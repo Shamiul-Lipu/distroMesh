@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# distroMesh
 
-## Getting Started
+distroMesh is a multi-business distribution management dashboard. It gives business owners a portfolio view for comparing businesses, separate workspaces for reviewing each operation, and a consistent path from an overview to the records that need attention.
 
-First, run the development server:
+## What you can do
+
+- Review available sales, cash, receivables, and profit figures across the portfolio.
+- Compare selected businesses and inspect sales and operational indicators.
+- Open a workspace for each business without combining its ledger with another business.
+- Record business relationships, such as product lines, distributors, or retail partners.
+- Review transactions, invoices, expenses, cash summaries, and listed alerts.
+- Use the sales history chart and contextual review prompts to decide what records to investigate.
+- Navigate directly to a business or workspace section using shareable URLs.
+
+## Getting started
+
+### Requirements
+
+- Node.js 20.9 or later
+- npm
+
+### Install and run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The landing page is at `/`; choose the dashboard entry point to open the business portfolio at `/businesses`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-## Learn More
+## Application routes
 
-To learn more about Next.js, take a look at the following resources:
+| Route | Purpose |
+| --- | --- |
+| `/` | distroMesh landing page |
+| `/businesses` | Portfolio overview and business comparison |
+| `/businesses/{business}/overview` | Selected business workspace |
+| `/businesses/{business}/sales-operations` | Sales history and operating indicators |
+| `/businesses/{business}/connected-businesses` | Linked business relationships |
+| `/businesses/{business}/transactions` | Business transaction activity |
+| `/businesses/{business}/invoices` | Invoice records |
+| `/businesses/{business}/expenses` | Expense records |
+| `/businesses/{business}/cash-flow` | Cash and activity summary |
+| `/businesses/{business}/alerts` | Alerts and review tasks |
+| `/businesses/{business}/ask` | Contextual questions about the displayed business information |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use a business identifier from the sidebar or portfolio. Selecting a business opens its Overview; the sidebar also links to its principal sections. Browser Back and Forward follow the selected business and section.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Technology
 
-## Deploy on Vercel
+- Next.js 16 App Router and React 19
+- TypeScript
+- Tailwind CSS
+- Recharts for responsive, data-driven sales visualization
+- Lucide icons
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Current implementation status
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The interface, navigation, portfolio comparisons, business workspaces, sales visualization, local record-entry flows, and contextual prompts are implemented. The current application is a front-end implementation: it has no authentication, server-side business database, durable record storage, or connected banking, accounting, inventory, order, or delivery integrations.
+
+The seeded businesses, financial values, sales history, operational indicators, and sample activity are illustrative. New businesses and entries created in the interface are held in client-side application state and are not durable records; reloading the app restores the seeded workspace. Some actions, including receipt storage and account/security settings, are not connected to a production service. The question panel uses simple rules against currently displayed information and is not an AI adviser.
+
+Do not use the sample figures as actual results or for financial decisions. Before operating with live businesses, add persistent storage and access controls, connect reliable source systems or controlled data entry, and validate data coverage, reporting periods, and calculations.
+
+## Project structure
+
+```text
+src/
+  app/                 App Router pages and workspace routes
+  components/
+    executive/         Portfolio, business workspace, navigation, and operations UI
+    marketing/         Landing page
+  context/             Client-side workspace state
+  data/                Portfolio sample data and calculations
+  types/               Shared TypeScript types
+  utils/               Route and formatting helpers
+```
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run lint` | Run ESLint |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |

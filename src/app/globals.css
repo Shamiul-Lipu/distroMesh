@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f5f7f8;
+    --foreground: #17211f;
+    --sidebar: #101c1b;
+    --muted: #66736f;
+    --line: #e6ece9;
+    --green: #087e63;
+    --green-dark: #08634f;
+    --green-soft: #e9f5f0;
+    --red: #b74750;
+    color-scheme: light;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::selection {
+  background: #cce9dd;
+  color: #10241d;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: #c7d2ce;
+  background-clip: padding-box;
+}
+
+.accounting-app {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 65% 0%, rgba(226, 241, 234, 0.5), transparent 35rem),
+    var(--background);
+}
+
+.accounting-sidebar {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(20, 91, 72, 0.3), transparent 24rem),
+    var(--sidebar);
+}
+
+.glass-card {
+  border: 1px solid rgba(223, 231, 227, 0.9);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 2px 5px rgba(25, 47, 39, 0.025), 0 12px 30px rgba(25, 47, 39, 0.035);
+  backdrop-filter: blur(16px);
+}
+
+.chart-grid {
+  stroke: #e9efec;
+  stroke-dasharray: 3 5;
+}
+
+.chart-label {
+  fill: #83908b;
+  font-size: 11px;
+}
+
+.accounting-focus:focus-visible {
+  outline: 3px solid rgba(8, 126, 99, 0.45);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
