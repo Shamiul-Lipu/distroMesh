@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
-import { AlertOctagon, Wrench, ShieldAlert, CheckCircle2, ArrowRight, CornerDownRight } from 'lucide-react';
+import { AlertOctagon, Wrench, CheckCircle2, CornerDownRight } from 'lucide-react';
 import { ExecutiveAlert } from '../../types/executive';
 
 export const AlertCenter: React.FC = () => {
-  const { state, openDrawer, waiveVariance, deductVariance, replaceHardware, resolveAlert } = useExecutive();
+  const { state, openDrawer, waiveVariance, deductVariance, replaceHardware } = useExecutive();
 
   const activeAlerts = state.alerts.filter(a => !a.resolved);
 

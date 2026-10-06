@@ -3,16 +3,21 @@
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT, formatCompactBDT } from '../../utils/formatters';
-import { Layers, ArrowRight, Store, Box, FileCheck2, Info } from 'lucide-react';
+import { ArrowRight, Store, Box, FileCheck2, Info } from 'lucide-react';
 
 export const WorkingCapital: React.FC = () => {
   const { state, openDrawer } = useExecutive();
 
-  const { total, retailerReceivables, inventory, unclaimedSchemes } = state.trappedCapital;
+  const wc = state.workingCapital;
+  const total = wc.netOperatingWorkingCapital;
+  const retailerReceivables = wc.receivables;
+  const inventory = wc.inventory;
+  const unclaimedSchemes = wc.schemeClaimsPending;
+  const grossCapital = retailerReceivables + inventory + unclaimedSchemes;
 
-  const recPct = ((retailerReceivables / total) * 100).toFixed(1);
-  const invPct = ((inventory / total) * 100).toFixed(1);
-  const schPct = ((unclaimedSchemes / total) * 100).toFixed(1);
+  const recPct = grossCapital ? ((retailerReceivables / grossCapital) * 100).toFixed(1) : '0.0';
+  const invPct = grossCapital ? ((inventory / grossCapital) * 100).toFixed(1) : '0.0';
+  const schPct = grossCapital ? ((unclaimedSchemes / grossCapital) * 100).toFixed(1) : '0.0';
 
   return (
     <div className="bg-[#111827] border border-[#374151] rounded-xl p-5 shadow-xl flex flex-col justify-between">
@@ -21,7 +26,7 @@ export const WorkingCapital: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-purple-500"></div>
           <h2 className="text-base font-bold text-[#F9FAFB] tracking-tight uppercase font-sans">
-            Trapped Working Capital
+            Net Operating Working Capital
           </h2>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
             ILLUSTRATIVE
@@ -44,7 +49,7 @@ export const WorkingCapital: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs font-mono text-[#9CA3AF] uppercase">
-              Total Non-Liquid Capital Enclosed
+              Net Operating Working Capital (Closing Stock Basis)
             </div>
             <div className="text-2xl font-mono font-bold text-[#F9FAFB] group-hover:text-purple-400 transition-colors mt-0.5">
               {formatBDT(total)}
@@ -52,7 +57,7 @@ export const WorkingCapital: React.FC = () => {
           </div>
           <div className="text-right">
             <span className="text-[11px] font-mono text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded border border-purple-800">
-              TRAPPED CAPITAL
+              NOWC
             </span>
           </div>
         </div>
@@ -131,7 +136,7 @@ export const WorkingCapital: React.FC = () => {
       <div className="mt-3 pt-2 border-t border-[#1F2937] flex items-center gap-2 text-[11px] font-mono text-[#9CA3AF]">
         <Info className="w-4 h-4 text-purple-400 shrink-0" />
         <p className="truncate">
-          "This money exists inside the business but is not immediately available as liquid cash."
+          &quot;This money exists inside the business but is not immediately available as liquid cash.&quot;
         </p>
       </div>
     </div>

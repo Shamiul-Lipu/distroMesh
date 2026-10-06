@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
-import { SlidersHorizontal, RotateCcw, X, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, X } from 'lucide-react';
 import { formatBDT } from '../../utils/formatters';
 
 export const SimulationPanel: React.FC = () => {
@@ -82,22 +82,22 @@ export const SimulationPanel: React.FC = () => {
           {/* 3. Upcoming Obligation */}
           <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151]">
             <div className="flex justify-between mb-1">
-              <label className="text-gray-300 font-semibold">Unilever Auto-Debit Obligation</label>
+              <label className="text-gray-300 font-semibold">Principal Auto-Debit Obligation</label>
               <span className="text-amber-400 font-bold">{formatBDT(state.upcomingObligation)}</span>
             </div>
             <input
               type="range"
-              min="500000"
-              max="4000000"
-              step="50000"
+              min="1000000"
+              max="8000000"
+              step="100000"
               value={state.upcomingObligation}
               onChange={(e) => updateSimulationValues({ upcomingObligation: Number(e.target.value) })}
               className="w-full accent-amber-500 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-              <span>৳500K</span>
-              <span>৳2.0M</span>
-              <span>৳4.0M</span>
+              <span>৳10.0 L</span>
+              <span>৳54.0 L</span>
+              <span>৳80.0 L</span>
             </div>
           </div>
 

@@ -1,193 +1,178 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ExecutiveState, OperatingMode, RouteData, ExecutiveAlert } from '../types/executive';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import {
+  ExecutiveState,
+  OperatingMode,
+  RouteData,
+  ExecutiveAlert,
+  UserRole,
+  AuditLogEntry,
+  ShortageCase,
+  WarRoomTier,
+} from '../types/executive.ts';
+import { popy12Routes, popyMonthlyParameters, popyTodaySnapshot } from '../data/seedData.ts';
+import { deriveRouteStatus } from '../utils/derivedRules.ts';
 
-const initialRoutes: RouteData[] = [
-  {
-    id: 'van-1',
-    vanNumber: 'Van #1',
-    routeName: 'Sherpur Rural',
-    depot: 'Sherpur',
-    dsrName: 'Tariqul Islam',
-    collected: 78000,
-    expected: 78000,
-    credit: 31000,
-    variance: 0,
-    status: 'OK',
-    retailersVisited: 38,
-    totalRetailers: 40,
-    completionPct: 95,
-    lastCheckin: '17:30',
-    notes: 'Smooth collection in Rural beat.',
-  },
-  {
-    id: 'van-2',
-    vanNumber: 'Van #2',
-    routeName: 'Town Central',
-    depot: 'Sherpur',
-    dsrName: 'Rafiqul Alam',
-    collected: 92000,
-    expected: 92000,
-    credit: 12000,
-    variance: 0,
-    status: 'OK',
-    retailersVisited: 45,
-    totalRetailers: 45,
-    completionPct: 100,
-    lastCheckin: '17:45',
-    notes: 'All key town accounts settled.',
-  },
-  {
-    id: 'van-3',
-    vanNumber: 'Van #3',
-    routeName: 'Bogura Link',
-    depot: 'Bogura',
-    dsrName: 'Babul Hossain',
-    collected: 84600,
-    expected: 85000,
-    credit: 38000,
-    variance: -400,
-    status: 'EXCEPTION',
-    retailersVisited: 32,
-    totalRetailers: 34,
-    completionPct: 94,
-    lastCheckin: '18:10',
-    notes: 'Cash count mismatch of ৳400 at Bogura road point.',
-  },
-  {
-    id: 'van-4',
-    vanNumber: 'Van #4',
-    routeName: 'Mirzapur Beat',
-    depot: 'Sherpur',
-    dsrName: 'Anowar Hossain',
-    collected: 65000,
-    expected: 65000,
-    credit: 28000,
-    variance: 0,
-    status: 'OK',
-    retailersVisited: 28,
-    totalRetailers: 30,
-    completionPct: 93,
-    lastCheckin: '17:15',
-    notes: 'Deliveries completed early.',
-  },
-  {
-    id: 'van-5',
-    vanNumber: 'Van #5',
-    routeName: 'Nalitabari West',
-    depot: 'Sherpur',
-    dsrName: 'Kabir Mia',
-    collected: 58000,
-    expected: 58000,
-    credit: 41000,
-    variance: 0,
-    status: 'WARNING',
-    retailersVisited: 26,
-    totalRetailers: 32,
-    completionPct: 81,
-    lastCheckin: '17:50',
-    notes: 'High credit ratio (45.2%) on new accounts.',
-  },
-  {
-    id: 'van-6',
-    vanNumber: 'Van #6',
-    routeName: 'Highway Route',
-    depot: 'Sherpur',
-    dsrName: 'Jahangir Alam',
-    collected: 65000,
-    expected: 65000,
-    credit: 40000,
-    variance: 0,
-    status: 'WARNING',
-    retailersVisited: 29,
-    totalRetailers: 35,
-    completionPct: 82,
-    lastCheckin: '18:00',
-    notes: '2 overdue retailers extended credit.',
-  },
-];
+// Map popy12Routes to RouteData format
+const mapInitialRoutes = (): RouteData[] => {
+  return popy12Routes.map((r, index) => {
+    const statusResult = deriveRouteStatus(r);
+    return {
+      id: r.id,
+      vanNumber: `Van #${index + 1}`,
+      routeName: r.name,
+      territory: r.territory,
+      isOutsideTerritory: r.isOutsideTerritory,
+      depot: r.territory.includes('Bogura') ? 'Bogura' : 'Sherpur',
+      jsrName: r.jsrName,
+      srName: r.srName,
+      deliveredSales: r.deliveredSales,
+      cashSales: r.cashSales,
+      creditSales: r.creditSales,
+      oldDuesCollected: r.oldDuesCollected,
+      cashExpenses: r.cashExpenses,
+      cashHandedIn: r.cashHandedIn,
+      expectedTill: r.expectedTill,
+      countedTill: r.countedTill,
+      collected: r.cashHandedIn,
+      expected: r.expectedTill,
+      credit: r.creditSales,
+      variance: r.variance,
+      status: statusResult.status,
+      statusReason: statusResult.reason,
+      retailersVisited: Math.round(r.dropsCount * 0.95),
+      totalRetailers: r.dropsCount,
+      completionPct: 95,
+      lastCheckin: '17:45',
+      notes: r.notes,
+      invoicesCount: r.invoicesCount,
+      unitsDelivered: r.unitsDelivered,
+    };
+  });
+};
 
 const initialAlerts: ExecutiveAlert[] = [
   {
     id: 'alert-1',
-    title: 'Van #3 Cash Variance (-৳400)',
+    title: 'Van #3 Till Shortage (−৳400)',
     category: 'CASH',
-    severity: 'CRITICAL',
-    whatHappened: 'Closing till count is ৳442,600 against expected till cash of ৳443,000 on the Bogura Link route.',
-    impact: '৳400 unverified cash variance in evening route settlement.',
-    whyItMatters: 'Unreconciled physical cash discrepancies weaken DSR accountability.',
-    availableAction: 'Review details, simulate salary deduction, or approve waiver.',
-    actionKey: 'REVIEW_VARIANCE',
-    resolved: false,
-    timestamp: '18:12',
+    severity: 'WARNING',
+    whatHappened: 'JSR Babul Hossain reported partial cash settlement during peak rush-hour delivery on Bogura Link Road.',
+    impact: 'Shortage of −৳400 against expected route collection of ৳74,600.',
+    whyItMatters: 'Cash discrepancy must be formally investigated through the Shortage Case workflow before day-end closeout.',
+    availableAction: 'Open Shortage Case',
+    actionKey: 'OPEN_SHORTAGE_CASE',
+    takaAtRisk: 400,
+    timestamp: '18:15',
   },
   {
     id: 'alert-2',
-    title: 'Billing Desk Printer Hardware Failure',
-    category: 'HARDWARE',
-    severity: 'WARNING',
-    whatHappened: 'Epson LQ-310 matrix printer ribbon jam at Desk #1 stalled morning invoice printing.',
-    impact: '60 cartons returned, 24 DSRs delayed by 165 minutes. Estimated revenue risk: ৳2,790.',
-    whyItMatters: 'Printer bottleneck directly delayed market dispatch by +2h 45m.',
-    availableAction: 'Simulate hardware replacement (৳3,000 cost, 2.8 days estimated payback).',
+    title: 'Dispatch Delay: 165 Minutes Late (Epson LQ-310 Ribbon Failure)',
+    category: 'EXECUTION',
+    severity: 'CRITICAL',
+    whatHappened: 'Faint ribbon and gear misalignment on billing desk #1 delayed invoice trip prints until 11:45 AM (target 09:00 AM).',
+    impact: '12 vans stalled in depot yard; 1,980 van-minutes lost; ≈৳4,950 idle crew cost incurred.',
+    whyItMatters: 'Late departures compress retailer drop windows, reducing on-time delivery from 94% down to 38%.',
+    availableAction: 'Simulate Dot-Matrix Replacement',
     actionKey: 'SIMULATE_REPLACEMENT',
-    resolved: false,
-    timestamp: '09:15',
+    takaAtRisk: 4950,
+    timestamp: '11:45',
   },
   {
     id: 'alert-3',
-    title: 'Unilever Principal Auto-Debit (48 Hours)',
+    title: 'Principal Auto-Debit Scheduled: ৳54,00,000 Due in 48h',
     category: 'OBLIGATION',
     severity: 'INFO',
-    whatHappened: 'Scheduled principal auto-debit of ৳2,070,000 set for direct withdrawal.',
-    impact: 'Reduces available liquid cash buffer from ৳2.74M to ৳672.6K.',
-    whyItMatters: 'Ensure minimum bank threshold is maintained prior to sweep.',
-    availableAction: 'Review bank liquidity bridge and pending market deposits.',
+    whatHappened: 'Monthly primary FMCG invoice settlement auto-debit scheduled against principal bank account.',
+    impact: 'Bank balance post-debit drops to ৳8,00,000. Vault cash (৳8,95,200) must be deposited to maintain liquidity buffer.',
+    whyItMatters: 'Post-debit 7-day obligation cover is 2.17× combined, but 1.02× bank-only.',
+    availableAction: 'Prepare Bank Deposit',
     actionKey: 'REVIEW_OBLIGATION',
-    resolved: false,
+    takaAtRisk: 5400000,
     timestamp: '08:00',
   },
 ];
 
-const initialExecutiveState: ExecutiveState = {
+const initialAuditLog: AuditLogEntry[] = [
+  {
+    id: 'audit-1',
+    timestamp: '09:15',
+    action: 'DISPATCH_DELAY_LOGGED',
+    performedBy: 'Manager',
+    reason: 'Billing printer gear misalignment halted trip invoice batch generation.',
+    reversible: false,
+  },
+];
+
+const initialShortageCases: ShortageCase[] = [
+  {
+    id: 'case-van-3-01',
+    routeId: 'van-3',
+    jsrName: 'Babul Hossain',
+    amount: 400,
+    notes: 'Shortage occurred during rush-hour collection at Bogura Link road point when shopkeeper made partial payment with ৳500 note.',
+    assignedRole: 'Cashier',
+    resolution: 'PENDING',
+    createdAt: 'Today, 18:15',
+  },
+];
+
+export const initialExecutiveState: ExecutiveState = {
+  currentRole: 'Owner',
   operatingMode: 'LIVE_OPS',
+  warRoomTier: 'desktop',
   isTabletView: false,
   wakeLockActive: false,
+  banglaMode: false,
   dayClosed: false,
   depositPrepared: false,
   creditLockActive: false,
   hardwareReplaced: false,
   varianceWaived: false,
   varianceDeducted: false,
+  depositInTransit: popyTodaySnapshot.plannedDepositTonight, // ৳8,00,000 deposit in transit
 
-  bankCash: 2300000,
-  vaultCash: 442600,
-  upcomingObligation: 2070000,
-  obligationDueHours: 48,
-  freshCredit: 190000,
-  todaySales: 480000,
+  // Financials
+  bankCash: popyTodaySnapshot.bankAfterDebit, // ৳8,00,000 post-debit
+  vaultCash: popyTodaySnapshot.vaultCash, // ৳8,95,200
+  upcomingObligation: popyTodaySnapshot.upcomingAutoDebit, // ৳54,00,000
+  obligationDueHours: popyTodaySnapshot.dueHours,
+  freshCredit: popyTodaySnapshot.creditSales, // ৳3,80,000
+  todaySales: popyTodaySnapshot.deliveredSales, // ৳9,60,000
+  cashVariance: popyTodaySnapshot.variance, // -৳400
 
-  trappedCapital: {
-    total: 23890000,
-    retailerReceivables: 9500000,
-    inventory: 12500000,
-    unclaimedSchemes: 1890000,
+  // Working Capital headline & components (Defect A6)
+  workingCapital: {
+    receivables: popyMonthlyParameters.receivables,
+    inventory: popyMonthlyParameters.inventory,
+    schemeClaimsPending: popyMonthlyParameters.schemeClaimsPending,
+    damageClaimsPending: popyMonthlyParameters.damageClaimsPending,
+    payables: popyMonthlyParameters.payables,
+    netOperatingWorkingCapital:
+      popyMonthlyParameters.receivables +
+      popyMonthlyParameters.inventory +
+      popyMonthlyParameters.schemeClaimsPending +
+      popyMonthlyParameters.damageClaimsPending -
+      popyMonthlyParameters.payables,
   },
 
-  dispatchTarget: '09:00 AM',
-  dispatchActual: '11:45 AM',
-  dispatchDelayMinutes: 165,
-  billingDeskBottleneckDSRs: 24,
+  // Operations
+  dispatchTarget: popyTodaySnapshot.dispatchTarget,
+  dispatchActual: popyTodaySnapshot.dispatchActual,
+  dispatchDelayMinutes: popyTodaySnapshot.dispatchDelayMinutes,
+  billingDeskBottleneckSRs: 24,
 
-  reconciliationExpected: 443000,
-  reconciliationCounted: 442600,
-  cashVariance: -400,
-  reconciliationRoute: 'Van #3 (Bogura Link)',
-  reconciliationDSR: 'Babul Hossain',
+  // Reconciliation
+  reconciliationExpected: popyTodaySnapshot.expectedTill,
+  reconciliationCounted: popyTodaySnapshot.countedTill,
+  reconciliationRoute: 'Van #3 - Bogura Link Road',
+  reconciliationJSR: 'Babul Hossain',
 
-  routes: initialRoutes,
+  routes: mapInitialRoutes(),
   alerts: initialAlerts,
+  auditLog: initialAuditLog,
+  shortageCases: initialShortageCases,
 
   activeDrawer: null,
   selectedRouteId: null,
@@ -195,34 +180,18 @@ const initialExecutiveState: ExecutiveState = {
   toastMessage: null,
 };
 
-const addDelayToTime = (time: string, delayMinutes: number) => {
-  const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(time);
-  if (!match) return time;
-  const [, hourText, minuteText, meridiem] = match;
-  const hour = Number(hourText) % 12 + (meridiem.toUpperCase() === 'PM' ? 12 : 0);
-  const totalMinutes = (hour * 60 + Number(minuteText) + delayMinutes + 1440) % 1440;
-  const resultHour = Math.floor(totalMinutes / 60);
-  const displayHour = resultHour % 12 || 12;
-  const resultMeridiem = resultHour < 12 ? 'AM' : 'PM';
-  return `${String(displayHour).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')} ${resultMeridiem}`;
-};
-
-const formatBDTForToast = (amount: number) => {
-  const sign = amount < 0 ? '-' : '';
-  return `${sign}৳${Math.abs(amount).toLocaleString('en-BD')}`;
-};
-
 interface ExecutiveContextType {
   state: ExecutiveState;
   setOperatingMode: (mode: OperatingMode) => void;
+  setUserRole: (role: UserRole) => void;
+  setWarRoomTier: (tier: WarRoomTier) => void;
   setTabletView: (isTablet: boolean) => void;
   toggleWakeLock: () => Promise<void>;
+  toggleBanglaMode: () => void;
   openDrawer: (drawer: ExecutiveState['activeDrawer'], routeId?: string) => void;
   closeDrawer: () => void;
   openModal: (modal: ExecutiveState['activeModal']) => void;
   closeModal: () => void;
-
-  // Simulation Actions
   updateSimulationValues: (values: Partial<{
     bankCash: number;
     vaultCash: number;
@@ -232,82 +201,142 @@ interface ExecutiveContextType {
     dispatchDelayMinutes: number;
   }>) => void;
   resetSimulation: () => void;
-
-  // Business Action Triggers
-  confirmCreditLock: () => void;
-  confirmBankDeposit: () => void;
-  confirmDayEndClose: () => void;
+  confirmCreditLock: (reason?: string) => void;
+  confirmBankDeposit: (reason?: string) => void;
+  confirmDayEndClose: (reason?: string) => void;
+  handleOpenShortageCase: (caseData: {
+    routeId: string;
+    jsrName: string;
+    amount: number;
+    notes: string;
+    action: 'WAIVE' | 'RECOVER' | 'ESCALATE';
+  }) => void;
   waiveVariance: () => void;
   deductVariance: () => void;
   replaceHardware: () => void;
   resolveAlert: (alertId: string) => void;
+  undoAuditAction: (auditId: string) => void;
   showToast: (msg: string) => void;
+  clearToast: () => void;
 }
 
 const ExecutiveContext = createContext<ExecutiveContextType | undefined>(undefined);
 
-export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
+export const ExecutiveProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setState] = useState<ExecutiveState>(initialExecutiveState);
 
-  // Screen Wake Lock Handler
-  const toggleWakeLock = async () => {
-    if (typeof window !== 'undefined' && 'wakeLock' in navigator) {
-      try {
-        if (!state.wakeLockActive) {
-          await navigator.wakeLock.request('screen');
-          setState(prev => ({ ...prev, wakeLockActive: true }));
-          showToast('Screen Wake Lock Enabled — Control Room display stay active');
-        } else {
-          setState(prev => ({ ...prev, wakeLockActive: false }));
-          showToast('Screen Wake Lock Disabled');
-        }
-      } catch (err) {
-        console.error('Wake lock error:', err);
-        showToast('Wake Lock Request Failed or Unsupported');
-      }
-    } else {
-      showToast('Wake Lock API not supported on this browser (Simulated toggle active)');
-      setState(prev => ({ ...prev, wakeLockActive: !prev.wakeLockActive }));
-    }
-  };
+  const showToast = useCallback((msg: string) => {
+    setState((prev) => ({ ...prev, toastMessage: msg }));
+  }, []);
 
-  const showToast = (msg: string) => {
-    setState(prev => ({ ...prev, toastMessage: msg }));
-    setTimeout(() => {
-      setState(prev => ({ ...prev, toastMessage: null }));
-    }, 4000);
-  };
+  const clearToast = useCallback(() => {
+    setState((prev) => ({ ...prev, toastMessage: null }));
+  }, []);
+
+  useEffect(() => {
+    if (state.toastMessage) {
+      const timer = setTimeout(() => {
+        clearToast();
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [state.toastMessage, clearToast]);
 
   const setOperatingMode = (mode: OperatingMode) => {
-    setState(prev => ({
-      ...prev,
-      operatingMode: mode,
-      toastMessage: `Operating Mode switched to: ${mode.replace('_', ' ')}`,
-    }));
+    setState((prev) => ({ ...prev, operatingMode: mode }));
+  };
+
+  const setUserRole = (role: UserRole) => {
+    setState((prev) => ({ ...prev, currentRole: role }));
+    showToast(`Active role changed to ${role}`);
+  };
+
+  const setWarRoomTier = (tier: WarRoomTier) => {
+    setState((prev) => ({ ...prev, warRoomTier: tier }));
   };
 
   const setTabletView = (isTablet: boolean) => {
-    setState(prev => ({ ...prev, isTabletView: isTablet }));
+    setState((prev) => ({ ...prev, isTabletView: isTablet }));
+  };
+
+  const toggleBanglaMode = () => {
+    setState((prev) => ({ ...prev, banglaMode: !prev.banglaMode }));
+  };
+
+  // Screen Wake Lock API implementation with fallback & visibilitychange handling (Defect D5)
+  const toggleWakeLock = async () => {
+    if (typeof window === 'undefined') return;
+
+    if (!('wakeLock' in navigator)) {
+      setState((prev) => ({
+        ...prev,
+        wakeLockActive: !prev.wakeLockActive,
+      }));
+      showToast('Wake Lock API not supported in this browser; simulated display keep-alive enabled');
+      return;
+    }
+
+    try {
+      if (!state.wakeLockActive) {
+        const sentinel = await (navigator as unknown as { wakeLock: { request: (type: string) => Promise<unknown> } }).wakeLock.request('screen');
+        setState((prev) => ({ ...prev, wakeLockActive: true }));
+        showToast('Screen Wake Lock acquired — display will stay active');
+
+        const onVisibility = async () => {
+          if (document.visibilityState === 'visible' && state.wakeLockActive) {
+            try {
+              await (navigator as unknown as { wakeLock: { request: (type: string) => Promise<unknown> } }).wakeLock.request('screen');
+            } catch {
+              // Ignore re-acquire error
+            }
+          }
+        };
+        document.addEventListener('visibilitychange', onVisibility, { once: true });
+        void sentinel;
+      } else {
+        setState((prev) => ({ ...prev, wakeLockActive: false }));
+        showToast('Screen Wake Lock released');
+      }
+    } catch {
+      setState((prev) => ({ ...prev, wakeLockActive: !prev.wakeLockActive }));
+      showToast('Wake Lock permission toggled in simulated mode');
+    }
   };
 
   const openDrawer = (drawer: ExecutiveState['activeDrawer'], routeId?: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       activeDrawer: drawer,
-      selectedRouteId: routeId || prev.selectedRouteId,
+      selectedRouteId: routeId || null,
     }));
   };
 
   const closeDrawer = () => {
-    setState(prev => ({ ...prev, activeDrawer: null }));
+    setState((prev) => ({ ...prev, activeDrawer: null, selectedRouteId: null }));
   };
 
   const openModal = (modal: ExecutiveState['activeModal']) => {
-    setState(prev => ({ ...prev, activeModal: modal }));
+    setState((prev) => ({ ...prev, activeModal: modal }));
   };
 
   const closeModal = () => {
-    setState(prev => ({ ...prev, activeModal: null }));
+    setState((prev) => ({ ...prev, activeModal: null }));
+  };
+
+  const addAuditEntry = (action: string, reason: string, details?: string, reversible = false) => {
+    const entry: AuditLogEntry = {
+      id: `audit-${Date.now()}`,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+      action,
+      performedBy: state.currentRole,
+      reason: reason || 'Action authorized by supervisor.',
+      details,
+      reversible,
+    };
+    setState((prev) => ({
+      ...prev,
+      auditLog: [entry, ...prev.auditLog],
+    }));
   };
 
   const updateSimulationValues = (values: Partial<{
@@ -318,22 +347,18 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
     cashVariance: number;
     dispatchDelayMinutes: number;
   }>) => {
-    setState(prev => {
-      const updatedExpected = prev.reconciliationExpected;
+    setState((prev) => {
       const updatedVariance = values.cashVariance !== undefined ? values.cashVariance : prev.cashVariance;
+      const updatedExpected = prev.reconciliationExpected;
       const updatedCounted = updatedExpected + updatedVariance;
-      const updatedDispatchActual = values.dispatchDelayMinutes !== undefined
-        ? addDelayToTime(prev.dispatchTarget, values.dispatchDelayMinutes)
-        : prev.dispatchActual;
 
-      // Also update Van #3 variance if cashVariance changes
-      const updatedRoutes = prev.routes.map(r => {
+      const updatedRoutes = prev.routes.map((r) => {
         if (r.id === 'van-3') {
           return {
             ...r,
             variance: updatedVariance,
-            collected: r.expected + updatedVariance,
-            status: updatedVariance !== 0 ? ('EXCEPTION' as const) : ('OK' as const),
+            countedTill: r.expectedTill + updatedVariance,
+            status: updatedVariance !== 0 ? ('REVIEW' as const) : ('OK' as const),
           };
         }
         return r;
@@ -342,14 +367,11 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
       return {
         ...prev,
         ...values,
-        dispatchActual: updatedDispatchActual,
-        varianceDeducted: values.cashVariance !== undefined ? false : prev.varianceDeducted,
-        varianceWaived: values.cashVariance !== undefined ? false : prev.varianceWaived,
         reconciliationCounted: updatedCounted,
         cashVariance: updatedVariance,
         routes: updatedRoutes,
         alerts: values.cashVariance !== undefined
-          ? prev.alerts.map(alert => alert.id === 'alert-1'
+          ? prev.alerts.map((alert) => alert.id === 'alert-1'
             ? { ...alert, resolved: updatedVariance === 0 }
             : alert)
           : prev.alerts,
@@ -359,78 +381,150 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
 
   const resetSimulation = () => {
     setState(initialExecutiveState);
-    showToast('Simulation state reset to verified defaults');
+    showToast('Simulation state reset to reconciled defaults');
   };
 
-  const confirmCreditLock = () => {
-    setState(prev => ({
+  // Defect E2: Credit Lock confirmation with reason & audit log
+  const confirmCreditLock = (reason = 'Overdue limit enforcement across Van #2, #3, #4') => {
+    setState((prev) => ({
       ...prev,
       creditLockActive: true,
       activeModal: null,
-      toastMessage: 'SIMULATED • Credit Lock executed for 7 overdue retailers (৳84,000 exposure locked)',
     }));
+    addAuditEntry('CREDIT_LOCK_ENFORCED', reason, '7 retailers supply suspended', true);
+    showToast('Credit lock enacted; audit log recorded');
   };
 
-  const confirmBankDeposit = () => {
-    setState(prev => {
-      const newBank = prev.bankCash + prev.vaultCash;
+  // Defect E2: Bank Deposit confirmation with reason & audit log
+  const confirmBankDeposit = (reason = 'Daily till deposit for upcoming supplier debit') => {
+    setState((prev) => {
+      const depositAmount = prev.depositInTransit;
       return {
         ...prev,
         depositPrepared: true,
-        bankCash: newBank,
-        vaultCash: 0,
+        bankCash: prev.bankCash + depositAmount,
+        vaultCash: Math.max(0, prev.vaultCash - depositAmount),
+        depositInTransit: 0,
         activeModal: null,
-        toastMessage: `SIMULATED • Deposit of ৳${prev.vaultCash.toLocaleString()} prepared and credited to Bank`,
       };
     });
+    addAuditEntry('BANK_DEPOSIT_TRANSFERRED', reason, '৳8,00,000 moved from vault to bank buffer');
+    showToast('৳8,00,000 vault deposit posted to bank account');
   };
 
-  const confirmDayEndClose = () => {
-    setState(prev => ({
+  // Defect E2: Day-End Closeout blocked if unresolved exceptions exist unless reason provided
+  const confirmDayEndClose = (reason = 'Supervised reconciliation complete') => {
+    const hasUnresolved = state.alerts.some((a) => !a.resolved && a.severity === 'CRITICAL');
+    if (hasUnresolved && !reason) {
+      showToast('Cannot close day while unresolved critical exceptions exist without supervisor reason.');
+      return;
+    }
+
+    setState((prev) => ({
       ...prev,
       dayClosed: true,
       activeModal: null,
-      toastMessage: 'SIMULATED • Evening Closeout Approved. Control Room locked into Day-Closed state.',
     }));
+    addAuditEntry('DAY_END_CLOSEOUT', reason, 'Books closed for today');
+    showToast('Day-End closeout verified and finalized');
+  };
+
+  // Defect E1: Open Shortage Case workflow
+  const handleOpenShortageCase = (caseData: {
+    routeId: string;
+    jsrName: string;
+    amount: number;
+    notes: string;
+    action: 'WAIVE' | 'RECOVER' | 'ESCALATE';
+  }) => {
+    const newCase: ShortageCase = {
+      id: `case-${Date.now()}`,
+      routeId: caseData.routeId,
+      jsrName: caseData.jsrName,
+      amount: caseData.amount,
+      notes: caseData.notes,
+      assignedRole: state.currentRole,
+      resolution: caseData.action === 'WAIVE' ? 'WAIVED' : caseData.action === 'RECOVER' ? 'RECOVERED' : 'ESCALATED',
+      createdAt: 'Just now',
+    };
+
+    setState((prev) => ({
+      ...prev,
+      shortageCases: [newCase, ...prev.shortageCases],
+      varianceWaived: caseData.action === 'WAIVE' ? true : prev.varianceWaived,
+      varianceDeducted: caseData.action === 'RECOVER' ? true : prev.varianceDeducted,
+      activeModal: null,
+      alerts: prev.alerts.map((a) => a.id === 'alert-1' ? { ...a, resolved: true } : a),
+    }));
+
+    addAuditEntry(
+      `SHORTAGE_CASE_${caseData.action}`,
+      caseData.notes,
+      `JSR: ${caseData.jsrName}, Amount: ৳${caseData.amount}`,
+      true
+    );
+    showToast(`Shortage Case recorded: ${caseData.action}`);
   };
 
   const waiveVariance = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       varianceWaived: true,
-      cashVariance: 0,
-      reconciliationCounted: prev.reconciliationExpected,
-      routes: prev.routes.map(r => r.id === 'van-3' ? { ...r, variance: 0, collected: r.expected, status: 'OK' } : r),
-      alerts: prev.alerts.map(a => a.id === 'alert-1' ? { ...a, resolved: true } : a),
-      toastMessage: `SIMULATED • ${formatBDTForToast(Math.abs(prev.cashVariance))} cash variance waived by CEO approval.`,
+      alerts: prev.alerts.map((a) => a.id === 'alert-1' ? { ...a, resolved: true } : a),
     }));
+    addAuditEntry('VARIANCE_WAIVER_APPROVED', 'Approved by supervisor for rush-hour partial note mismatch', undefined, true);
+    showToast('Variance waiver approved; audit trail updated');
   };
 
   const deductVariance = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       varianceDeducted: true,
-      alerts: prev.alerts.map(a => a.id === 'alert-1' ? { ...a, resolved: true, impact: `${formatBDTForToast(Math.abs(prev.cashVariance))} deducted from DSR Babul payroll` } : a),
-      toastMessage: `SIMULATED • ${formatBDTForToast(Math.abs(prev.cashVariance))} deduction scheduled against DSR Babul payroll.`,
+      alerts: prev.alerts.map((a) => a.id === 'alert-1' ? { ...a, resolved: true } : a),
     }));
+    addAuditEntry('VARIANCE_RECOVERY_SCHEDULED', 'Scheduled for recovery subject to employment agreement notice', undefined, true);
+    showToast('Shortage recovery logged; audit trail updated');
   };
 
   const replaceHardware = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       hardwareReplaced: true,
-      vaultCash: Math.max(0, prev.vaultCash - 3000),
-      alerts: prev.alerts.map(a => a.id === 'alert-2' ? { ...a, resolved: true } : a),
-      toastMessage: 'SIMULATED • Replacement Epson printer ribbon/unit ordered (৳3,000 deducted). Desk #1 back online.',
+      dispatchDelayMinutes: 0,
+      alerts: prev.alerts.map((a) => a.id === 'alert-2' ? { ...a, resolved: true } : a),
     }));
+    addAuditEntry('HARDWARE_REPLACEMENT_SIMULATED', 'Replaced Epson LQ-310 ribbon gear assembly (Payback 2.8 days)');
+    showToast('Printer replacement applied; delay reset to 0 min');
   };
 
   const resolveAlert = (alertId: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      alerts: prev.alerts.map(a => a.id === alertId ? { ...a, resolved: true } : a),
-      toastMessage: 'Alert marked as reviewed',
+      alerts: prev.alerts.map((a) => a.id === alertId ? { ...a, resolved: true } : a),
     }));
+    addAuditEntry('ALERT_RESOLVED', `Alert ID: ${alertId}`);
+  };
+
+  const undoAuditAction = (auditId: string) => {
+    const entry = state.auditLog.find((a) => a.id === auditId);
+    if (!entry || !entry.reversible) {
+      showToast('This action cannot be undone.');
+      return;
+    }
+
+    if (entry.action === 'CREDIT_LOCK_ENFORCED') {
+      setState((prev) => ({ ...prev, creditLockActive: false }));
+    } else if (entry.action === 'VARIANCE_WAIVER_APPROVED') {
+      setState((prev) => ({ ...prev, varianceWaived: false }));
+    } else if (entry.action === 'VARIANCE_RECOVERY_SCHEDULED') {
+      setState((prev) => ({ ...prev, varianceDeducted: false }));
+    }
+
+    setState((prev) => ({
+      ...prev,
+      auditLog: prev.auditLog.filter((a) => a.id !== auditId),
+    }));
+    showToast(`Undid action: ${entry.action}`);
   };
 
   return (
@@ -438,8 +532,11 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
       value={{
         state,
         setOperatingMode,
+        setUserRole,
+        setWarRoomTier,
         setTabletView,
         toggleWakeLock,
+        toggleBanglaMode,
         openDrawer,
         closeDrawer,
         openModal,
@@ -449,11 +546,14 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
         confirmCreditLock,
         confirmBankDeposit,
         confirmDayEndClose,
+        handleOpenShortageCase,
         waiveVariance,
         deductVariance,
         replaceHardware,
         resolveAlert,
+        undoAuditAction,
         showToast,
+        clearToast,
       }}
     >
       {children}
@@ -463,6 +563,8 @@ export const ExecutiveProvider = ({ children }: { children: ReactNode }) => {
 
 export const useExecutive = () => {
   const context = useContext(ExecutiveContext);
-  if (!context) throw new Error('useExecutive must be used within an ExecutiveProvider');
+  if (!context) {
+    throw new Error('useExecutive must be used within an ExecutiveProvider');
+  }
   return context;
 };

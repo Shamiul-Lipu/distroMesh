@@ -1,20 +1,20 @@
 'use client';
 
 import React from 'react';
-import { useExecutive } from '@/context/ExecutiveContext';
-import { X, Truck, User, Phone, MapPin, CheckCircle2, AlertTriangle, ShieldAlert } from 'lucide-react';
-import { formatBDT, formatVariance } from '@/utils/formatters';
+import { useExecutive } from '@/context/ExecutiveContext.tsx';
+import { X, Truck, User } from 'lucide-react';
+import { formatBDT, formatVariance } from '@/utils/formatters.ts';
 
 export const RouteDetailDrawer: React.FC = () => {
   const { state, closeDrawer, waiveVariance, openModal } = useExecutive();
 
   if (state.activeDrawer !== 'ROUTE_DETAIL' || !state.selectedRouteId) return null;
 
-  const route = state.routes.find(r => r.id === state.selectedRouteId);
+  const route = state.routes.find((r) => r.id === state.selectedRouteId);
   if (!route) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] bg-[#111827] border-l border-[#374151] z-50 p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
+    <div className="fixed inset-y-0 right-0 w-full sm:w-[500px] bg-[#111827] border-l border-[#374151] z-50 p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
       <div>
         {/* Header */}
         <div className="flex items-center justify-between mb-6 border-b border-[#1F2937] pb-4">
@@ -24,9 +24,11 @@ export const RouteDetailDrawer: React.FC = () => {
             </div>
             <div>
               <h2 className="text-lg font-mono font-extrabold text-white uppercase">
-                {route.vanNumber} — {route.routeName}
+                {route.routeName}
               </h2>
-              <span className="text-[10px] font-mono text-gray-400">DSR: {route.dsrName}</span>
+              <span className="text-xs font-mono text-gray-400">
+                {route.vanNumber} · {route.territory} ({route.depot} Depot)
+              </span>
             </div>
           </div>
           <button
@@ -37,45 +39,47 @@ export const RouteDetailDrawer: React.FC = () => {
           </button>
         </div>
 
-        {/* DSR Overview Card */}
-        <div className="bg-[#0B0F19] p-4 rounded-xl border border-[#374151] mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-mono font-bold text-white">{route.dsrName}</span>
+        {/* JSR Delivery & Order Taker Profile */}
+        <div className="bg-[#0B0F19] p-4 rounded-xl border border-[#374151] mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-[#1F2937] text-gray-300 rounded-full">
+              <User className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1F2937] text-gray-300 border border-[#374151]">
-              DSR CODE #BD-409
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-            <div className="bg-[#1F2937] p-2.5 rounded border border-[#374151]">
-              <div className="text-[10px] text-gray-400">Last GPS Checkin:</div>
-              <div className="text-white font-bold mt-0.5">{route.lastCheckin} PM</div>
-            </div>
-            <div className="bg-[#1F2937] p-2.5 rounded border border-[#374151]">
-              <div className="text-[10px] text-gray-400">Outlets Covered:</div>
-              <div className="text-white font-bold mt-0.5">{route.retailersVisited} / {route.totalRetailers} ({route.completionPct}%)</div>
+            <div>
+              <div className="text-sm font-bold text-white">{route.jsrName}</div>
+              <div className="text-xs text-gray-400 font-mono">Assigned JSR (Delivery &amp; Cash Collection)</div>
             </div>
           </div>
+          <span className="text-xs font-mono text-emerald-400 font-bold bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-800">
+            {route.status}
+          </span>
         </div>
 
-        {/* Financial Breakdown */}
-        <div className="space-y-3 text-xs font-mono mb-6">
+        {/* Route Metrics Breakdown */}
+        <div className="space-y-3 font-mono text-xs mb-6">
           <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151] flex justify-between items-center">
-            <span className="text-gray-400">Expected Invoice Total:</span>
-            <span className="font-bold text-white">{formatBDT(route.expected)}</span>
+            <span className="text-gray-400">Delivered Secondary Sales:</span>
+            <span className="text-white font-bold">{formatBDT(route.deliveredSales)}</span>
           </div>
 
           <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151] flex justify-between items-center">
-            <span className="text-gray-400">Cash Collected:</span>
-            <span className="font-bold text-emerald-400">{formatBDT(route.collected)}</span>
+            <span className="text-gray-400">Cash Sales Realized:</span>
+            <span className="text-emerald-400 font-bold">{formatBDT(route.cashSales)}</span>
           </div>
 
           <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151] flex justify-between items-center">
-            <span className="text-gray-400">Credit Extended to Outlets:</span>
-            <span className="font-bold text-amber-400">{formatBDT(route.credit)}</span>
+            <span className="text-gray-400">Credit Extended Today:</span>
+            <span className="text-amber-400 font-bold">{formatBDT(route.creditSales)}</span>
+          </div>
+
+          <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151] flex justify-between items-center">
+            <span className="text-gray-400">Old Market Dues Collected:</span>
+            <span className="text-emerald-400 font-bold">+{formatBDT(route.oldDuesCollected)}</span>
+          </div>
+
+          <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#374151] flex justify-between items-center">
+            <span className="text-gray-400">Route Fuel &amp; Helper Allowance:</span>
+            <span className="text-gray-300 font-bold">−{formatBDT(route.cashExpenses)}</span>
           </div>
 
           <div className={`p-3 rounded-lg border flex justify-between items-center ${
@@ -91,10 +95,10 @@ export const RouteDetailDrawer: React.FC = () => {
         {/* Notes & Audit History */}
         <div className="bg-[#0B0F19] p-4 rounded-xl border border-[#374151]">
           <div className="text-xs font-mono font-bold text-gray-400 mb-2 uppercase">
-            Supervisor Notes & Audit Trail
+            Supervisor Notes &amp; Audit Trail
           </div>
           <p className="text-xs font-mono text-gray-300 bg-[#1F2937] p-3 rounded border border-[#374151]">
-            "{route.notes || 'Routine beat settlement complete.'}"
+            &quot;{route.notes || 'Routine beat settlement complete.'}&quot;
           </p>
         </div>
       </div>

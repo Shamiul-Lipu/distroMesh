@@ -3,7 +3,7 @@
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT, formatVariance } from '../../utils/formatters';
-import { Scale, CheckCircle2, AlertTriangle, ArrowRight, UserCheck, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 
 export const Reconciliation: React.FC = () => {
   const { state, openDrawer, waiveVariance, deductVariance } = useExecutive();
@@ -80,11 +80,11 @@ export const Reconciliation: React.FC = () => {
             </div>
           </div>
 
-          {/* Assigned DSR & Route */}
+          {/* Assigned JSR & Route */}
           <div className="bg-[#1F2937] p-3 rounded-md border border-[#374151]">
-            <div className="text-[10px] font-mono text-[#9CA3AF] uppercase">Assigned DSR & Beat</div>
+            <div className="text-[10px] font-mono text-[#9CA3AF] uppercase">Assigned JSR &amp; Beat</div>
             <div className="text-sm font-mono font-bold text-white mt-0.5 truncate">
-              {state.reconciliationDSR}
+              {state.reconciliationJSR}
             </div>
             <div className="text-[10px] font-mono text-amber-300 mt-0.5 truncate">
               {state.reconciliationRoute}
@@ -101,7 +101,7 @@ export const Reconciliation: React.FC = () => {
             {isWaived
               ? 'Status: WAIVED BY CEO — Variance resolved.'
               : isDeducted
-              ? 'Status: DEDUCTION SCHEDULED — DSR payroll adjusted.'
+              ? 'Status: DEDUCTION SCHEDULED — JSR payroll adjusted.'
               : 'Cash variance detected — review required.'}
           </span>
         </div>

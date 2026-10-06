@@ -40,11 +40,13 @@ import {
   Upload,
   Wallet,
   X,
+  Monitor,
 } from 'lucide-react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT } from '../../utils/formatters';
 import { getBusinessRoute, isBusinessRouteName, sectionIdsByRouteName } from '../../utils/businessRoutes';
 import { RouteData } from '../../types/executive';
+import { WarRoomView } from '../war-room/WarRoomView';
 import {
   DepotFilter,
   getPortfolioSnapshot,
@@ -173,7 +175,7 @@ export const ExecutiveShell: React.FC = () => {
   const [localRows, setLocalRows] = useState<LedgerRow[]>(initialSampleRows);
   const [formDescription, setFormDescription] = useState('');
   const [formAmount, setFormAmount] = useState('');
-  const [formPrincipal, setFormPrincipal] = useState<Exclude<PrincipalFilter, 'All principals'>>('Unilever');
+  const [formPrincipal, setFormPrincipal] = useState<Exclude<PrincipalFilter, 'All principals'>>('Illustrative FMCG');
   const [formDepot, setFormDepot] = useState<Exclude<DepotFilter, 'All depots'>>('Sherpur');
   const searchRef = useRef<HTMLInputElement>(null);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
@@ -368,21 +370,21 @@ export const ExecutiveShell: React.FC = () => {
   };
   const routeRows = useMemo<LedgerRow[]>(
     () => state.routes.flatMap((route: RouteData) => {
-      const unileverCollected = Math.round(route.collected * 0.7);
-      const unileverCredit = Math.round(route.credit * 0.7);
+      const fmcgCollected = Math.round(route.collected * 0.7);
+      const fmcgCredit = Math.round(route.credit * 0.7);
       return [
         {
-          id: `${route.id}-unilever-collection`,
+          id: `${route.id}-fmcg-collection`,
           businessId: 'unilever-distribution',
           date: 'Today',
           description: `Route collection · ${route.vanNumber}`,
           party: `${route.routeName} · ${route.depot}`,
-          principal: 'Unilever',
+          principal: 'Illustrative FMCG',
           depot: route.depot,
           category: 'Cash collection',
           method: 'Cash',
-          amount: unileverCollected,
-          status: route.status === 'EXCEPTION' ? 'Pending' : 'Paid',
+          amount: fmcgCollected,
+          status: (route.status === 'ACTION' || route.status === 'REVIEW') ? 'Pending' : 'Paid',
           kind: 'Collection',
           ageDays: 0,
           routeId: route.id,
@@ -393,27 +395,27 @@ export const ExecutiveShell: React.FC = () => {
           date: 'Today',
           description: `Route collection · ${route.vanNumber}`,
           party: `${route.routeName} · ${route.depot}`,
-          principal: 'Pureit',
+          principal: 'Pureit (Durables)',
           depot: route.depot,
           category: 'Cash collection',
           method: 'Cash',
-          amount: route.collected - unileverCollected,
-          status: route.status === 'EXCEPTION' ? 'Pending' : 'Paid',
+          amount: route.collected - fmcgCollected,
+          status: (route.status === 'ACTION' || route.status === 'REVIEW') ? 'Pending' : 'Paid',
           kind: 'Collection',
           ageDays: 0,
           routeId: route.id,
         },
         {
-          id: `${route.id}-unilever-credit`,
+          id: `${route.id}-fmcg-credit`,
           businessId: 'unilever-distribution',
           date: 'Today',
           description: `Market credit · ${route.vanNumber}`,
           party: `${route.routeName} · ${route.depot}`,
-          principal: 'Unilever',
+          principal: 'Illustrative FMCG',
           depot: route.depot,
           category: 'Trade receivable',
           method: 'Invoice',
-          amount: unileverCredit,
+          amount: fmcgCredit,
           status: 'Pending',
           kind: 'Invoicing',
           ageDays: 0,
@@ -425,11 +427,11 @@ export const ExecutiveShell: React.FC = () => {
           date: 'Today',
           description: `Market credit · ${route.vanNumber}`,
           party: `${route.routeName} · ${route.depot}`,
-          principal: 'Pureit',
+          principal: 'Pureit (Durables)',
           depot: route.depot,
           category: 'Trade receivable',
           method: 'Invoice',
-          amount: route.credit - unileverCredit,
+          amount: route.credit - fmcgCredit,
           status: 'Pending',
           kind: 'Invoicing',
           ageDays: 0,
@@ -444,12 +446,12 @@ export const ExecutiveShell: React.FC = () => {
     ...localRows,
     ...routeRows,
     {
-      id: 'unilever-sherpur-auto-debit',
+      id: 'fmcg-sherpur-auto-debit',
       businessId: 'unilever-distribution',
       date: `Due in ${state.obligationDueHours}h`,
       description: 'Supplier principal auto-debit',
-      party: 'Unilever Bangladesh',
-      principal: 'Unilever',
+      party: 'Principal Supplier (Illustrative)',
+      principal: 'Illustrative FMCG',
       depot: 'Sherpur',
       category: 'Supplier payable',
       method: 'Bank transfer',
@@ -459,12 +461,12 @@ export const ExecutiveShell: React.FC = () => {
       ageDays: 0,
     },
     {
-      id: 'unilever-bogura-auto-debit',
+      id: 'fmcg-bogura-auto-debit',
       businessId: 'unilever-distribution',
       date: `Due in ${state.obligationDueHours}h`,
       description: 'Supplier principal auto-debit',
-      party: 'Unilever Bangladesh',
-      principal: 'Unilever',
+      party: 'Principal Supplier (Illustrative)',
+      principal: 'Illustrative FMCG',
       depot: 'Bogura',
       category: 'Supplier payable',
       method: 'Bank transfer',
@@ -497,7 +499,7 @@ export const ExecutiveShell: React.FC = () => {
         return depotFilter !== 'Sherpur' && portfolio.cashVariance !== 0;
       }
       if (alert.actionKey === 'REVIEW_OBLIGATION') {
-        return principalFilter !== 'Pureit' && portfolio.upcomingObligation > 0;
+        return principalFilter !== 'Pureit (Durables)' && portfolio.upcomingObligation > 0;
       }
       return true;
     })
@@ -526,7 +528,7 @@ export const ExecutiveShell: React.FC = () => {
       && (depotFilter === 'All depots' || row.depot === depotFilter))
     .reduce((sum, row) => sum + row.amount, 0);
   const dueSoon = activeBusinessId === 'unilever-distribution' ? state.routes.filter((route) =>
-    route.status === 'EXCEPTION' && (depotFilter === 'All depots' || route.depot === depotFilter),
+    (route.status === 'ACTION' || route.status === 'REVIEW') && (depotFilter === 'All depots' || route.depot === depotFilter),
   ).length : 0;
   const activeBusinessMetrics = businessMetrics[activeBusinessId];
   const fullBusinessScope = principalFilter === 'All principals' && depotFilter === 'All depots';
@@ -588,9 +590,9 @@ export const ExecutiveShell: React.FC = () => {
     .filter((route) => depotFilter === 'All depots' || route.depot === depotFilter)
     .map((route) => {
       const scopedAmount = (amount: number) => {
-        const unileverAmount = Math.round(amount * 0.7);
-        if (principalFilter === 'Unilever') return unileverAmount;
-        if (principalFilter === 'Pureit') return amount - unileverAmount;
+        const fmcgAmount = Math.round(amount * 0.7);
+        if (principalFilter === 'Illustrative FMCG') return fmcgAmount;
+        if (principalFilter === 'Pureit (Durables)') return amount - fmcgAmount;
         return amount;
       };
       const variance = scopedAmount(route.variance);
@@ -600,7 +602,7 @@ export const ExecutiveShell: React.FC = () => {
         collected: scopedAmount(route.collected),
         credit: scopedAmount(route.credit),
         variance,
-        status: route.status === 'EXCEPTION' && variance === 0 ? 'OK' as const : route.status,
+        status: (route.status === 'ACTION' || route.status === 'REVIEW') && variance === 0 ? 'OK' as const : route.status,
       };
     }), [depotFilter, principalFilter, state.routes]);
 
@@ -683,7 +685,7 @@ export const ExecutiveShell: React.FC = () => {
     if (isPortfolioView) selectBusiness('unilever-distribution');
     setFormDescription('');
     setFormAmount('');
-    setFormPrincipal(principalFilter === 'All principals' ? 'Unilever' : principalFilter);
+    setFormPrincipal(principalFilter === 'All principals' ? 'Illustrative FMCG' : principalFilter);
     setFormDepot(depotFilter === 'All depots' ? 'Sherpur' : depotFilter);
     setQuickAction(action);
   };
@@ -886,6 +888,7 @@ export const ExecutiveShell: React.FC = () => {
                     )}
                     {[
                       { id: 'overview', label: 'Overview', icon: LayoutDashboard, selected: activeSection === 'overview' },
+                      { id: 'war-room', label: 'War Room', icon: Monitor, selected: activeSection === 'war-room' },
                       { id: 'business-performance', label: 'Sales & operations', icon: Activity, selected: activeSection === 'business-performance' },
                       { id: 'related-businesses', label: 'Connected businesses', icon: GitBranch, selected: activeSection === 'related-businesses' },
                     ].map(({ id, label, icon: Icon, selected }) => (
@@ -1229,6 +1232,8 @@ export const ExecutiveShell: React.FC = () => {
                 onSelectBusiness={selectBusiness}
                 onAddBusiness={() => { setBusinessModalMode('standalone'); setBusinessOnboardingOpen(true); }}
               />
+            ) : activeSection === 'war-room' ? (
+              <WarRoomView businessSlug={activeBusinessId} />
             ) : activeBusiness && activeBusiness.id !== 'unilever-distribution' ? (
               <NewBusinessWorkspace
                 business={activeBusiness}
@@ -1284,6 +1289,12 @@ export const ExecutiveShell: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href={getBusinessRoute(activeBusinessId, 'war-room')}
+                  className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3 text-[11px] font-semibold text-emerald-800 hover:bg-emerald-100"
+                >
+                  <Monitor size={14} /> War Room
+                </Link>
                 <button onClick={() => openQuickAction('expense')} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[#d8e8df] bg-white px-3 text-[11px] font-semibold text-[#087e63] hover:bg-[#f5faf7]">
                   <Plus size={14} /> Add expense
                 </button>
@@ -1412,7 +1423,7 @@ export const ExecutiveShell: React.FC = () => {
                   <span className="rounded-xl bg-[#fbefef] p-2.5 text-[#b54c54]"><ArrowUpRight size={18} /></span>
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-[#edf1ef] pt-3">
-                  <span className="text-[11px] text-[#76837d]">{principalFilter === 'Pureit' ? 'No payment in demo scope' : `Unilever · due in ${state.obligationDueHours}h`}</span>
+                  <span className="text-[11px] text-[#76837d]">{principalFilter === 'Pureit (Durables)' ? 'No payment in demo scope' : `Principal · due in ${state.obligationDueHours}h`}</span>
                   <div className="flex items-center gap-2">
                     <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[#087e63] hover:underline">Review</button>
                   </div>
@@ -1470,7 +1481,10 @@ export const ExecutiveShell: React.FC = () => {
                     <h2 className="text-[15px] font-semibold text-[#25332c]">Cash, stock &amp; supplier payments</h2>
                     <p className="mt-1 text-[11px] text-[#7a8781]">Cash you can use is different from money tied up in stock or unpaid bills.</p>
                   </div>
-                  <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[#087e63] hover:underline">View cash position <ArrowRight size={12} className="ml-1 inline" /></button>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => openDrawer('WORKING_CAPITAL')} className="text-[11px] font-semibold text-[#087e63] hover:underline">Operating working capital <ArrowRight size={12} className="ml-1 inline" /></button>
+                    <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[#087e63] hover:underline">View cash position <ArrowRight size={12} className="ml-1 inline" /></button>
+                  </div>
                 </div>
                 <details className="group mt-4">
                   <summary className="accounting-focus flex cursor-pointer list-none items-center justify-between rounded-lg bg-[#f7faf8] px-3 py-2.5 text-[11px] font-semibold text-[#53635a] marker:hidden hover:bg-[#f0f6f2]">
@@ -1564,11 +1578,15 @@ export const ExecutiveShell: React.FC = () => {
                         : `${state.dispatchTarget} target · ${state.dispatchActual} actual · ${state.dispatchDelayMinutes} min late`}
                   </strong>
                 </div>
-                <div className="rounded-xl bg-[#fbf1f1] p-3">
-                  <span className="text-[#91696b]">Returns incident</span>
-                  <strong className="ml-2 text-[#9c555a]">60 cartons · {formatBDT(2790)} historical loss</strong>
-                  <p className="mt-1 text-[10px] text-[#987779]">Replacement {formatBDT(3000)} · estimated payback 2.8 days</p>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => openDrawer('INCIDENT')}
+                  className="accounting-focus rounded-xl bg-[#fbf1f1] p-3 text-left transition hover:bg-[#f8e8e8]"
+                >
+                  <span className="text-[#91696b]">Returns incident (faint print)</span>
+                  <strong className="ml-2 block text-[#9c555a]">60 units (2.5 ctn) · {formatBDT(2488)} loss today</strong>
+                  <p className="mt-1 text-[10px] text-[#987779]">Printer {formatBDT(3000)} · payback 2.8 days (tap for formula &amp; fix)</p>
+                </button>
               </div>
               <p className="mt-3 text-[10px] text-[#87938d]">
                 Daily cash added = cash sales + old dues collected − cash expenses. This is a cash measure, not daily profit.
@@ -1602,7 +1620,7 @@ export const ExecutiveShell: React.FC = () => {
                         <td className="px-5 py-3">
                           <button onClick={() => openDrawer('ROUTE_DETAIL', route.id)} className="accounting-focus rounded text-left">
                             <span className="block font-semibold text-[#34433b]">{route.vanNumber} · {route.routeName}</span>
-                            <span className="mt-0.5 block text-[10px] text-[#89958f]">{route.dsrName}</span>
+                            <span className="mt-0.5 block text-[10px] text-[#89958f]">JSR: {route.jsrName} · SR: {route.srName}</span>
                           </button>
                         </td>
                         <td className="px-3 py-3 text-[#68766f]">{route.depot}</td>
@@ -1614,11 +1632,11 @@ export const ExecutiveShell: React.FC = () => {
                         </td>
                         <td className="px-5 py-3 text-right">
                           <span className={`inline-flex rounded-full px-2 py-1 text-[9px] font-semibold ${
-                            route.status === 'EXCEPTION' ? 'bg-[#fbefef] text-[#a74850]'
-                              : route.status === 'WARNING' ? 'bg-[#fff6e8] text-[#9a6819]'
+                            route.status === 'ACTION' ? 'bg-[#fbefef] text-[#a74850]'
+                              : route.status === 'REVIEW' ? 'bg-[#fff6e8] text-[#9a6819]'
                                 : 'bg-[#eaf5ef] text-[#26765a]'
                           }`}>
-                            {route.status === 'EXCEPTION' ? 'Needs review' : route.status === 'WARNING' ? 'Check' : 'On track'}
+                            {route.status === 'ACTION' ? 'Action required' : route.status === 'REVIEW' ? 'Needs review' : 'On track'}
                           </span>
                         </td>
                       </tr>

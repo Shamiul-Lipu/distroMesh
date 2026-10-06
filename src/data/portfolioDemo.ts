@@ -1,5 +1,23 @@
-export type PrincipalFilter = 'All principals' | 'Unilever' | 'Pureit';
+// Portfolio Demo Data Contract & Allocation Module
+// All figures align with Section 4 and Section 5 reconciled seed data contract.
+// Uses exact taka for control figures and realistic thin-margin calibration (~1.49% net profit).
+
+import { popyFieldBase, popyMonthlyParameters, popyTodaySnapshot } from './seedData.ts';
+
+export type PrincipalFilter = 'All principals' | 'Illustrative FMCG' | 'Pureit (Durables)';
 export type DepotFilter = 'All depots' | 'Sherpur' | 'Bogura';
+
+export const principalOptions: PrincipalFilter[] = [
+  'All principals',
+  'Illustrative FMCG',
+  'Pureit (Durables)',
+];
+
+export const depotOptions: DepotFilter[] = [
+  'All depots',
+  'Sherpur',
+  'Bogura',
+];
 
 type DemoSegment = {
   principal: Exclude<PrincipalFilter, 'All principals'>;
@@ -25,9 +43,14 @@ export type PortfolioSnapshot = {
   averageInventory: number;
   payables: number;
   unclaimedSchemes: number;
+  damageClaimsPending: number;
+  netOperatingWorkingCapital: number;
   bankCash: number;
   vaultCash: number;
+  liquidCash: number;
+  plannedDepositTonight: number;
   upcomingObligation: number;
+  next7DayObligations: number;
   dailyDeliveredSales: number;
   dailyCashSales: number;
   dailyFreshCredit: number;
@@ -43,17 +66,13 @@ export type PortfolioSnapshot = {
   cashConversionCycle: number;
 };
 
-const annualRevenue = 144_000_000;
-const annualCogs = 126_000_000;
-const annualInterest = 1_400_000;
-const taxRate = 0.275;
-const initialSupplierObligation = 2_070_000;
-
+// Segment allocation:
+// Sherpur Upazila: 70% share; Bogura Link: 30% share
 const demoSegments: DemoSegment[] = [
-  { principal: 'Unilever', depot: 'Sherpur', share: 56, bankShare: 72, upcomingObligation: 1_656_000 },
-  { principal: 'Unilever', depot: 'Bogura', share: 14, bankShare: 18, upcomingObligation: 414_000 },
-  { principal: 'Pureit', depot: 'Sherpur', share: 24, bankShare: 8, upcomingObligation: 0 },
-  { principal: 'Pureit', depot: 'Bogura', share: 6, bankShare: 2, upcomingObligation: 0 },
+  { principal: 'Illustrative FMCG', depot: 'Sherpur', share: 55, bankShare: 65, upcomingObligation: 3780000 },
+  { principal: 'Illustrative FMCG', depot: 'Bogura', share: 25, bankShare: 20, upcomingObligation: 1620000 },
+  { principal: 'Pureit (Durables)', depot: 'Sherpur', share: 15, bankShare: 10, upcomingObligation: 0 },
+  { principal: 'Pureit (Durables)', depot: 'Bogura', share: 5, bankShare: 5, upcomingObligation: 0 },
 ];
 
 const allocate = (amount: number, share: number) => Math.round((amount * share) / 100);
@@ -62,49 +81,88 @@ export const getPortfolioSnapshot = (
   principal: PrincipalFilter,
   depot: DepotFilter,
   overrides?: {
-    bankCash: number;
-    vaultCash: number;
-    upcomingObligation: number;
-    freshCredit: number;
-    todaySales: number;
-    cashVariance: number;
+    bankCash?: number;
+    vaultCash?: number;
+    upcomingObligation?: number;
+    freshCredit?: number;
+    todaySales?: number;
+    cashVariance?: number;
   },
 ): PortfolioSnapshot => {
   const matchingSegments = demoSegments.filter((segment) =>
     (principal === 'All principals' || segment.principal === principal)
     && (depot === 'All depots' || segment.depot === depot),
   );
+
   const share = matchingSegments.reduce((total, segment) => total + segment.share, 0);
   const bankShare = matchingSegments.reduce((total, segment) => total + segment.bankShare, 0);
-  const split = (amount: number) => allocate(amount, share);
-  const splitBankCash = (amount: number) => allocate(amount, bankShare);
-  const monthlyRevenue = split(12_000_000);
-  const monthlyCogs = split(10_500_000);
+
+  const split = (amount: number) => (share === 100 ? amount : allocate(amount, share));
+  const splitBankCash = (amount: number) => (bankShare === 100 ? amount : allocate(amount, bankShare));
+
+  // Base calibrated figures from Section 4.1
+  const monthlyRevenue = split(popyMonthlyParameters.revenue);
+  const monthlyCogs = split(popyMonthlyParameters.cogs);
   const monthlyGrossProfit = monthlyRevenue - monthlyCogs;
-  const monthlyDeliveryCost = split(300_000);
-  const monthlyFixedOverhead = split(450_000);
+  const monthlyDeliveryCost = split(popyMonthlyParameters.variableCost);
+  const monthlyFixedOverhead = split(popyMonthlyParameters.fixedCost);
   const monthlyEbit = monthlyGrossProfit - monthlyDeliveryCost - monthlyFixedOverhead;
-  const monthlyInterest = split(annualInterest / 12);
+  const monthlyInterest = split(popyMonthlyParameters.interest);
   const monthlyProfitBeforeTax = monthlyEbit - monthlyInterest;
-  const monthlyTax = Math.round(Math.max(0, monthlyProfitBeforeTax * taxRate));
+  const monthlyTax = Math.round(Math.max(0, monthlyProfitBeforeTax * popyMonthlyParameters.taxRate));
   const monthlyNetProfit = Math.round(monthlyProfitBeforeTax - monthlyTax);
+
+  // Cash variance: allocated to Bogura route Van #3
   const boguraShare = matchingSegments
     .filter((segment) => segment.depot === 'Bogura')
     .reduce((total, segment) => total + segment.share, 0);
-  const cashVariance = allocate(overrides?.cashVariance ?? -400, boguraShare * 5);
-  const dailyDeliveredSales = split(overrides?.todaySales ?? 480_000);
-  const dailyFreshCredit = split(overrides?.freshCredit ?? 190_000);
-  const dailyCashSales = split(Math.max(0, (overrides?.todaySales ?? 480_000) - (overrides?.freshCredit ?? 190_000)));
-  const dailyOldDuesCollected = split(140_000);
-  const dailyCashOutflow = split(12_000);
+  const cashVariance = boguraShare > 0
+    ? (overrides?.cashVariance ?? popyTodaySnapshot.variance)
+    : 0;
+
+  // Daily operations
+  const baseDeliveredSales = overrides?.todaySales ?? popyTodaySnapshot.deliveredSales;
+  const baseFreshCredit = overrides?.freshCredit ?? popyTodaySnapshot.creditSales;
+  const dailyDeliveredSales = split(baseDeliveredSales);
+  const dailyFreshCredit = split(baseFreshCredit);
+  const dailyCashSales = Math.max(0, dailyDeliveredSales - dailyFreshCredit);
+  const dailyOldDuesCollected = split(popyTodaySnapshot.oldDuesCollected);
+  const dailyCashOutflow = split(popyTodaySnapshot.routeCashExpenses);
+  const dailyNetCashAdded = (dailyCashSales + dailyOldDuesCollected) - dailyCashOutflow;
+
+  const openingFloat = split(popyTodaySnapshot.openingFloat);
+  const cashHandedIn = dailyCashSales + dailyOldDuesCollected;
+  const expectedTillCash = openingFloat + cashHandedIn - dailyCashOutflow;
+  const countedTillCash = expectedTillCash + cashVariance;
+
+  // Auto-debit and Liquidity
   const obligationShare = matchingSegments.reduce(
     (total, segment) => total + segment.upcomingObligation,
     0,
-  ) / initialSupplierObligation;
+  );
+  const upcomingObligation = overrides?.upcomingObligation !== undefined
+    ? split(overrides.upcomingObligation)
+    : (share === 100 ? popyTodaySnapshot.upcomingAutoDebit : obligationShare);
+
+  const bankCash = overrides?.bankCash !== undefined
+    ? splitBankCash(overrides.bankCash)
+    : splitBankCash(popyTodaySnapshot.bankAfterDebit);
+  const vaultCash = overrides?.vaultCash !== undefined
+    ? split(overrides.vaultCash)
+    : (share === 100 ? countedTillCash : split(countedTillCash));
+  const liquidCash = bankCash + vaultCash;
+
+  // Working capital metrics (Section 4.1 & Defect A5/A6)
+  const receivables = split(popyMonthlyParameters.receivables);
+  const averageInventory = split(popyMonthlyParameters.inventory);
+  const payables = split(popyMonthlyParameters.payables);
+  const unclaimedSchemes = split(popyMonthlyParameters.schemeClaimsPending);
+  const damageClaimsPending = split(popyMonthlyParameters.damageClaimsPending);
+  const netOperatingWorkingCapital = receivables + averageInventory + unclaimedSchemes + damageClaimsPending - payables;
 
   return {
     share,
-    monthlyUnits: split(100_000),
+    monthlyUnits: split(popyMonthlyParameters.workingDays * popyFieldBase.dailyUnits),
     monthlyRevenue,
     monthlyCogs,
     monthlyGrossProfit,
@@ -114,44 +172,30 @@ export const getPortfolioSnapshot = (
     monthlyInterest,
     monthlyTax,
     monthlyNetProfit,
-    receivables: split(9_500_000),
-    averageInventory: split(12_500_000),
-    payables: split(11_000_000),
-    unclaimedSchemes: split(1_890_000),
-    bankCash: splitBankCash(overrides?.bankCash ?? 2_300_000),
-    vaultCash: split(overrides?.vaultCash ?? 442_600),
-    upcomingObligation: Math.round((overrides?.upcomingObligation ?? initialSupplierObligation) * obligationShare),
+    receivables,
+    averageInventory,
+    payables,
+    unclaimedSchemes,
+    damageClaimsPending,
+    netOperatingWorkingCapital,
+    bankCash,
+    vaultCash,
+    liquidCash,
+    plannedDepositTonight: split(popyTodaySnapshot.plannedDepositTonight),
+    upcomingObligation,
+    next7DayObligations: split(popyTodaySnapshot.next7DayObligations),
     dailyDeliveredSales,
     dailyCashSales,
     dailyFreshCredit,
     dailyOldDuesCollected,
     dailyCashOutflow,
-    dailyNetCashAdded: dailyCashSales + dailyOldDuesCollected - dailyCashOutflow,
-    expectedTillCash: split(443_000),
-    countedTillCash: split(443_000) + cashVariance,
+    dailyNetCashAdded,
+    expectedTillCash,
+    countedTillCash,
     cashVariance,
-    dso: share === 0 ? 0 : (9_500_000 / annualRevenue) * 365,
-    dio: share === 0 ? 0 : (12_500_000 / annualCogs) * 365,
-    dpo: share === 0 ? 0 : (11_000_000 / annualCogs) * 365,
-    cashConversionCycle: share === 0
-      ? 0
-      : ((12_500_000 / annualCogs) + (9_500_000 / annualRevenue) - (11_000_000 / annualCogs)) * 365,
+    dso: popyMonthlyParameters.dso,
+    dio: popyMonthlyParameters.dio,
+    dpo: popyMonthlyParameters.dpo,
+    cashConversionCycle: popyMonthlyParameters.ccc,
   };
-};
-
-export const principalOptions: PrincipalFilter[] = ['All principals', 'Unilever', 'Pureit'];
-export const depotOptions: DepotFilter[] = ['All depots', 'Sherpur', 'Bogura'];
-
-export const demoPortfolioTotals = {
-  monthlyRevenue: 12_000_000,
-  monthlyGrossProfit: 1_500_000,
-  monthlyEbit: 750_000,
-  monthlyInterest: annualInterest / 12,
-  monthlyTax: ((750_000 - (annualInterest / 12)) * taxRate),
-  monthlyNetProfit: (750_000 - (annualInterest / 12)) * (1 - taxRate),
-  dailySales: 480_000,
-  dailyCashIn: 430_000,
-  dailyCashOut: 12_000,
-  annualRevenue,
-  annualCogs,
 };

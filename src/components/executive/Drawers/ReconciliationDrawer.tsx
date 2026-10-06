@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useExecutive } from '@/context/ExecutiveContext';
-import { X, Scale, User } from 'lucide-react';
-import { formatBDT, formatVariance } from '@/utils/formatters';
-import type { PortfolioSnapshot } from '@/data/portfolioDemo';
+import { useExecutive } from '@/context/ExecutiveContext.tsx';
+import { X, Scale, User, AlertTriangle } from 'lucide-react';
+import { formatBDT, formatVariance } from '@/utils/formatters.ts';
+import type { PortfolioSnapshot } from '@/data/portfolioDemo.ts';
 
 export const ReconciliationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ portfolio }) => {
-  const { state, closeDrawer, waiveVariance, deductVariance } = useExecutive();
+  const { state, closeDrawer, openModal, waiveVariance } = useExecutive();
 
   if (state.activeDrawer !== 'RECONCILIATION') return null;
 
@@ -22,7 +22,7 @@ export const ReconciliationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = 
             </div>
             <div>
               <h2 className="text-lg font-mono font-extrabold text-white uppercase">
-                Till & Route Reconciliation
+                Till &amp; Route Reconciliation
               </h2>
               <span className="text-[10px] font-mono text-amber-300">
                 {portfolio.cashVariance === 0 ? 'SELECTED SCOPE · NO CASH VARIANCE' : state.reconciliationRoute.toUpperCase()}
@@ -59,41 +59,45 @@ export const ReconciliationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = 
             <span className="text-amber-400">{formatVariance(portfolio.cashVariance)}</span>
           </div>
           <div className="mt-3 text-[10px] leading-relaxed text-gray-500">
-            Approve waiver or deduction applies to the company-wide demo variance, even while viewing a filtered scope.
+            Waiver or case resolution applies to the company-wide demo variance, even while viewing a filtered scope.
           </div>
           {state.varianceDeducted && portfolio.cashVariance !== 0 && (
             <div className="mt-2 text-[10px] font-semibold text-emerald-400">
-              Payroll deduction simulated; the original route variance remains visible for audit.
+              Case opened &amp; recovery scheduled; original route variance remains visible for audit trail.
             </div>
           )}
         </div>
 
-        {/* Responsible DSR Explanation */}
+        {/* Responsible JSR Explanation (Defect E1) */}
         {portfolio.cashVariance !== 0 ? (
           <div className="bg-[#0B0F19] p-4 rounded-xl border border-amber-500/30">
             <div className="flex items-center gap-2 text-amber-400 font-mono font-bold text-xs mb-2">
               <User className="w-4 h-4" />
-              <span>DSR Statement — Babul Hossain</span>
+              <span>JSR Statement — Babul Hossain (Van #3)</span>
             </div>
             <p className="text-xs font-mono text-gray-300 bg-[#1F2937] p-3 rounded border border-[#374151] leading-relaxed">
               &quot;Shortage occurred during rush-hour collection at Bogura Link road point when shopkeeper made partial payment with ৳500 note.&quot;
             </p>
+            <div className="mt-3 text-[10px] text-gray-400 flex items-center gap-1.5 font-mono">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>Statutory policy: Never auto-deduct wages without formal case review.</span>
+            </div>
           </div>
         ) : (
-            <div className="bg-[#0B0F19] p-4 rounded-xl border border-emerald-500/20 text-xs font-mono text-gray-300">
-              No cash shortage is allocated to the selected scope.
-            </div>
+          <div className="bg-[#0B0F19] p-4 rounded-xl border border-emerald-500/20 text-xs font-mono text-gray-300">
+            No cash shortage is allocated to the selected scope.
+          </div>
         )}
       </div>
 
-      {/* Actions */}
+      {/* Actions (Defect E1) */}
       <div className="mt-6 pt-4 border-t border-[#1F2937] flex items-center justify-between gap-2 text-xs font-mono">
         <button
-          onClick={deductVariance}
+          onClick={() => openModal('SHORTAGE_CASE')}
           disabled={portfolio.cashVariance === 0 || state.varianceDeducted || state.varianceWaived}
           className="px-4 py-2 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Simulate Deduction
+          Open Shortage Case
         </button>
         <button
           onClick={waiveVariance}

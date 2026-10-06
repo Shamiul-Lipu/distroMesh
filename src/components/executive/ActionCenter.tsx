@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
-import { Lock, ArrowUpRight, CheckSquare, ShieldAlert, SlidersHorizontal } from 'lucide-react';
+import { Lock, ArrowUpRight, CheckSquare, ShieldAlert } from 'lucide-react';
 
 export const ActionCenter: React.FC = () => {
-  const { state, openModal, openDrawer } = useExecutive();
+  const { state, openModal } = useExecutive();
 
   return (
     <div className="bg-[#111827] border border-[#374151] rounded-xl p-5 shadow-xl">

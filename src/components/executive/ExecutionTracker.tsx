@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
-import { Clock, AlertTriangle, ArrowRight, Printer, CheckCircle2 } from 'lucide-react';
+import { Clock, AlertTriangle, ArrowRight, Printer } from 'lucide-react';
 
 export const ExecutionTracker: React.FC = () => {
   const { state, openDrawer } = useExecutive();
@@ -17,7 +17,7 @@ export const ExecutionTracker: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-red-500 animate-ping"></div>
           <h2 className="text-base font-bold text-[#F9FAFB] tracking-tight uppercase font-sans">
-            Today's Operational Execution
+            Today&apos;s Operational Execution
           </h2>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800">
             DISPATCH AUDIT
@@ -99,7 +99,7 @@ export const ExecutionTracker: React.FC = () => {
               <span>CAUSE</span>
             </div>
             <div className="text-sm font-mono font-extrabold text-amber-300 mt-1">
-              {state.billingDeskBottleneckDSRs} DSRs at Billing Desk #1
+              {state.billingDeskBottleneckSRs} SRs at Billing Desk #1
             </div>
             <div className="text-[10px] font-mono text-gray-400 mt-1">
               Epson LQ-310 ribbon jam & WhatsApp manual order entry bottleneck.

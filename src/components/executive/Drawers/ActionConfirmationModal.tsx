@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExecutive } from '@/context/ExecutiveContext';
-import { Lock, ArrowUpRight, CheckSquare, ShieldAlert, X, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Lock, ArrowUpRight, CheckSquare, ShieldAlert, X } from 'lucide-react';
 import { formatBDT } from '@/utils/formatters';
 
 export const ActionConfirmationModal: React.FC = () => {
@@ -56,7 +56,7 @@ export const ActionConfirmationModal: React.FC = () => {
               CANCEL
             </button>
             <button
-              onClick={confirmCreditLock}
+              onClick={() => confirmCreditLock()}
               className="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg shadow-lg"
             >
               CONFIRM SIMULATION
@@ -109,7 +109,7 @@ export const ActionConfirmationModal: React.FC = () => {
               CANCEL
             </button>
             <button
-              onClick={confirmBankDeposit}
+              onClick={() => confirmBankDeposit()}
               className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg"
             >
               CONFIRM DEPOSIT
@@ -164,7 +164,7 @@ export const ActionConfirmationModal: React.FC = () => {
               CANCEL
             </button>
             <button
-              onClick={confirmDayEndClose}
+              onClick={() => confirmDayEndClose()}
               className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg shadow-lg"
             >
               APPROVE CLOSEOUT

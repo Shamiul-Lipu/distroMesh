@@ -1,16 +1,23 @@
 'use client';
 
 import React from 'react';
-import { useExecutive } from '@/context/ExecutiveContext';
-import { X, Layers, AlertCircle, TrendingDown, Store, Box, FileCheck2 } from 'lucide-react';
-import { formatBDT, formatCompactBDT } from '@/utils/formatters';
+import { useExecutive } from '@/context/ExecutiveContext.tsx';
+import { X, Layers, Store, Box, FileCheck2 } from 'lucide-react';
+import { formatBDT } from '@/utils/formatters.ts';
 
 export const WorkingCapitalDrawer: React.FC = () => {
   const { state, closeDrawer } = useExecutive();
 
   if (state.activeDrawer !== 'WORKING_CAPITAL') return null;
 
-  const { total, retailerReceivables, inventory, unclaimedSchemes } = state.trappedCapital;
+  const {
+    receivables,
+    inventory,
+    schemeClaimsPending,
+    damageClaimsPending,
+    payables,
+    netOperatingWorkingCapital,
+  } = state.workingCapital;
 
   return (
     <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] bg-[#111827] border-l border-[#374151] z-50 p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
@@ -23,9 +30,9 @@ export const WorkingCapitalDrawer: React.FC = () => {
             </div>
             <div>
               <h2 className="text-lg font-mono font-extrabold text-white uppercase">
-                Trapped Capital & Working Capital Audit
+                Net Operating Working Capital Audit
               </h2>
-              <span className="text-[10px] font-mono text-purple-300">ILLUSTRATIVE PROTOTYPE BREAKDOWN</span>
+              <span className="text-[10px] font-mono text-purple-300">CLOSING STOCK BASIS · ACCRUAL</span>
             </div>
           </div>
           <button
@@ -36,44 +43,45 @@ export const WorkingCapitalDrawer: React.FC = () => {
           </button>
         </div>
 
-        {/* CEO Explanation Box */}
+        {/* Reconciled Headline (Defect A6) */}
         <div className="bg-[#0B0F19] border border-purple-500/30 rounded-xl p-4 mb-6">
           <div className="text-xs font-mono font-bold text-purple-300 mb-1 uppercase">
-            Executive Summary
+            Net Operating Working Capital (NOWC)
+          </div>
+          <div className="text-xl font-mono font-bold text-white mb-2">
+            {formatBDT(netOperatingWorkingCapital)}
           </div>
           <p className="text-xs font-mono text-gray-300 leading-relaxed">
-            "This money (<strong>{formatBDT(total)}</strong>) exists inside the business structure but is not immediately available as liquid cash for principal payments or emergency buffers."
+            &quot;Net operating working capital = receivables + inventory + claims receivable − supplier payables. Stock valued at closing inventory cost.&quot;
           </p>
         </div>
 
-        {/* 3 Main Categories Detailed breakdown */}
+        {/* Detailed breakdown */}
         <div className="space-y-4 text-xs font-mono">
           {/* 1. Retailer Receivables */}
           <div className="bg-[#0B0F19] p-4 rounded-xl border border-[#374151]">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-purple-400 font-bold">
                 <Store className="w-4 h-4" />
-                <span>1. RETAILER MARKET RECEIVABLES</span>
+                <span>1. CUSTOMER RECEIVABLES (DSO 24)</span>
               </div>
-              <span className="font-bold text-white text-sm">{formatBDT(retailerReceivables)}</span>
+              <span className="font-bold text-white text-sm">{formatBDT(receivables)}</span>
             </div>
-
             <p className="text-gray-400 mb-3 text-[11px]">
-              Outstanding credit extended to 412 retail shop owners across Sherpur & Bogura beats.
+              Active market credit extended to retail shops across Sherpur &amp; Bogura beats.
             </p>
-
             <div className="space-y-1.5 text-[11px] bg-[#1F2937] p-3 rounded border border-[#374151]">
               <div className="flex justify-between">
-                <span className="text-gray-400">Current (&lt; 15 Days):</span>
-                <span className="text-emerald-400 font-bold">৳9.80M (66.0%)</span>
+                <span className="text-gray-400">Current (&lt; 15 Days, 55%):</span>
+                <span className="text-emerald-400 font-bold">{formatBDT(Math.round(receivables * 0.55))}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Overdue (15-30 Days):</span>
-                <span className="text-amber-400 font-bold">৳3.85M (25.9%)</span>
+                <span className="text-gray-400">Overdue (16–30 Days, 27%):</span>
+                <span className="text-amber-400 font-bold">{formatBDT(Math.round(receivables * 0.27))}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">High Risk (&gt; 30 Days):</span>
-                <span className="text-red-400 font-bold">৳1.20M (8.1%)</span>
+                <span className="text-gray-400">Past-Due (&gt; 30 Days, 18%):</span>
+                <span className="text-red-400 font-bold">{formatBDT(Math.round(receivables * 0.18))}</span>
               </div>
             </div>
           </div>
@@ -83,51 +91,50 @@ export const WorkingCapitalDrawer: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-indigo-400 font-bold">
                 <Box className="w-4 h-4" />
-                <span>2. WAREHOUSE INVENTORY STOCK</span>
+                <span>2. WAREHOUSE INVENTORY STOCK (DIO 20)</span>
               </div>
               <span className="font-bold text-white text-sm">{formatBDT(inventory)}</span>
             </div>
-
             <p className="text-gray-400 mb-3 text-[11px]">
-              Physical FMCG stock held at central Sherpur warehouse (Lux, Surf Excel, Wheel, Knorr, Vaseline).
+              Physical FMCG stock held at central Sherpur warehouse on closing stock basis.
             </p>
-
-            <div className="space-y-1.5 text-[11px] bg-[#1F2937] p-3 rounded border border-[#374151]">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Fast Moving Stock (DOX &lt; 7 days):</span>
-                <span className="text-emerald-400 font-bold">৳5.10M (70.4%)</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Slow Moving Stock (DOX &gt; 21 days):</span>
-                <span className="text-amber-400 font-bold">৳2.14M (29.6%)</span>
-              </div>
-            </div>
           </div>
 
-          {/* 3. Unclaimed Schemes */}
+          {/* 3. Scheme Claims & Damage Claims (Defect A5) */}
           <div className="bg-[#0B0F19] p-4 rounded-xl border border-[#374151]">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-blue-400 font-bold">
                 <FileCheck2 className="w-4 h-4" />
-                <span>3. UNCLAIMED PRINCIPAL SCHEMES & REBATES</span>
+                <span>3. CLAIMS RECEIVABLE REGISTER</span>
               </div>
-              <span className="font-bold text-white text-sm">{formatBDT(unclaimedSchemes)}</span>
+              <span className="font-bold text-white text-sm">
+                {formatBDT(schemeClaimsPending + damageClaimsPending)}
+              </span>
             </div>
-
             <p className="text-gray-400 mb-3 text-[11px]">
-              Promotional discount claims, damaged stock returns, and volume targets pending Unilever audit credit.
+              Promotional scheme rebates (0.5% scale) and transit damage claims pending principal audit.
             </p>
-
             <div className="space-y-1.5 text-[11px] bg-[#1F2937] p-3 rounded border border-[#374151]">
               <div className="flex justify-between">
-                <span className="text-gray-400">Q3 Secondary Target Discount:</span>
-                <span className="text-blue-300 font-bold">৳1.10M</span>
+                <span className="text-gray-400">Scheme Claims Pending:</span>
+                <span className="text-blue-300 font-bold">{formatBDT(schemeClaimsPending)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Transit Damage Claims:</span>
-                <span className="text-blue-300 font-bold">৳700K</span>
+                <span className="text-gray-400">Damage Claims Pending:</span>
+                <span className="text-blue-300 font-bold">{formatBDT(damageClaimsPending)}</span>
               </div>
             </div>
+          </div>
+
+          {/* 4. Supplier Payables */}
+          <div className="bg-[#0B0F19] p-4 rounded-xl border border-red-500/30">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-red-400 font-bold">4. SUPPLIER PAYABLES (DPO 28)</span>
+              <span className="font-bold text-white text-sm">−{formatBDT(payables)}</span>
+            </div>
+            <p className="text-gray-400 text-[11px]">
+              Trade credit obligations due to principal for primary dispatches.
+            </p>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
-import { AlertTriangle, ShieldAlert, ArrowRight, Zap, CheckCircle2, Lock } from 'lucide-react';
+import { ShieldAlert, ArrowRight, Zap, Lock } from 'lucide-react';
 import { formatBDT } from '../../utils/formatters';
 
 export const ModeSwitcher: React.FC = () => {

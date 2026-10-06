@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useExecutive } from '@/context/ExecutiveContext';
+import { useExecutive } from '@/context/ExecutiveContext.tsx';
 import { X, CalendarClock, Building } from 'lucide-react';
-import { formatBDT } from '@/utils/formatters';
-import type { PortfolioSnapshot } from '@/data/portfolioDemo';
+import { formatBDT } from '@/utils/formatters.ts';
+import type { PortfolioSnapshot } from '@/data/portfolioDemo.ts';
 
 export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ portfolio }) => {
   const { state, closeDrawer, openModal } = useExecutive();
@@ -14,7 +14,7 @@ export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ p
   const liquidCash = portfolio.bankCash + portfolio.vaultCash;
   const projectedRemaining = liquidCash - portfolio.upcomingObligation;
   const firstInvoice = state.upcomingObligation > 0
-    ? Math.round(portfolio.upcomingObligation * (1_250_000 / 2_070_000))
+    ? Math.round(portfolio.upcomingObligation * (3_250_000 / 5_400_000))
     : 0;
   const secondInvoice = portfolio.upcomingObligation - firstInvoice;
 
@@ -29,7 +29,7 @@ export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ p
             </div>
             <div>
               <h2 className="text-lg font-mono font-extrabold text-white uppercase">
-                Principal Obligation & Auto-Debit Audit
+                Principal Obligation &amp; Auto-Debit Audit
               </h2>
               <span className="text-[10px] font-mono text-amber-300">ILLUSTRATIVE · SELECTED PORTFOLIO SCOPE</span>
             </div>
@@ -54,16 +54,16 @@ export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ p
             <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between bg-[#1F2937] p-2.5 rounded border border-[#374151]">
                 <div>
-                  <div className="text-white font-bold">Invoice #UN-BD-8891</div>
-                  <div className="text-[10px] text-gray-400">Personal Care (Lux, Lifebuoy, Sunsilk)</div>
+                  <div className="text-white font-bold">Invoice #FMCG-BD-8891</div>
+                  <div className="text-[10px] text-gray-400">Personal Care (Toiletries, Hair Care, Skin)</div>
                 </div>
                 <div className="text-amber-400 font-bold">{formatBDT(firstInvoice)}</div>
               </div>
 
               <div className="flex justify-between bg-[#1F2937] p-2.5 rounded border border-[#374151]">
                 <div>
-                  <div className="text-white font-bold">Invoice #UN-BD-8892</div>
-                  <div className="text-[10px] text-gray-400">Home Care (Wheel, Surf Excel, Vim)</div>
+                  <div className="text-white font-bold">Invoice #FMCG-BD-8892</div>
+                  <div className="text-[10px] text-gray-400">Home Care (Detergent, Fabric, Dishwash)</div>
                 </div>
                 <div className="text-amber-400 font-bold">{formatBDT(secondInvoice)}</div>
               </div>
@@ -93,11 +93,11 @@ export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ p
               <span className="text-white font-bold">{formatBDT(portfolio.bankCash)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Vault Cash Ready to Deposit:</span>
+              <span className="text-gray-400">Vault Cash (Till Balance):</span>
               <span className="text-emerald-400 font-bold">{formatBDT(portfolio.vaultCash)}</span>
             </div>
             <div className="flex justify-between border-t border-[#374151] pt-2">
-              <span className="text-gray-400">Total Liquid Cash:</span>
+              <span className="text-gray-400">Total Liquid Cash (Bank + Vault):</span>
               <span className="text-blue-300 font-bold">{formatBDT(liquidCash)}</span>
             </div>
             <div className="flex justify-between">
@@ -119,7 +119,7 @@ export const ObligationDrawer: React.FC<{ portfolio: PortfolioSnapshot }> = ({ p
           }}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all"
         >
-          Simulate Company Deposit →
+          Post Deposit to Bank →
         </button>
         <button
           onClick={closeDrawer}

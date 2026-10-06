@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExecutive } from '@/context/ExecutiveContext';
-import { Info, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 export const ToastNotification: React.FC = () => {
   const { state } = useExecutive();

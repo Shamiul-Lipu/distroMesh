@@ -8,6 +8,7 @@ export const sectionRouteNames: Record<string, string> = {
   reports: 'cash-flow',
   'bank-reconciliation': 'alerts',
   'ai-assistant': 'ask',
+  'war-room': 'war-room',
 };
 
 export const sectionIdsByRouteName: Record<string, string> = Object.fromEntries(

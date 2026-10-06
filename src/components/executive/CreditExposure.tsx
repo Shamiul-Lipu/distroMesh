@@ -3,7 +3,7 @@
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT, formatPercent } from '../../utils/formatters';
-import { CreditCard, ShieldAlert, ArrowRight, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Lock } from 'lucide-react';
 
 export const CreditExposure: React.FC = () => {
   const { state, openModal } = useExecutive();
@@ -100,7 +100,7 @@ export const CreditExposure: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center text-xs font-mono">
           {/* Sales */}
           <div className="flex-1 w-full bg-[#1F2937] p-2.5 rounded border border-[#374151]">
-            <div className="text-[10px] text-gray-400 uppercase">Today's Total Sales</div>
+            <div className="text-[10px] text-gray-400 uppercase">Today&apos;s Total Sales</div>
             <div className="text-sm font-bold text-white mt-0.5">{formatBDT(state.todaySales)}</div>
           </div>
 

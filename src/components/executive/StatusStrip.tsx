@@ -3,7 +3,7 @@
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT, formatVariance } from '../../utils/formatters';
-import { Wallet, CalendarClock, ShieldCheck, ShieldAlert, AlertTriangle, Layers, Info } from 'lucide-react';
+import { Wallet, CalendarClock, ShieldCheck, ShieldAlert, AlertTriangle, Layers } from 'lucide-react';
 
 export const StatusStrip: React.FC = () => {
   const { state, openDrawer } = useExecutive();
@@ -123,7 +123,7 @@ export const StatusStrip: React.FC = () => {
               <Layers className="w-5 h-5" />
             </div>
             <span className="text-xs font-mono font-semibold uppercase text-[#9CA3AF]">
-              Trapped Capital
+              Net Operating Working Capital
             </span>
           </div>
           <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
@@ -132,11 +132,11 @@ export const StatusStrip: React.FC = () => {
         </div>
 
         <div className="text-2xl xl:text-3xl font-mono font-bold text-[#F9FAFB] tracking-tight group-hover:text-purple-400 transition-colors">
-          ৳{(state.trappedCapital.total / 1000000).toFixed(2)}M
+          {formatBDT(state.workingCapital.netOperatingWorkingCapital, { mode: 'summary' })}
         </div>
 
         <div className="mt-3 pt-2 border-t border-[#1F2937] flex items-center justify-between text-xs font-mono text-[#9CA3AF]">
-          <span>Receivables + Inventory</span>
+          <span>Receivables + Stock + Claims − Payables</span>
           <span className="text-purple-400 hover:underline text-[11px]">Breakdown →</span>
         </div>
       </div>

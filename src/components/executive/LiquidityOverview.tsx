@@ -3,7 +3,7 @@
 import React from 'react';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT, formatCompactBDT } from '../../utils/formatters';
-import { ArrowDownRight, ArrowRight, Building, Vault, ShieldCheck, AlertCircle, TrendingUp, Info } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, Building } from 'lucide-react';
 
 export const LiquidityOverview: React.FC = () => {
   const { state, openDrawer, openModal } = useExecutive();
