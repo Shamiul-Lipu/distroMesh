@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   ArrowRight,
   ShieldCheck,
@@ -20,15 +19,61 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  Sparkles,
+  Gauge,
+  Receipt,
+  Store,
+  Zap,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import {
+  LiquidityRunwayPreview,
+  TrappedCapitalPreview,
+  DispatchRunwayPreview,
+  RouteSettlementPreview,
+  DecisionDockPreview,
+  HeroCockpitPreview,
+} from './previews';
+
+const FEATURE_TAB_IDS = ['liquidity', 'capital', 'dispatch', 'settlement', 'decision'] as const;
+type FeatureTabId = (typeof FEATURE_TAB_IDS)[number];
+
+const CINEMATIC_EASE = [0.4, 0, 0.2, 1] as const;
 
 export function DistroMeshLanding() {
   const { theme, toggleTheme } = useTheme();
   const [banglaMode, setBanglaMode] = useState(true);
-  const [activeFeatureTab, setActiveFeatureTab] = useState<
-    'liquidity' | 'capital' | 'dispatch' | 'settlement' | 'decision'
-  >('liquidity');
+  const [activeFeatureTab, setActiveFeatureTab] = useState<FeatureTabId>('liquidity');
+  const [isFeaturePaused, setIsFeaturePaused] = useState(false);
+
+  const featuresRef = useRef<HTMLElement>(null);
+  const isFeaturesInView = useInView(featuresRef, { amount: 0.1 });
+  const featurePauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Balanced 5.0s cadence: gives 1.5s initial scan + 3.5s for absorption of resolved metrics
+  const ZONE_DURATION_MS = 5000;
+
+  // Viewport-triggered self-running auto-cycling through the 5 operational zones
+  useEffect(() => {
+    if (!isFeaturesInView || isFeaturePaused) return;
+
+    const timer = setInterval(() => {
+      setActiveFeatureTab((prev) => {
+        const nextIdx = (FEATURE_TAB_IDS.indexOf(prev) + 1) % FEATURE_TAB_IDS.length;
+        return FEATURE_TAB_IDS[nextIdx];
+      });
+    }, ZONE_DURATION_MS);
+
+    return () => clearInterval(timer);
+  }, [isFeaturesInView, isFeaturePaused]);
+
+  const handleFeatureTabClick = (tabId: FeatureTabId) => {
+    setActiveFeatureTab(tabId);
+    setIsFeaturePaused(true);
+    if (featurePauseTimeoutRef.current) clearTimeout(featurePauseTimeoutRef.current);
+    // Resumes auto-cycle after 8s of user inactivity
+    featurePauseTimeoutRef.current = setTimeout(() => setIsFeaturePaused(false), 8000);
+  };
 
   const featureTabs = [
     {
@@ -78,22 +123,22 @@ export function DistroMeshLanding() {
       icon: Truck,
       tag: 'ZONE 03',
       headline: banglaMode
-        ? '১২টি ডেলিভারি ভ্যান সকাল ৯টায় সময়মতো ছাড়ার তদারকি'
-        : 'Ensure 12 Loaded Delivery Vans Leave Depot by 09:00 AM',
+        ? 'ডেলিভারি ভ্যান সকাল ৯টায় সময়মতো ছাড়ার তদারকি'
+        : 'Ensure Loaded Delivery Fleet Leaves Depot by 09:00 AM',
       description: banglaMode
         ? 'চালান প্রিন্টিং বা লোডিংয়ে দেরি হলে ড্রাইভার ও ডেলিভারিম্যানরা ইয়ার্ডে বসে থাকে। ভ্যান ছাড়তে আড়াই ঘণ্টা (+১৬৫ মিনিট) দেরি হলে লেবারের যে টাকা জলে যায় তা তাৎক্ষণিক সামনে আসে।'
         : 'When memo printing or loading stalls, delivery crews sit idle in your depot yard. Pinpoint yard departure stalls in real time and calculate the exact idle labor crew cost.',
       bullets: [
-        banglaMode ? '১২টি রুটের সকালের ভ্যান ছাড়ার সময়সূচি' : 'Depot departure timeline across all 12 distribution beats',
+        banglaMode ? 'সকল ডেলিভারি রুটের সকালের ভ্যান ছাড়ার সময়সূচি' : 'Depot departure timeline across all delivery beats',
         banglaMode ? 'ডেসপ্যাচ স্টল (+১৬৫ মিনিট বিলম্ব) সাথে সাথে শনাক্ত' : 'Catches departure stalls (+165 min delay) before route hours are lost',
         banglaMode ? 'ইয়ার্ড জ্যামের কারণে অলস লেবার খরচ (৳৪,৯৫০) পরিমাপ' : 'Calculates idle labor crew cost (৳4,950) from yard bottlenecks',
       ],
       image: '/screenshots/war_room_at_top_1791354223522.png',
-      badgeText: '12 Delivery Beats · 09:00 AM Target',
+      badgeText: 'Active Fleet Radar · 09:00 AM Target',
     },
     {
       id: 'settlement' as const,
-      title: banglaMode ? '১২-রুট সেটেলমেন্ট' : 'Route Settlement',
+      title: banglaMode ? 'রুট সেটেলমেন্ট' : 'Route Settlement',
       subtitle: banglaMode ? 'সন্ধ্যায় ড্রাইভার ক্যাশ মেলানো' : 'Driver Till Reconciliation',
       icon: Navigation,
       tag: 'ZONE 04',
@@ -109,7 +154,7 @@ export function DistroMeshLanding() {
         banglaMode ? 'এক ক্লিকে ড্রাইভারের বেতন থেকে শর্টেজ সমন্বয়' : 'One-click wage deduction protocol stops distributor cash leakages',
       ],
       image: '/screenshots/route_settlement.png',
-      badgeText: '11 Routes Cleared · 1 Shortage (−৳400)',
+      badgeText: 'All Routes Audited · 1 Shortage (−৳400)',
     },
     {
       id: 'decision' as const,
@@ -124,7 +169,7 @@ export function DistroMeshLanding() {
         ? 'মালিক হিসেবে নিজের ব্যবসার গুরুত্বপূর্ণ সিদ্ধান্ত এক ক্লিকে নিন: ঋণখেলাপি দোকানে বাকি দেওয়া বন্ধ করুন, ভল্ট ক্যাশ ব্যাংকে পাঠান, শর্টেজ কর্তন করুন এবং কালেকশন কম হলে কী হবে তা টেস্ট করুন।'
         : 'Execute critical ownership decisions with instant verification: freeze credit on defaulting shops, stage vault cash to the bank, deduct driver shortages, and stress-test your runway.',
       bullets: [
-        banglaMode ? '১২টি রুটে এক ক্লিকে বাকি খাতা লক করার ক্ষমতা' : 'One-Tap credit lock across all 12 van delivery routes',
+        banglaMode ? 'সকল রুটে এক ক্লিকে বাকি খাতা লক করার ক্ষমতা' : 'One-Tap credit lock across all van delivery routes',
         banglaMode ? 'ভল্ট ক্যাশ ব্যাংকে স্থানান্তর ও দিন-শেষ হিসাব ক্লোজ' : 'Stage vault cash to bank and approve zero-variance day closeout',
         banglaMode ? 'কালেকশন কমে গেলে ক্যাশ কেমন থাকবে তার লাইভ সিমুলেশন' : 'Stress-test your cash runway against lower collection days',
       ],
@@ -205,7 +250,13 @@ export function DistroMeshLanding() {
       {/* 2. VISUAL-FIRST HERO SECTION                         */}
       {/* ---------------------------------------------------- */}
       <section className="relative overflow-hidden border-b border-[var(--border)] bg-gradient-to-b from-[var(--background-deep)] via-[var(--surface-inset)]/20 to-[var(--background)] pt-10 pb-14 sm:pt-14 sm:pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Subtle Engineering Grid Texture */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(100,116,139,0.12)_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-60 dark:opacity-30 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_20%,#000_60%,transparent_100%)]" />
+
+        {/* Ambient Glow Orbs */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-[var(--accent)]/15 via-emerald-500/10 to-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Main Hero Header */}
           <div className="mx-auto max-w-3xl text-center">
             {/* Context Pill */}
@@ -219,24 +270,24 @@ export function DistroMeshLanding() {
             </div>
 
             {/* Grounded Headline for the Business Owner */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--foreground)] font-mono leading-[1.18]">
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--foreground)] font-mono leading-tight sm:leading-[1.18] break-words">
               {banglaMode
                 ? 'ডিস্ট্রিবিউশন ব্যবসা মালিকের প্রতিদিনের কন্ট্রোল বোর্ড'
                 : 'The Daily Control Board for Distribution Business Owners'}
             </h1>
 
             {/* Subtitle Grounded in Real Operations */}
-            <p className="mt-3.5 text-base sm:text-lg text-[var(--foreground-muted)] leading-relaxed font-sans max-w-2xl mx-auto">
+            <p className="mt-3.5 text-sm sm:text-lg text-[var(--foreground-muted)] leading-relaxed font-sans max-w-2xl mx-auto">
               {banglaMode
-                ? 'কোম্পানির ৪৮ ঘণ্টার ব্যাংক ডেবিট, বাজারের বাকি টাকা এবং ১২টি ভ্যানের ক্যাশ শর্টেজ নিয়ন্ত্রণে মালিকের নির্ভরযোগ্য সমাধান।'
-                : 'Protect your bank before 48-hour principal auto-debits, track overdue credit across 700 retail shops, and settle van driver cash without shortage.'}
+                ? 'কোম্পানির ৪৮ ঘণ্টার ব্যাংক ডেবিট, বাজারের বাকি টাকা এবং ডেলিভারি ফ্লিটের ক্যাশ শর্টেজ নিয়ন্ত্রণে মালিকের নির্ভরযোগ্য সমাধান।'
+                : 'Protect your bank before 48-hour principal auto-debits, track overdue credit across 700 retail shops, and settle delivery driver cash without shortage.'}
             </p>
 
             {/* Action Buttons */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono">
               <Link
                 href="/businesses/unilever-distribution/war-room"
-                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[var(--accent)] hover:opacity-90 px-5 text-xs sm:text-sm font-bold text-white shadow-md transition transform hover:-translate-y-0.5"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[var(--accent)] hover:opacity-90 px-4 sm:px-5 text-xs sm:text-sm font-bold text-white shadow-md transition transform hover:-translate-y-0.5 active:scale-95"
               >
                 <Monitor size={15} />
                 <span>{banglaMode ? 'লাইভ ওয়ার রুম দেখুন' : 'Launch War Room'}</span>
@@ -244,7 +295,7 @@ export function DistroMeshLanding() {
               </Link>
               <Link
                 href="/businesses"
-                className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] px-4 text-xs sm:text-sm font-bold text-[var(--foreground)] shadow-2xs transition"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] px-4 text-xs sm:text-sm font-bold text-[var(--foreground)] shadow-2xs transition active:scale-95"
               >
                 <Building2 size={15} className="text-[var(--foreground-muted)]" />
                 <span>{banglaMode ? 'মাল্টি-বিজনেস পোর্টফোলিও' : 'Business Portfolio'}</span>
@@ -253,7 +304,7 @@ export function DistroMeshLanding() {
           </div>
 
           {/* -------------------------------------------------- */}
-          {/* LARGE HERO SCREENSHOT IN POLISHED DESKTOP FRAME    */}
+          {/* POLISHED DESKTOP FRAME WITH LIVE INTERACTIVE COCKPIT */}
           {/* -------------------------------------------------- */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -261,67 +312,33 @@ export function DistroMeshLanding() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="mt-10 mx-auto max-w-5xl"
           >
-            <div className="relative rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl overflow-hidden">
+            <div className="relative rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl overflow-hidden ring-1 ring-white/5">
               {/* Browser Window Chrome */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-inset)] px-4 py-2.5 text-xs font-mono text-[var(--foreground-muted)]">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400 border border-rose-500 inline-block" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400 border border-amber-500 inline-block" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 border border-emerald-500 inline-block" />
+              <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-inset)] px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-mono text-[var(--foreground-muted)]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400/90 border border-rose-500/40 inline-block" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90 border border-amber-500/40 inline-block" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/90 border border-emerald-500/40 inline-block" />
                   </div>
-                  <div className="h-3.5 w-px bg-[var(--border)] mx-1 hidden sm:block" />
-                  <span className="font-semibold text-[var(--foreground)] text-[11px] truncate">
-                    distromesh.local/businesses/unilever-distribution/war-room
+                  <div className="h-3.5 w-px bg-[var(--border)] mx-1 hidden sm:block shrink-0" />
+                  <span className="font-semibold text-[var(--foreground)] text-[11px] truncate hidden sm:flex items-center gap-1.5">
+                    <span className="text-gray-500">https://</span>
+                    <span>distromesh.local/businesses/unilever-distribution/war-room</span>
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-[var(--success-soft)] text-[var(--success)] px-2 py-0.5 rounded border border-[var(--success)]/20">
-                    ● LIVE OPS (10:00–16:00)
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold bg-[var(--success-soft)] text-[var(--success)] px-2 py-0.5 rounded border border-[var(--success)]/20">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)] animate-pulse" />
+                    <span>INTERACTIVE COCKPIT</span>
                   </span>
                 </div>
               </div>
 
-              {/* Real Product Screenshot */}
-              <div className="relative bg-[var(--surface-inset)] aspect-[16/9] w-full">
-                <Image
-                  src="/screenshots/war_room_overview.png"
-                  alt="distroMesh Distribution Control Board"
-                  fill
-                  priority
-                  className="object-cover object-top"
-                />
-
-                {/* Floating Telemetry Pills */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
-                  className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex flex-wrap items-center gap-2 font-mono text-[10px] sm:text-xs"
-                >
-                  <div className="rounded-lg bg-[var(--surface-elevated)]/95 backdrop-blur-md border border-[var(--border)] px-3 py-1.5 shadow-md flex items-center gap-2 text-[var(--foreground)]">
-                    <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-ping" />
-                    <span className="font-bold">Liquid Cash: ৳16,95,200</span>
-                    <span className="text-[var(--success)] font-bold hidden sm:inline">(2.17× Cover)</span>
-                  </div>
-
-                  <div className="rounded-lg bg-[var(--surface-elevated)]/95 backdrop-blur-md border border-[var(--warning)]/40 px-3 py-1.5 shadow-md flex items-center gap-1.5 text-[var(--warning)]">
-                    <Clock size={12} className="text-[var(--warning)]" />
-                    <span className="font-bold">48h Sweep: Safe</span>
-                  </div>
-                </motion.div>
-
-                {/* Inspect Link */}
-                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
-                  <Link
-                    href="/businesses/unilever-distribution/war-room"
-                    className="rounded-lg bg-[var(--accent)] hover:opacity-90 text-white px-3 py-1.5 shadow-md flex items-center gap-1 text-xs font-mono font-bold transition active:scale-95"
-                  >
-                    <span>Inspect Board</span>
-                    <ChevronRight size={13} />
-                  </Link>
-                </div>
+              {/* Real Interactive Web-App Cockpit */}
+              <div className="relative w-full overflow-hidden">
+                <HeroCockpitPreview />
               </div>
             </div>
           </motion.div>
@@ -331,58 +348,98 @@ export function DistroMeshLanding() {
       {/* ---------------------------------------------------- */}
       {/* 3. INTERACTIVE FEATURE SHOWCASE: STRICT 5 ZONES      */}
       {/* ---------------------------------------------------- */}
-      <section id="features" className="py-14 sm:py-20 border-b border-[var(--border)] bg-[var(--background)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section
+        id="features"
+        ref={featuresRef}
+        className="relative py-14 sm:py-20 border-b border-[var(--border)] bg-[var(--background)] overflow-hidden"
+      >
+        {/* Subtle background engineering grid texture */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(100,116,139,0.1)_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-50 dark:opacity-25" />
+        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-[var(--accent)]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-8">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 rounded border border-[var(--accent)]/30 block w-fit mb-2">
-              {banglaMode ? 'অপারেশনাল জোনসমূহ' : 'DISTRIBUTOR OPERATIONS ARCHITECTURE'}
-            </span>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 rounded border border-[var(--accent)]/30 block w-fit">
+                {banglaMode ? 'অপারেশনাল জোনসমূহ' : 'DISTRIBUTOR OPERATIONS ARCHITECTURE'}
+              </span>
+              {isFeaturesInView && (
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold bg-[var(--success-soft)] text-[var(--success)] px-2.5 py-0.5 rounded border border-[var(--success)]/30 animate-pulse">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
+                  <span>
+                    {banglaMode
+                      ? `স্বয়ংক্রিয় লাইভ ডেমো · জোন ${FEATURE_TAB_IDS.indexOf(activeFeatureTab) + 1}/৫`
+                      : `SELF-RUNNING DEMO · ZONE ${FEATURE_TAB_IDS.indexOf(activeFeatureTab) + 1}/5`}
+                  </span>
+                </span>
+              )}
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[var(--foreground)]">
               {banglaMode ? '৫টি অপারেশনাল জোন ও কন্ট্রোল মেকানিক্স' : 'Explore the 5 Operational Zones'}
             </h2>
             <p className="mt-1.5 text-sm text-[var(--foreground-muted)] font-sans">
-              Switch through the 5 zones of the executive control board to inspect live screens and mechanics.
+              Continuous self-running showcase cycling through all 5 zones with real-time operations telemetry.
             </p>
           </div>
 
           {/* Interactive Feature Tabs: Exactly 5 Zones in Sequence */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs mb-6">
-            {featureTabs.map((tab) => {
+          <div
+            className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs mb-6"
+            onMouseEnter={() => setIsFeaturePaused(true)}
+            onMouseLeave={() => setIsFeaturePaused(false)}
+          >
+            {featureTabs.map((tab, idx) => {
               const Icon = tab.icon;
               const isActive = activeFeatureTab === tab.id;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveFeatureTab(tab.id)}
-                  className={`relative p-3 rounded-xl border text-left transition-all ${
+                  onClick={() => handleFeatureTabClick(tab.id)}
+                  className={`relative p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-left group overflow-hidden transition-colors ${
+                    idx === 4 ? 'col-span-2 sm:col-span-1' : ''
+                  } ${
                     isActive
-                      ? 'border-[var(--accent)] bg-[var(--accent-soft)] shadow-sm text-[var(--foreground)] font-bold'
-                      : 'border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--foreground-muted)]'
+                      ? 'text-[var(--foreground)] font-bold'
+                      : 'hover:bg-[var(--surface-hover)] text-[var(--foreground-muted)]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-[10px] font-bold ${isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground-subtle)]'}`}>
-                      {tab.tag}
-                    </span>
-                    <Icon size={15} className={isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground-muted)]'} />
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeFeatureTabIndicator"
+                      className="absolute inset-0 rounded-xl border-2 border-[var(--accent)] bg-[var(--accent-soft)] shadow-xs pointer-events-none z-0"
+                      transition={{ type: 'spring', bounce: 0.15, duration: 0.35 }}
+                    />
+                  )}
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] font-bold ${isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground-subtle)]'}`}>
+                        {tab.tag}
+                      </span>
+                      <Icon size={15} className={isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground-muted)] group-hover:text-[var(--foreground)] transition-colors'} />
+                    </div>
+                    <div className="font-bold text-xs sm:text-sm text-[var(--foreground)] truncate">{tab.title}</div>
+                    <div className="text-[10px] text-[var(--foreground-muted)] font-sans truncate">{tab.subtitle}</div>
                   </div>
-                  <div className="font-bold text-xs sm:text-sm text-[var(--foreground)] truncate">{tab.title}</div>
-                  <div className="text-[10px] text-[var(--foreground-muted)] font-sans truncate">{tab.subtitle}</div>
                 </button>
               );
             })}
           </div>
 
           {/* Active Tab Visual Card with AnimatePresence */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentTab.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 sm:p-7 shadow-sm"
-            >
+          <div
+            onMouseEnter={() => setIsFeaturePaused(true)}
+            onMouseLeave={() => setIsFeaturePaused(false)}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentTab.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: CINEMATIC_EASE }}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 sm:p-6 lg:p-7 shadow-xl relative overflow-hidden"
+              >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Left Column: Concise Explanation */}
                 <div className="lg:col-span-5 space-y-3.5">
@@ -422,16 +479,15 @@ export function DistroMeshLanding() {
                   </div>
                 </div>
 
-                {/* Right Column: High-Res Screenshot Preview */}
+                {/* Right Column: Modern Interactive Self-Running Web-App Card Component */}
                 <div className="lg:col-span-7">
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-2 shadow-md overflow-hidden group">
-                    <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden bg-[var(--surface-inset)]">
-                      <Image
-                        src={currentTab.image}
-                        alt={currentTab.title}
-                        fill
-                        className="object-cover object-top transition duration-300 group-hover:scale-[1.01]"
-                      />
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-inset)]/50 p-1.5 sm:p-2 shadow-xl ring-1 ring-white/5">
+                    <div className="rounded-xl overflow-hidden">
+                      {currentTab.id === 'liquidity' && <LiquidityRunwayPreview autoDemo={true} />}
+                      {currentTab.id === 'capital' && <TrappedCapitalPreview autoDemo={true} />}
+                      {currentTab.id === 'dispatch' && <DispatchRunwayPreview autoDemo={true} />}
+                      {currentTab.id === 'settlement' && <RouteSettlementPreview autoDemo={true} />}
+                      {currentTab.id === 'decision' && <DecisionDockPreview autoDemo={true} />}
                     </div>
                   </div>
                 </div>
@@ -439,13 +495,17 @@ export function DistroMeshLanding() {
             </motion.div>
           </AnimatePresence>
         </div>
+        </div>
       </section>
 
       {/* ---------------------------------------------------- */}
       {/* 4. DAILY OPERATIONS RHYTHM IN 3 SIMPLE STEPS         */}
       {/* ---------------------------------------------------- */}
-      <section className="py-14 sm:py-20 border-b border-[var(--border)] bg-[var(--background-deep)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative py-14 sm:py-20 border-b border-[var(--border)] bg-[var(--background-deep)] overflow-hidden">
+        {/* Subtle engineering grid texture */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(100,116,139,0.08)_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-40 dark:opacity-20" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-10">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-soft)] px-2.5 py-0.5 rounded border border-[var(--accent)]/30 block w-fit mb-2">
               {banglaMode ? 'দৈনিক কার্যপদ্ধতি' : 'DAILY OPERATIONS LIFECYCLE'}
@@ -460,49 +520,70 @@ export function DistroMeshLanding() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono text-xs">
             {/* Step 1 */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm space-y-2.5">
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm hover:border-[var(--accent)]/40 hover:shadow-md transition-all space-y-2.5 group"
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[var(--success)] font-bold text-base">01 · 09:00 AM</span>
-                <Truck size={17} className="text-[var(--foreground-muted)]" />
+                <div className="p-2 rounded-lg bg-[var(--surface)] text-[var(--foreground-muted)] group-hover:text-[var(--accent)] transition-colors">
+                  <Truck size={17} />
+                </div>
               </div>
               <h3 className="text-sm font-bold text-[var(--foreground)] uppercase">Morning Dispatch</h3>
               <p className="text-[var(--foreground-muted)] font-sans text-xs leading-relaxed">
                 Loading audit across 12 delivery beats. Departure stalls are caught immediately to avoid idle labor wage losses.
               </p>
-              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold">
-                ✓ Stalls cleared &amp; vans departed
+              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-[var(--success)]" />
+                <span>Stalls cleared &amp; vans departed</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 2 */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm space-y-2.5">
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm hover:border-[var(--accent)]/40 hover:shadow-md transition-all space-y-2.5 group"
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[var(--success)] font-bold text-base">02 · 02:00 PM</span>
-                <Lock size={17} className="text-[var(--foreground-muted)]" />
+                <div className="p-2 rounded-lg bg-[var(--surface)] text-[var(--foreground-muted)] group-hover:text-[var(--accent)] transition-colors">
+                  <Lock size={17} />
+                </div>
               </div>
               <h3 className="text-sm font-bold text-[var(--foreground)] uppercase">Field Credit Guard</h3>
               <p className="text-[var(--foreground-muted)] font-sans text-xs leading-relaxed">
                 700 retail shop drops underway. Unauthorized fresh credit extensions to overdue shops are hard-locked across all beats.
               </p>
-              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold">
-                ✓ Overdue credit leakage prevented
+              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-[var(--success)]" />
+                <span>Overdue credit leakage prevented</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Step 3 */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm space-y-2.5">
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-sm hover:border-[var(--accent)]/40 hover:shadow-md transition-all space-y-2.5 group"
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[var(--success)] font-bold text-base">03 · 07:30 PM</span>
-                <Wallet size={17} className="text-[var(--foreground-muted)]" />
+                <div className="p-2 rounded-lg bg-[var(--surface)] text-[var(--foreground-muted)] group-hover:text-[var(--accent)] transition-colors">
+                  <Wallet size={17} />
+                </div>
               </div>
               <h3 className="text-sm font-bold text-[var(--foreground)] uppercase">Till Settlement</h3>
               <p className="text-[var(--foreground-muted)] font-sans text-xs leading-relaxed">
                 Physical vault cash counted at the depot window. Route shortages (−৳400) are identified in 15 seconds and deducted.
               </p>
-              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold">
-                ✓ 100% zero-variance day-end closeout
+              <div className="pt-2 border-t border-[var(--border)] text-[11px] text-[var(--success)] font-bold flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-[var(--success)]" />
+                <span>100% zero-variance day-end closeout</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -510,10 +591,14 @@ export function DistroMeshLanding() {
       {/* ---------------------------------------------------- */}
       {/* 5. CALL TO ACTION                                    */}
       {/* ---------------------------------------------------- */}
-      <section className="py-14 sm:py-16 bg-[var(--background)] border-b border-[var(--border)]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[var(--surface-elevated)] via-[var(--surface)] to-[var(--surface-elevated)] p-6 sm:p-10 shadow-sm">
-            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[var(--accent)] bg-[var(--surface-elevated)] border border-[var(--border)] px-3 py-1 rounded-full mb-3">
+      <section className="relative py-14 sm:py-16 bg-[var(--background)] border-b border-[var(--border)] overflow-hidden">
+        {/* Subtle engineering grid texture & Ambient Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(100,116,139,0.08)_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-40 dark:opacity-20" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-gradient-to-t from-[var(--accent)]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[var(--surface-elevated)] via-[var(--surface)] to-[var(--surface-elevated)] p-6 sm:p-10 shadow-lg relative">
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[var(--accent)] bg-[var(--surface-elevated)] border border-[var(--border)] px-3 py-1 rounded-full mb-3 shadow-2xs">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
               <span>{banglaMode ? 'সম্পূর্ণ সক্রিয় লাইভ পরিবেশ' : 'Zero-Setup Interactive Demo'}</span>
             </div>
@@ -533,7 +618,7 @@ export function DistroMeshLanding() {
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono">
               <Link
                 href="/businesses/unilever-distribution/war-room"
-                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[var(--accent)] hover:opacity-90 px-5 text-xs sm:text-sm font-bold text-white shadow-xs transition"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[var(--accent)] hover:opacity-90 px-5 text-xs sm:text-sm font-bold text-white shadow-md transition transform hover:-translate-y-0.5 active:scale-95"
               >
                 <Monitor size={15} />
                 <span>{banglaMode ? 'ওয়ার রুম চালু করুন' : 'Launch Executive War Room'}</span>
@@ -541,7 +626,7 @@ export function DistroMeshLanding() {
               </Link>
               <Link
                 href="/businesses"
-                className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] px-4 text-xs sm:text-sm font-bold text-[var(--foreground)] shadow-2xs transition"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] px-4 text-xs sm:text-sm font-bold text-[var(--foreground)] shadow-2xs transition transform hover:-translate-y-0.5 active:scale-95"
               >
                 <span>{banglaMode ? 'পোর্টফোলিও ভিউ' : 'Explore Portfolio'}</span>
               </Link>

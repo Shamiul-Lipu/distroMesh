@@ -29,6 +29,7 @@ import {
 import { formatBDT } from '../../utils/formatters';
 import { getBusinessRoute } from '../../utils/businessRoutes';
 import { useTheme } from '../../context/ThemeContext';
+import { CrossEntityCommandMatrix } from './visualizations/CrossEntityCommandMatrix';
 
 export type BusinessProfile = {
   id: string;
@@ -612,6 +613,12 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Cross-Entity Operational Command Matrix (All 5 Businesses + Consolidated Empire Total) */}
+      <CrossEntityCommandMatrix
+        onSelectBusiness={onSelectBusiness}
+        className="mb-6"
+      />
 
       <section aria-labelledby="businesses-heading" className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden font-mono shadow-xs">
         <div className="flex flex-col justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface-inset)]/50 p-5 sm:flex-row sm:items-center">

@@ -43,6 +43,7 @@ import {
   Monitor,
   Sun,
   Moon,
+  Layers,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useExecutive } from '../../context/ExecutiveContext';
@@ -65,6 +66,13 @@ import { IncidentDrawer } from './Drawers/IncidentDrawer';
 import { ObligationDrawer } from './Drawers/ObligationDrawer';
 import { ActionConfirmationModal } from './Drawers/ActionConfirmationModal';
 import { ToastNotification } from './ToastNotification';
+import { ExecutiveOperationsGrid } from './visualizations/ExecutiveOperationsGrid';
+import { CrossEntityCommandMatrix } from './visualizations/CrossEntityCommandMatrix';
+import {
+  businessSnapshots,
+  getBusinessOperationalSnapshot,
+  getEntityPortfolioSnapshot,
+} from '../../data/businessEntitiesData';
 import {
   BusinessOnboardingModal,
   BusinessPortfolioOverview,
@@ -270,26 +278,30 @@ export const ExecutiveShell: React.FC = () => {
     selectBusiness(business.id);
     showToast(`${business.name} added${relationshipParent ? ' as a related business' : ''}${referenceEntries.length ? ` with ${referenceEntries.length} reference entries` : ''}`);
   };
-  const portfolio = useMemo(
-    () => getPortfolioSnapshot(principalFilter, depotFilter, {
+  const portfolio = useMemo(() => {
+    if (!isPortfolioView && activeBusinessId !== 'unilever-distribution' && businessSnapshots[activeBusinessId]) {
+      return getEntityPortfolioSnapshot(activeBusinessId);
+    }
+    return getPortfolioSnapshot(principalFilter, depotFilter, {
       bankCash: state.bankCash,
       vaultCash: state.vaultCash,
       upcomingObligation: state.upcomingObligation,
       freshCredit: state.freshCredit,
       todaySales: state.todaySales,
       cashVariance: state.cashVariance,
-    }),
-    [
-      principalFilter,
-      depotFilter,
-      state.bankCash,
-      state.vaultCash,
-      state.upcomingObligation,
-      state.freshCredit,
-      state.todaySales,
-      state.cashVariance,
-    ],
-  );
+    });
+  }, [
+    isPortfolioView,
+    activeBusinessId,
+    principalFilter,
+    depotFilter,
+    state.bankCash,
+    state.vaultCash,
+    state.upcomingObligation,
+    state.freshCredit,
+    state.todaySales,
+    state.cashVariance,
+  ]);
   const companyPortfolio = useMemo(
     () => getPortfolioSnapshot('All principals', 'All depots', {
       bankCash: state.bankCash,
@@ -541,16 +553,17 @@ export const ExecutiveShell: React.FC = () => {
   const dueSoon = activeBusinessId === 'unilever-distribution' ? state.routes.filter((route) =>
     (route.status === 'ACTION' || route.status === 'REVIEW') && (depotFilter === 'All depots' || route.depot === depotFilter),
   ).length : 0;
+  const currentSnapshot = getBusinessOperationalSnapshot(activeBusinessId);
   const activeBusinessMetrics = businessMetrics[activeBusinessId];
   const fullBusinessScope = principalFilter === 'All principals' && depotFilter === 'All depots';
-  const activePerformanceMetrics = activeBusinessMetrics && activeBusinessId === 'unilever-distribution'
+  const activePerformanceMetrics = activeBusinessMetrics
     ? {
       ...activeBusinessMetrics,
       availableCash: liquidCash,
       receivables: portfolio.receivables,
       monthlyRevenue: portfolio.monthlyRevenue,
       monthlyNetProfit: portfolio.monthlyNetProfit,
-      monthlySalesHistory: fullBusinessScope ? activeBusinessMetrics.monthlySalesHistory : undefined,
+      monthlySalesHistory: activeBusinessMetrics.monthlySalesHistory,
     }
     : activeBusinessMetrics;
   const trendUnavailableMessage = !fullBusinessScope && activeBusinessId === 'unilever-distribution'
@@ -597,25 +610,43 @@ export const ExecutiveShell: React.FC = () => {
               detail: 'Review sales and activity as new records come in.',
               section: 'business-performance',
             };
-  const scopedRoutes = useMemo(() => state.routes
-    .filter((route) => depotFilter === 'All depots' || route.depot === depotFilter)
-    .map((route) => {
-      const scopedAmount = (amount: number) => {
-        const fmcgAmount = Math.round(amount * 0.7);
-        if (principalFilter === 'Illustrative FMCG') return fmcgAmount;
-        if (principalFilter === 'Pureit (Durables)') return amount - fmcgAmount;
-        return amount;
-      };
-      const variance = scopedAmount(route.variance);
-      return {
-        ...route,
-        expected: scopedAmount(route.expected),
-        collected: scopedAmount(route.collected),
-        credit: scopedAmount(route.credit),
-        variance,
-        status: (route.status === 'ACTION' || route.status === 'REVIEW') && variance === 0 ? 'OK' as const : route.status,
-      };
-    }), [depotFilter, principalFilter, state.routes]);
+  const scopedRoutes = useMemo(() => {
+    if (!isPortfolioView && activeBusinessId !== 'unilever-distribution' && businessSnapshots[activeBusinessId]) {
+      const snap = businessSnapshots[activeBusinessId];
+      return snap.routes.map((r, idx) => ({
+        id: r.id,
+        depot: snap.location.split(' ')[0] || 'Hub',
+        vanNumber: `Van #${idx + 1}`,
+        routeName: r.name,
+        jsrName: r.jsrName,
+        srName: r.srName,
+        collected: r.cashCollected,
+        credit: r.creditSales,
+        expected: r.cashCollected - r.variance,
+        variance: r.variance,
+        status: r.status,
+      }));
+    }
+    return state.routes
+      .filter((route) => depotFilter === 'All depots' || route.depot === depotFilter)
+      .map((route) => {
+        const scopedAmount = (amount: number) => {
+          const fmcgAmount = Math.round(amount * 0.7);
+          if (principalFilter === 'Illustrative FMCG') return fmcgAmount;
+          if (principalFilter === 'Pureit (Durables)') return amount - fmcgAmount;
+          return amount;
+        };
+        const variance = scopedAmount(route.variance);
+        return {
+          ...route,
+          expected: scopedAmount(route.expected),
+          collected: scopedAmount(route.collected),
+          credit: scopedAmount(route.credit),
+          variance,
+          status: (route.status === 'ACTION' || route.status === 'REVIEW') && variance === 0 ? 'OK' as const : route.status,
+        };
+      });
+  }, [isPortfolioView, activeBusinessId, depotFilter, principalFilter, state.routes]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -1383,7 +1414,7 @@ export const ExecutiveShell: React.FC = () => {
               />
             ) : activeSection === 'war-room' ? (
               <WarRoomView businessSlug={activeBusinessId} />
-            ) : activeBusiness && activeBusiness.id !== 'unilever-distribution' ? (
+            ) : activeBusiness && !businessSnapshots[activeBusiness.id] ? (
               <NewBusinessWorkspace
                 business={activeBusiness}
                 businesses={businesses}
@@ -1428,13 +1459,17 @@ export const ExecutiveShell: React.FC = () => {
               <div>
                 <div className="mb-2 flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-muted)]">
                   <span>Workspace</span><ChevronRight size={12} /><span className="text-[var(--foreground)]">Overview</span>
-                  <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />Demo data</span>
+                  <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />Live Telemetry</span>
                 </div>
-                <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[var(--foreground)] sm:text-[29px]">{activeBusiness?.name ?? 'Distribution executive dashboard'}</h1>
-                <p className="mt-1 text-[13px] text-[var(--foreground-muted)]">{activeBusiness?.industry ?? 'Consumer goods distribution'} · {activeBusiness?.location ?? 'Sherpur & Bogura, Bangladesh'}.</p>
+                <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[var(--foreground)] sm:text-[29px]">{activeBusiness?.name ?? currentSnapshot.name}</h1>
+                <p className="mt-1 text-[13px] text-[var(--foreground-muted)]">{currentSnapshot.industry} · {currentSnapshot.location}.</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">Unilever · Pureit</span>
-                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">Sherpur · Bogura depots</span>
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">
+                    {currentSnapshot.principals.join(' · ')}
+                  </span>
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">
+                    {currentSnapshot.vanCount} Delivery Vans · {currentSnapshot.routesCount} Routes
+                  </span>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -1686,6 +1721,33 @@ export const ExecutiveShell: React.FC = () => {
               </article>
             </section>
 
+            {/* Cross-Entity Benchmark Matrix Collapsible */}
+            <details className="mt-4 group rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs">
+              <summary className="accounting-focus flex cursor-pointer list-none items-center justify-between text-xs font-mono font-bold uppercase tracking-wider text-[var(--foreground)] marker:hidden hover:text-[var(--accent)] transition-colors">
+                <div className="flex items-center gap-2">
+                  <Layers size={15} className="text-[var(--accent)]" />
+                  <span>Cross-Entity Benchmark Matrix (All 5 Businesses + Empire in One Look)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-[var(--foreground-muted)] font-normal font-sans">
+                  <span>Compare with other entities</span>
+                  <ChevronDown size={14} className="transition-transform group-open:rotate-180" />
+                </div>
+              </summary>
+              <div className="mt-4 pt-3 border-t border-[var(--border)]">
+                <CrossEntityCommandMatrix
+                  activeBusinessId={activeBusinessId}
+                  onSelectBusiness={selectBusiness}
+                />
+              </div>
+            </details>
+
+            {/* Executive Operations Pulse (7-Day Performance, Dispatch Runway, Capital Solvency, and Exception Triage) */}
+            <ExecutiveOperationsGrid
+              businessId={activeBusinessId}
+              className="mt-4"
+              onOpenDrawer={(drawer) => openDrawer(drawer)}
+            />
+
             <section aria-label="Today’s business activity" className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -1719,21 +1781,33 @@ export const ExecutiveShell: React.FC = () => {
                 <div className="rounded-xl border border-[var(--warning)]/30 bg-[var(--warning-soft)] p-3">
                   <span className="text-[var(--warning)] font-medium">Dispatch</span>
                   <strong className="ml-2 text-[var(--warning)]">
-                    {state.hardwareReplaced
+                    {activeBusinessId === 'unilever-distribution' && state.hardwareReplaced
                       ? 'Printer replacement simulated · monitor next dispatch'
-                      : state.dispatchDelayMinutes === 0
-                        ? `${state.dispatchTarget} target · on time`
-                        : `${state.dispatchTarget} target · ${state.dispatchActual} actual · ${state.dispatchDelayMinutes} min late`}
+                      : currentSnapshot.dispatchDelayMin === 0
+                        ? `${currentSnapshot.dispatchTarget} target · on time`
+                        : `${currentSnapshot.dispatchTarget} target · ${currentSnapshot.dispatchActual} actual · ${currentSnapshot.dispatchDelayMin} min late`}
                   </strong>
                 </div>
                 <button
                   type="button"
                   onClick={() => openDrawer('INCIDENT')}
-                  className="accounting-focus rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] p-3 text-left transition hover:bg-[var(--danger-soft)]/80"
+                  className={`accounting-focus rounded-xl border p-3 text-left transition ${
+                    currentSnapshot.dispatchStatus === 'ON_TIME'
+                      ? 'border-[var(--success)]/30 bg-[var(--success-soft)] hover:bg-[var(--success-soft)]/80'
+                      : 'border-[var(--danger)]/30 bg-[var(--danger-soft)] hover:bg-[var(--danger-soft)]/80'
+                  }`}
                 >
-                  <span className="text-[var(--danger)] font-medium">Returns incident (faint print)</span>
-                  <strong className="ml-2 block text-[var(--danger)]">60 units (2.5 ctn) · {formatBDT(2488)} loss today</strong>
-                  <p className="mt-1 text-[10px] text-[var(--danger)]/80">Printer {formatBDT(3000)} · payback 2.8 days (tap for formula &amp; fix)</p>
+                  <span className={`font-medium ${currentSnapshot.dispatchStatus === 'ON_TIME' ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
+                    {currentSnapshot.dispatchStatus === 'ON_TIME' ? 'Dispatch Status: Normal' : 'Returns & Bottleneck Incident'}
+                  </span>
+                  <strong className={`ml-2 block ${currentSnapshot.dispatchStatus === 'ON_TIME' ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
+                    {currentSnapshot.dispatchStatus === 'ON_TIME'
+                      ? '100% routes dispatched on time'
+                      : `${currentSnapshot.dispatchBottleneck}`}
+                  </strong>
+                  <p className={`mt-1 text-[10px] ${currentSnapshot.dispatchStatus === 'ON_TIME' ? 'text-[var(--success)]/80' : 'text-[var(--danger)]/80'}`}>
+                    {currentSnapshot.dispatchStatus === 'ON_TIME' ? 'All depot loading bays cleared' : 'Tap for triage & hardware mitigation'}
+                  </p>
                 </button>
               </div>
               <p className="mt-3 text-[10px] text-[var(--foreground-muted)]">

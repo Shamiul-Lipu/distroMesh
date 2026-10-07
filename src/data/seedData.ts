@@ -629,3 +629,52 @@ export const sampleShopDrops: SampleShopDrop[] = [
   { billNumber: 'INV-8827', retailerName: 'Rabbani Confectionery', marketPoint: 'Sherpur New Market', cashPaid: 1800, creditGranted: 750 },
   { billNumber: 'INV-8828', retailerName: 'Bogra Corner Grocery', marketPoint: 'College Road', cashPaid: 2900, creditGranted: 1250 },
 ];
+
+// ----------------------------------------------------
+// Section 4.5: 7-Day Performance Trends & Telemetry
+// Reconciled against M/S Popy Traders weekly sales and cash velocity
+// ----------------------------------------------------
+export interface DailyPerformancePoint {
+  day: 'Sat' | 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
+  fullDay: string;
+  cashSales: number;       // in thousands (৳ K)
+  creditSales: number;     // in thousands (৳ K)
+  totalSales: number;      // in thousands (৳ K)
+  collectionTarget: number;// in thousands (৳ K)
+  collectionActual: number;// in thousands (৳ K)
+  cashInflow: number;      // in thousands (৳ K)
+  cashOutflow: number;     // in thousands (৳ K)
+}
+
+export const sevenDayPerformanceTrend: DailyPerformancePoint[] = [
+  { day: 'Sat', fullDay: 'Saturday',  cashSales: 310, creditSales: 170, totalSales: 480, collectionTarget: 420, collectionActual: 395, cashInflow: 410, cashOutflow: 315 },
+  { day: 'Sun', fullDay: 'Sunday',    cashSales: 330, creditSales: 160, totalSales: 490, collectionTarget: 420, collectionActual: 425, cashInflow: 435, cashOutflow: 325 },
+  { day: 'Mon', fullDay: 'Monday',    cashSales: 290, creditSales: 200, totalSales: 490, collectionTarget: 420, collectionActual: 380, cashInflow: 390, cashOutflow: 270 },
+  { day: 'Tue', fullDay: 'Tuesday',   cashSales: 360, creditSales: 180, totalSales: 540, collectionTarget: 420, collectionActual: 430, cashInflow: 455, cashOutflow: 345 },
+  { day: 'Wed', fullDay: 'Wednesday', cashSales: 325, creditSales: 195, totalSales: 520, collectionTarget: 420, collectionActual: 400, cashInflow: 420, cashOutflow: 310 },
+  { day: 'Thu', fullDay: 'Thursday',  cashSales: 295, creditSales: 185, totalSales: 480, collectionTarget: 420, collectionActual: 390, cashInflow: 405, cashOutflow: 285 },
+  { day: 'Fri', fullDay: 'Friday',    cashSales: 280, creditSales: 210, totalSales: 490, collectionTarget: 420, collectionActual: 435, cashInflow: 430, cashOutflow: 330 },
+];
+
+export interface DispatchReadinessStatus {
+  countdownSeconds: number; // default 8100s = 02:15:00
+  billingQueueDSRs: number; // 24 DSRs / SRs
+  invoiceProcessingPct: number; // 68%
+  dsrReadinessCurrent: number; // 6
+  dsrReadinessTotal: number; // 6
+  warehouseReady: boolean; // true
+  routesClearedCurrent: number; // 5
+  routesClearedTotal: number; // 6
+}
+
+export const initialDispatchReadiness: DispatchReadinessStatus = {
+  countdownSeconds: 8100, // 02:15:00
+  billingQueueDSRs: 24,
+  invoiceProcessingPct: 68,
+  dsrReadinessCurrent: 6,
+  dsrReadinessTotal: 6,
+  warehouseReady: true,
+  routesClearedCurrent: 5,
+  routesClearedTotal: 6,
+};
+
