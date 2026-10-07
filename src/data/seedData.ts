@@ -610,3 +610,22 @@ export const initialSchemeClaims: SchemeClaim[] = [
     submissionDate: '2026-09-28',
   },
 ];
+
+export interface SampleShopDrop {
+  billNumber: string;
+  retailerName: string;
+  marketPoint: string;
+  cashPaid: number;
+  creditGranted: number;
+}
+
+export const sampleShopDrops: SampleShopDrop[] = [
+  { billNumber: 'INV-8821', retailerName: 'Rahman General Store', marketPoint: 'Sherpur Town Center', cashPaid: 3200, creditGranted: 1400 },
+  { billNumber: 'INV-8822', retailerName: 'M/S Bismillah Departmental', marketPoint: 'Nalitabari Road', cashPaid: 2800, creditGranted: 1200 },
+  { billNumber: 'INV-8823', retailerName: 'Suwagari Station Grocers', marketPoint: 'Suwagari Mor', cashPaid: 4100, creditGranted: 1900 },
+  { billNumber: 'INV-8824', retailerName: 'Al-Madina Traders', marketPoint: 'Nakla Bazaar', cashPaid: 1900, creditGranted: 800 },
+  { billNumber: 'INV-8825', retailerName: 'Kusumbi Green Store', marketPoint: 'Raninagar Mor', cashPaid: 2500, creditGranted: 1100 },
+  { billNumber: 'INV-8826', retailerName: 'Chowdhury & Brothers', marketPoint: 'Bhatara Mor', cashPaid: 3600, creditGranted: 1500 },
+  { billNumber: 'INV-8827', retailerName: 'Rabbani Confectionery', marketPoint: 'Sherpur New Market', cashPaid: 1800, creditGranted: 750 },
+  { billNumber: 'INV-8828', retailerName: 'Bogra Corner Grocery', marketPoint: 'College Road', cashPaid: 2900, creditGranted: 1250 },
+];

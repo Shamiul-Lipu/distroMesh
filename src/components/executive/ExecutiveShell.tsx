@@ -98,16 +98,23 @@ type LedgerRow = {
   referenceSourceBusinessId?: string;
 };
 
-const dailyWorkItems = [
+const commandNavItems = [
+  { id: 'war-room', label: 'War Room', icon: Monitor, isLive: true },
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'business-performance', label: 'Sales & operations', icon: Activity },
+];
+
+const financeNavItems = [
   { id: 'general-ledger', label: 'Transactions', icon: BookOpen },
   { id: 'invoicing', label: 'Invoices', icon: FileText },
   { id: 'expenses', label: 'Expenses', icon: CreditCard },
+  { id: 'reports', label: 'Cash flow', icon: Wallet },
 ];
 
-const insightItems = [
-  { id: 'reports', label: 'Cash flow', icon: Activity },
+const governanceNavItems = [
+  { id: 'related-businesses', label: 'Connected businesses', icon: GitBranch },
   { id: 'bank-reconciliation', label: 'Alerts & tasks', icon: FileCheck2 },
-  { id: 'ai-assistant', label: 'Help & business questions', icon: Sparkles },
+  { id: 'ai-assistant', label: 'Help & Copilot', icon: Sparkles },
 ];
 
 const compactCurrency = (amount: number) => {
@@ -761,224 +768,332 @@ export const ExecutiveShell: React.FC = () => {
     setNotificationsOpen(false);
   };
 
-  const renderSidebarNavItems = (items: typeof dailyWorkItems | typeof insightItems, isMobile: boolean) => items.map(({ id, label, icon: Icon }) => {
-    const selected = activeSection === id;
-    const targetBusinessId = isPortfolioView ? 'unilever-distribution' : activeBusinessId;
-    return (
-      <Link
-        key={id}
-        href={getBusinessRoute(targetBusinessId, id)}
-        onClick={() => {
-          prepareSectionNavigation(id);
-          setMobileNavOpen(false);
-        }}
-        aria-current={selected ? 'page' : undefined}
-        title={collapsed && !isMobile ? label : undefined}
-        className={`accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] transition-colors ${
-          selected
-            ? 'bg-emerald-500/15 font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/15'
-            : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'
-        }`}
-      >
-        <Icon size={18} strokeWidth={1.8} className="shrink-0" />
-        {(!collapsed || isMobile) && <span>{label}</span>}
-        {id === 'bank-reconciliation' && activeAlerts.length > 0 && (!collapsed || isMobile) && (
-          <span className="ml-auto rounded-md bg-rose-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300">{activeAlerts.length}</span>
-        )}
-      </Link>
-    );
-  });
-
-  const renderSidebar = (isMobile = false) => (
-    <aside className={`accounting-sidebar flex h-full flex-col overflow-y-auto text-white ${collapsed && !isMobile ? 'w-[76px]' : 'w-[252px]'} ${isMobile ? 'w-[280px]' : ''} transition-[width] duration-200`}>
-      <div className="flex h-[76px] items-center gap-3 border-b border-white/10 px-5">
-        <Link
-          href="/"
-          aria-label="distroMesh home"
-          title="Go to distroMesh home"
-          onClick={() => setMobileNavOpen(false)}
-          className="accounting-focus flex min-w-0 flex-1 items-center gap-3 rounded-lg"
-        >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-[#0e2820] shadow-lg shadow-emerald-950/30">
-            <Building2 size={19} strokeWidth={2} />
-          </span>
-          {(!collapsed || isMobile) && (
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold tracking-wide">distroMesh</span>
-              <span className="mt-0.5 block text-[10px] font-medium tracking-wide text-emerald-300">Business workspace</span>
-            </span>
-          )}
-        </Link>
-        {isMobile && (
-          <button onClick={() => setMobileNavOpen(false)} aria-label="Close navigation" className="accounting-focus rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white">
-            <X size={18} />
-          </button>
-        )}
-      </div>
-
-      <div className="px-3 pt-6">
-      {(!collapsed || isMobile) && <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Your workspace</p>}
-        <nav aria-label="Workspace navigation" className="space-y-1">
-          <button
-            onClick={() => {
-              if (collapsed && !isMobile) {
-                setCollapsed(false);
-                setBusinessNavExpanded(true);
-              } else {
-                setBusinessNavExpanded((expanded) => !expanded);
-              }
-            }}
-            aria-expanded={businessNavExpanded && (!collapsed || isMobile)}
-            title={collapsed && !isMobile ? 'Businesses · expand navigation' : undefined}
-            className={`accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] transition-colors ${
-              isPortfolioView || activeSection === 'overview' || activeSection === 'related-businesses'
-                ? 'bg-white/[0.075] font-semibold text-white'
-                : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'
-            }`}
-          >
-            <BriefcaseBusiness size={18} strokeWidth={1.8} className="shrink-0 text-emerald-300" />
-            {(!collapsed || isMobile) && <><span className="flex-1">Businesses</span><ChevronDown size={15} className={`transition-transform duration-200 ${businessNavExpanded ? 'rotate-180' : ''}`} /></>}
-          </button>
-          <div className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${businessNavExpanded && (!collapsed || isMobile) ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-            <div className="min-h-0 overflow-hidden">
-              <div className="ml-[21px] space-y-0.5 border-l border-white/10 py-1 pl-2.5">
-                <Link
-                  href="/businesses"
-                  onClick={() => {
-                    prepareBusinessSelection('all');
-                    setMobileNavOpen(false);
-                  }}
-                  aria-current={isPortfolioView ? 'page' : undefined}
-                  className={`accounting-focus flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[12px] transition-colors ${isPortfolioView ? 'bg-emerald-500/15 font-semibold text-emerald-300' : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'}`}
-                >
-                  <Building2 size={15} strokeWidth={1.8} className="shrink-0" />
-                  <span>All businesses</span>
-                </Link>
-                {(!collapsed || isMobile) && (
-                  <p className="px-2.5 pb-1 pt-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-500">
-                    Your businesses
-                  </p>
-                )}
-                {businesses.map((business) => {
-                  const selected = business.id === activeBusinessId;
-                  return (
-                    <Link
-                      key={business.id}
-                      href={getBusinessRoute(business.id, 'overview')}
-                      onClick={() => {
-                        prepareBusinessSelection(business.id);
-                        setMobileNavOpen(false);
-                      }}
-                      aria-current={selected ? 'page' : undefined}
-                      title={collapsed && !isMobile ? business.name : undefined}
-                      className={`accounting-focus flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[12px] transition-colors ${selected ? 'bg-emerald-500/15 font-semibold text-emerald-300' : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'}`}
+  const renderNavSection = (
+    heading: string,
+    items: {
+      id: string;
+      label: string;
+      icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+      badge?: string | number | null;
+      badgeColor?: string;
+      isLive?: boolean;
+    }[],
+    isMobile: boolean
+  ) => (
+    <div className="mb-4">
+      {(!collapsed || isMobile) && (
+        <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 font-mono">
+          {heading}
+        </p>
+      )}
+      <nav aria-label={heading} className="space-y-0.5">
+        {items.map(({ id, label, icon: Icon, badge, badgeColor, isLive }) => {
+          const selected = activeSection === id;
+          const targetBusinessId = isPortfolioView ? 'unilever-distribution' : activeBusinessId;
+          return (
+            <Link
+              key={id}
+              href={getBusinessRoute(targetBusinessId, id)}
+              scroll={false}
+              onClick={() => {
+                prepareSectionNavigation(id);
+                setMobileNavOpen(false);
+              }}
+              aria-current={selected ? 'page' : undefined}
+              title={collapsed && !isMobile ? label : undefined}
+              className={`accounting-focus group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-medium transition-all ${
+                selected
+                  ? 'bg-emerald-50/90 font-semibold text-emerald-900 border border-emerald-200/80 shadow-2xs'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <Icon
+                size={16}
+                strokeWidth={selected ? 2.2 : 1.8}
+                className={`shrink-0 transition-colors ${selected ? 'text-emerald-700' : 'text-slate-500 group-hover:text-slate-800'}`}
+              />
+              {(!collapsed || isMobile) && (
+                <>
+                  <span className="flex-1 truncate">{label}</span>
+                  {isLive && (
+                    <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-bold font-mono text-emerald-700 border border-emerald-500/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      LIVE
+                    </span>
+                  )}
+                  {badge !== undefined && badge !== null && (
+                    <span
+                      className={`ml-auto rounded-md px-1.5 py-0.5 text-[10px] tabular-nums font-bold ${
+                        badgeColor ?? 'bg-slate-100 border border-slate-200 text-slate-700'
+                      }`}
                     >
-                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${selected ? 'bg-emerald-300' : 'bg-slate-500'}`} />
-                      <span className="min-w-0 flex-1 truncate">{business.name}</span>
-                      {selected && (!collapsed || isMobile) && <span className="text-[9px] font-medium text-emerald-200">OPEN</span>}
-                    </Link>
-                  );
-                })}
-                {!isPortfolioView && (
-                  <>
-                    {(!collapsed || isMobile) && (
-                      <p className="px-2.5 pb-1 pt-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-500">
-                        Current business
-                      </p>
-                    )}
-                    {[
-                      { id: 'overview', label: 'Overview', icon: LayoutDashboard, selected: activeSection === 'overview' },
-                      { id: 'war-room', label: 'War Room', icon: Monitor, selected: activeSection === 'war-room' },
-                      { id: 'business-performance', label: 'Sales & operations', icon: Activity, selected: activeSection === 'business-performance' },
-                      { id: 'related-businesses', label: 'Connected businesses', icon: GitBranch, selected: activeSection === 'related-businesses' },
-                    ].map(({ id, label, icon: Icon, selected }) => (
+                      {badge}
+                    </span>
+                  )}
+                </>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
+  );
+
+  const renderSidebar = (isMobile = false) => {
+    const isCollapsed = collapsed && !isMobile;
+    const currentBusinessName = isPortfolioView ? 'Portfolio overview' : (activeBusiness?.name ?? 'Business workspace');
+    const currentBusinessInitial = isPortfolioView ? 'P' : (activeBusiness?.name.charAt(0) ?? 'B');
+
+    return (
+      <aside className={`accounting-sidebar flex h-full flex-col overflow-y-auto bg-white text-slate-800 border-r border-[#e2e8f0] ${isCollapsed ? 'w-[76px]' : 'w-[252px]'} ${isMobile ? 'w-[280px]' : ''} transition-[width] duration-200`}>
+        {/* Top Brand Logo */}
+        <div className="flex h-[76px] items-center gap-3 border-b border-[#e2e8f0] px-5">
+          <Link
+            href="/"
+            aria-label="distroMesh home"
+            title="Go to distroMesh home"
+            onClick={() => setMobileNavOpen(false)}
+            className="accounting-focus flex min-w-0 flex-1 items-center gap-3 rounded-lg"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-950/20">
+              <Building2 size={19} strokeWidth={2} />
+            </span>
+            {!isCollapsed && (
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold tracking-wide text-slate-900">distroMesh</span>
+                <span className="mt-0.5 block text-[10px] font-medium tracking-wide text-emerald-700">Executive Workspace</span>
+              </span>
+            )}
+          </Link>
+          {isMobile && (
+            <button onClick={() => setMobileNavOpen(false)} aria-label="Close navigation" className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">
+              <X size={18} />
+            </button>
+          )}
+        </div>
+
+        {/* Navigation Body */}
+        <div className="flex-1 px-3 pt-4 space-y-4">
+          {/* Active Scope / Workspace Switcher Card */}
+          {isCollapsed ? (
+            <Link
+              href="/businesses"
+              scroll={false}
+              onClick={() => { prepareBusinessSelection('all'); setMobileNavOpen(false); }}
+              title={`Switch Business: ${currentBusinessName}`}
+              className="flex h-10 w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+            >
+              <BriefcaseBusiness size={17} className="text-emerald-700" />
+            </Link>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setBusinessNavExpanded((prev) => !prev)}
+                aria-expanded={businessNavExpanded}
+                aria-label="Toggle business selector"
+                className="w-full text-left rounded-xl border border-slate-200/90 bg-slate-50/80 p-2.5 shadow-2xs hover:bg-slate-100/80 transition"
+              >
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
+                    {isPortfolioView ? 'Scope' : 'Active Business'}
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 flex items-center gap-0.5">
+                    {businessNavExpanded ? 'Close' : 'Switch'} <ChevronDown size={11} className={`transition-transform duration-200 ${businessNavExpanded ? 'rotate-180' : ''}`} />
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold font-mono border ${
+                    isPortfolioView 
+                      ? 'bg-purple-100 text-purple-800 border-purple-200' 
+                      : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                  }`}>
+                    {currentBusinessInitial}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold text-slate-900 leading-tight">
+                      {currentBusinessName}
+                    </p>
+                    <p className="truncate text-[10px] text-slate-500 mt-0.5">
+                      {isPortfolioView ? 'Cross-business portfolio' : (activeBusiness?.industry ?? 'Distribution')}
+                    </p>
+                  </div>
+                </div>
+              </button>
+              {businessNavExpanded && (
+                <div className="mt-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg space-y-0.5 animate-in fade-in duration-150">
                   <Link
-                    key={id}
-                    href={getBusinessRoute(activeBusinessId, id)}
+                    href="/businesses"
+                    scroll={false}
                     onClick={() => {
+                      setBusinessNavExpanded(false);
+                      prepareBusinessSelection('all');
                       setMobileNavOpen(false);
-                      prepareSectionNavigation(id);
                     }}
-                    aria-current={selected ? 'page' : undefined}
-                    className={`accounting-focus flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[12px] transition-colors ${selected ? 'bg-emerald-500/15 font-semibold text-emerald-300' : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'}`}
+                    className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] transition ${
+                      isPortfolioView ? 'bg-purple-50 font-bold text-purple-900' : 'font-semibold text-emerald-800 hover:bg-emerald-50'
+                    }`}
                   >
-                    <Icon size={15} strokeWidth={1.8} className="shrink-0" /><span>{label}</span>
-                    {id === 'related-businesses' && activeRelatedBusinesses.length > 0 && <span className="ml-auto rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] tabular-nums">{activeRelatedBusinesses.length}</span>}
+                    <BriefcaseBusiness size={14} className={isPortfolioView ? 'text-purple-700' : 'text-emerald-600'} />
+                    <span>All businesses portfolio ({businesses.length})</span>
                   </Link>
-                    ))}
-                  </>
-                )}
+                  <div className="my-1 border-t border-slate-100" />
+                  {businesses.map((business) => {
+                    const selected = business.id === activeBusinessId;
+                    return (
+                      <Link
+                        key={business.id}
+                        href={getBusinessRoute(business.id, 'overview')}
+                        scroll={false}
+                        onClick={() => {
+                          setBusinessNavExpanded(false);
+                          prepareBusinessSelection(business.id);
+                          setMobileNavOpen(false);
+                        }}
+                        className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] transition ${
+                          selected ? 'bg-emerald-50 font-bold text-emerald-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        }`}
+                      >
+                        <span className={`h-1.5 w-1.5 rounded-full ${selected ? 'bg-emerald-600' : 'bg-slate-300'}`} />
+                        <span className="truncate flex-1">{business.name}</span>
+                        {selected && <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100/70 px-1 py-0.2 rounded font-mono">ACTIVE</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mode 1: Portfolio View Specific Navigation */}
+          {isPortfolioView ? (
+            <div className="space-y-3">
+              {!isCollapsed && (
+                <p className="px-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 font-mono">
+                  Connected Businesses
+                </p>
+              )}
+              <div className="space-y-1">
+                {businesses.map((business) => (
+                  <Link
+                    key={business.id}
+                    href={getBusinessRoute(business.id, 'overview')}
+                    scroll={false}
+                    onClick={() => {
+                      prepareBusinessSelection(business.id);
+                      setMobileNavOpen(false);
+                    }}
+                    title={isCollapsed ? business.name : undefined}
+                    className="accounting-focus group flex min-h-10 w-full items-center gap-2.5 rounded-xl px-2.5 text-left text-[12px] text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                  >
+                    <Building2 size={15} className="text-slate-400 group-hover:text-emerald-600 shrink-0" />
+                    {!isCollapsed && (
+                      <>
+                        <span className="min-w-0 flex-1 truncate font-medium">{business.name}</span>
+                        <ChevronRight size={13} className="text-slate-400 group-hover:text-slate-700 shrink-0" />
+                      </>
+                    )}
+                  </Link>
+                ))}
               </div>
             </div>
-          </div>
-        </nav>
+          ) : (
+            /* Mode 2: Single Business Workspace Navigation (3 Organised Clusters) */
+            <>
+              {/* Cluster 1: Command & Operations */}
+              {renderNavSection('Command & Ops', [
+                { id: 'war-room', label: 'War Room', icon: Monitor, isLive: true },
+                { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+                { id: 'business-performance', label: 'Sales & operations', icon: Activity },
+              ], isMobile)}
 
-        {!isPortfolioView && (
-          <>
-            {(!collapsed || isMobile) && <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Daily work insights</p>}
-            <nav aria-label="Daily work and insights navigation" className="space-y-1">
-              {renderSidebarNavItems(dailyWorkItems, isMobile)}
-            </nav>
-          </>
-        )}
-        {!isPortfolioView && (
-          <>
-            {(!collapsed || isMobile) && <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Insights &amp; help</p>}
-            <nav aria-label="Insights and help navigation" className="space-y-1">
-              {renderSidebarNavItems(insightItems, isMobile)}
-            </nav>
-          </>
-        )}
-        {!isPortfolioView && (!collapsed || isMobile) && (
-          <section aria-label="Business focus" className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-emerald-200">Today&apos;s focus</p>
-            <p className="mt-2 text-[12px] font-semibold text-slate-100">{businessFocus.title}</p>
-            <p className="mt-1 text-[10px] leading-relaxed text-slate-400">{businessFocus.detail}</p>
-            <Link
-              href={getBusinessRoute(activeBusinessId, businessFocus.section)}
-              onClick={() => {
-                prepareSectionNavigation(businessFocus.section);
-                setMobileNavOpen(false);
-              }}
-              className="accounting-focus mt-2 inline-flex items-center gap-1 rounded-md py-1 text-[10px] font-semibold text-emerald-300 hover:text-emerald-200"
-            >
-              Review this <ArrowRight size={11} />
-            </Link>
-            <Link
-              href={getBusinessRoute(activeBusinessId, 'ai-assistant')}
-              onClick={() => {
-                prepareSectionNavigation('ai-assistant');
-                setMobileNavOpen(false);
-              }}
-              className="accounting-focus ml-3 inline-flex items-center gap-1 rounded-md py-1 text-[10px] font-medium text-slate-300 hover:text-white"
-            >
-              Get help <ArrowRight size={11} />
-            </Link>
-          </section>
-        )}
-      </div>
+              {/* Cluster 2: Financial Operations */}
+              {renderNavSection('Financial Operations', [
+                { id: 'general-ledger', label: 'Transactions', icon: BookOpen },
+                { id: 'invoicing', label: 'Invoices', icon: FileText },
+                { id: 'expenses', label: 'Expenses', icon: CreditCard },
+                { id: 'reports', label: 'Cash flow', icon: Wallet },
+              ], isMobile)}
 
-      <div className="mt-auto px-3 pb-4">
-        {(!collapsed || isMobile) && (
-          <div className="mb-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5">
-            <div className="flex items-center gap-2 text-[11px] font-medium text-slate-300">
-              <ShieldCheck size={15} className="text-emerald-400" />
-              Demo workspace
+              {/* Cluster 3: Governance & Intelligence */}
+              {renderNavSection('Governance & Network', [
+                {
+                  id: 'related-businesses',
+                  label: 'Connected businesses',
+                  icon: GitBranch,
+                  badge: activeRelatedBusinesses.length > 0 ? activeRelatedBusinesses.length : null,
+                },
+                {
+                  id: 'bank-reconciliation',
+                  label: 'Alerts & tasks',
+                  icon: FileCheck2,
+                  badge: activeAlerts.length > 0 ? activeAlerts.length : null,
+                  badgeColor: activeAlerts.length > 0 ? 'bg-rose-100 border border-rose-200 text-rose-700' : undefined,
+                },
+                { id: 'ai-assistant', label: 'Help & Copilot', icon: Sparkles },
+              ], isMobile)}
+            </>
+          )}
+
+          {/* Today's Focus Card (When not in portfolio and not collapsed) */}
+          {!isPortfolioView && !isCollapsed && (
+            <section aria-label="Business focus" className="rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-800 font-mono">Today&apos;s Focus</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
+              <p className="mt-1.5 text-[11px] font-bold text-slate-900 leading-tight">{businessFocus.title}</p>
+              <p className="mt-1 text-[10px] leading-relaxed text-slate-600 line-clamp-2">{businessFocus.detail}</p>
+              <div className="mt-2.5 flex items-center gap-3 pt-1 border-t border-emerald-200/50">
+                <Link
+                  href={getBusinessRoute(activeBusinessId, businessFocus.section)}
+                  scroll={false}
+                  onClick={() => {
+                    prepareSectionNavigation(businessFocus.section);
+                    setMobileNavOpen(false);
+                  }}
+                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 hover:text-emerald-950"
+                >
+                  Review <ArrowRight size={10} />
+                </Link>
+                <Link
+                  href={getBusinessRoute(activeBusinessId, 'ai-assistant')}
+                  scroll={false}
+                  onClick={() => {
+                    prepareSectionNavigation('ai-assistant');
+                    setMobileNavOpen(false);
+                  }}
+                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 hover:text-slate-800"
+                >
+                  Ask AI <ArrowRight size={10} />
+                </Link>
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Bottom Footer Actions */}
+        <div className="mt-auto px-3 pb-4 pt-2 border-t border-slate-100">
+          {!isCollapsed && (
+            <div className="mb-2 px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-700">
+                <ShieldCheck size={13} className="text-emerald-600" />
+                <span>Demo Workspace</span>
+              </div>
+              <p className="mt-0.5 text-[9px] text-slate-500 leading-tight">Local illustrative ledger data</p>
             </div>
-            <p className="mt-2 text-[11px] leading-relaxed text-slate-500">Example figures only. Not connected to a bank or accounting system.</p>
-          </div>
-        )}
-        <button
-          onClick={() => openDrawer('SIMULATION')}
-          title={collapsed && !isMobile ? 'Demo controls' : undefined}
-          className="accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
-        >
-          <Settings2 size={18} className="shrink-0" />
-          {(!collapsed || isMobile) && <span>Demo controls</span>}
-        </button>
-      </div>
-    </aside>
-  );
+          )}
+          <button
+            onClick={() => openDrawer('SIMULATION')}
+            title={isCollapsed ? 'Simulation & Controls' : undefined}
+            className="accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          >
+            <Settings2 size={16} className="shrink-0 text-slate-500" />
+            {!isCollapsed && <span>Simulation controls</span>}
+          </button>
+        </div>
+      </aside>
+    );
+  };
 
   const renderTransactionRows = (rows: LedgerRow[]) => rows.map((row) => (
     <tr
@@ -1038,14 +1153,14 @@ export const ExecutiveShell: React.FC = () => {
   }
 
   return (
-    <div className="accounting-app min-h-screen text-[#1c2924]">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900">
       <div className="min-h-screen">
-        <div className={`accounting-sidebar fixed inset-y-0 left-0 z-40 hidden md:block ${collapsed ? 'w-[76px]' : 'w-[252px]'}`}>
+        <div className={`accounting-sidebar fixed inset-y-0 left-0 z-40 hidden md:block border-r border-[#e2e8f0] bg-white ${collapsed ? 'w-[76px]' : 'w-[252px]'}`}>
           {renderSidebar()}
           <button
             onClick={() => setCollapsed((value) => !value)}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="accounting-focus absolute left-[238px] top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#20302d] text-slate-300 shadow-lg transition-all hover:bg-[#30433e] md:flex"
+            className="accounting-focus absolute left-[238px] top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition-all hover:bg-slate-50 hover:text-slate-900 md:flex"
             style={{ left: collapsed ? 62 : 238 }}
           >
             {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
@@ -1054,18 +1169,18 @@ export const ExecutiveShell: React.FC = () => {
 
         {mobileNavOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <button className="absolute inset-0 bg-[#0c1714]/55" onClick={() => setMobileNavOpen(false)} aria-label="Close navigation overlay" />
+            <button className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs" onClick={() => setMobileNavOpen(false)} aria-label="Close navigation overlay" />
             <div className="absolute inset-y-0 left-0 shadow-2xl">{renderSidebar(true)}</div>
           </div>
         )}
 
         <div className={`min-w-0 transition-[margin] duration-200 ${collapsed ? 'md:ml-[76px]' : 'md:ml-[252px]'}`}>
-          <header className="sticky top-0 z-30 border-b border-[#e6ece9]/90 bg-white/90 backdrop-blur-xl">
+          <header className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white/95 text-slate-800 backdrop-blur-xl shadow-xs">
             <div className="flex h-[72px] items-center gap-3 px-4 sm:px-6 lg:px-8">
               <button
                 onClick={() => setMobileNavOpen(true)}
                 aria-label="Open navigation"
-                className="accounting-focus rounded-lg p-2 text-[#53615b] hover:bg-[#f0f4f2] md:hidden"
+                className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 md:hidden"
               >
                 <Menu size={20} />
               </button>
@@ -1075,12 +1190,12 @@ export const ExecutiveShell: React.FC = () => {
                   window.setTimeout(() => mobileSearchRef.current?.focus(), 0);
                 }}
                 aria-label="Search the ledger"
-                className="accounting-focus rounded-lg p-2 text-[#53615b] hover:bg-[#f0f4f2] sm:hidden"
+                className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 sm:hidden"
               >
                 <Search size={18} />
               </button>
               <div className="relative hidden min-w-0 flex-1 sm:block sm:max-w-[440px]">
-                <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#84908b]" />
+                <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   ref={searchRef}
                   value={globalSearch}
@@ -1089,11 +1204,11 @@ export const ExecutiveShell: React.FC = () => {
                     setTransactionSearch(event.target.value);
                   }}
                   onFocus={openSearchSection}
-                  placeholder="Search transactions, invoices..."
+                  placeholder="Search transactions, invoices, accounts..."
                   aria-label="Search the ledger"
-                  className="accounting-focus h-10 w-full rounded-xl border border-[#e8eeeb] bg-[#f8faf9] pl-10 pr-16 text-[13px] text-[#24322c] placeholder:text-[#9aa59f]"
+                  className="accounting-focus h-10 w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] pl-10 pr-16 text-[13px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
                 />
-                <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-[#e4eae7] bg-white px-1.5 py-1 text-[10px] text-[#8a9691]">
+                <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-[10px] text-slate-500">
                   <Command size={11} /> K
                 </span>
               </div>
@@ -1106,51 +1221,59 @@ export const ExecutiveShell: React.FC = () => {
                   })}
                   aria-expanded={companyMenuOpen}
                   aria-label="Choose a business"
-                  className="accounting-focus flex items-center gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-[#f4f7f5] sm:px-3"
+                  className="accounting-focus flex items-center gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-slate-100 text-slate-800 sm:px-3"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e8f3ed] text-[#087e63]"><Building2 size={16} /></span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200"><Building2 size={16} /></span>
                   <span className="hidden min-w-0 sm:block">
-                    <span className="block max-w-[180px] truncate text-[12px] font-semibold text-[#26342e]">{isPortfolioView ? 'All businesses' : activeBusiness?.name ?? 'Business workspace'}</span>
-                    <span className="block text-[10px] text-[#8a9691]">{isPortfolioView ? `${businesses.length} in portfolio` : activeBusiness?.location ?? 'Select a business'}</span>
+                    <span className="block max-w-[180px] truncate text-[12px] font-semibold text-slate-900">{isPortfolioView ? 'All businesses' : activeBusiness?.name ?? 'Business workspace'}</span>
+                    <span className="block text-[10px] text-slate-500">{isPortfolioView ? `${businesses.length} in portfolio` : activeBusiness?.location ?? 'Select a business'}</span>
                   </span>
-                  <ChevronDown size={14} className="hidden text-[#87938d] sm:block" />
+                  <ChevronDown size={14} className="hidden text-slate-400 sm:block" />
                 </button>
                 {companyMenuOpen && (
-                  <div className="absolute right-0 top-12 z-40 w-[min(320px,calc(100vw-24px))] rounded-2xl border border-[#e5ebe8] bg-white p-2 shadow-xl">
-                    <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-[#91a099]">Portfolio</p>
-                    <button onClick={() => selectBusiness('all')} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold transition ${isPortfolioView ? 'bg-[#f1f7f4] text-[#2c3933]' : 'text-[#637169] hover:bg-[#f7f9f8]'}`}>
-                      <BriefcaseBusiness size={15} className="text-[#087e63]" /> All businesses
-                      {isPortfolioView && <Check size={14} className="ml-auto text-[#087e63]" />}
-                    </button>
-                    <p className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-[#91a099]">Open a business</p>
-                    <div className="relative px-2 pb-2">
-                      <Search size={14} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-[#9aa59f]" />
-                      <input
-                        value={businessSearch}
-                        onChange={(event) => setBusinessSearch(event.target.value)}
-                        aria-label="Search businesses"
-                        placeholder="Find a business"
-                        className="accounting-focus h-9 w-full rounded-lg border border-[#e8eeeb] bg-[#f8faf9] pl-8 pr-3 text-[11px] text-[#34423b] placeholder:text-[#9aa59f]"
-                      />
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Close business selection menu"
+                      className="fixed inset-0 z-40 bg-transparent cursor-default"
+                      onClick={() => setCompanyMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 top-12 z-50 w-[min(320px,calc(100vw-24px))] rounded-2xl border border-[#e2e8f0] bg-white p-2 shadow-xl text-slate-800">
+                      <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Portfolio Cockpit</p>
+                      <button onClick={() => { setCompanyMenuOpen(false); selectBusiness('all'); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold transition ${isPortfolioView ? 'bg-emerald-50 text-emerald-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
+                        <BriefcaseBusiness size={15} className="text-emerald-700" /> All businesses
+                        {isPortfolioView && <Check size={14} className="ml-auto text-emerald-700" />}
+                      </button>
+                      <p className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Open a business</p>
+                      <div className="relative px-2 pb-2">
+                        <Search size={14} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          value={businessSearch}
+                          onChange={(event) => setBusinessSearch(event.target.value)}
+                          aria-label="Search businesses"
+                          placeholder="Find a business"
+                          className="accounting-focus h-9 w-full rounded-lg border border-slate-200 bg-[#f8fafc] pl-8 pr-3 text-[11px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-600"
+                        />
+                      </div>
+                      <div className="max-h-56 space-y-1 overflow-y-auto">
+                        {businesses
+                          .filter((business) => `${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase()))
+                          .map((business) => (
+                          <button key={business.id} onClick={() => { setCompanyMenuOpen(false); selectBusiness(business.id); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] transition ${activeBusinessId === business.id ? 'bg-emerald-50 font-semibold text-emerald-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
+                            <Building2 size={15} className="shrink-0 text-slate-500" />
+                            <span className="min-w-0 flex-1 truncate">{business.name}</span>
+                            {activeBusinessId === business.id && <Check size={14} className="shrink-0 text-emerald-700" />}
+                          </button>
+                        ))}
+                        {businesses.every((business) => !`${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase())) && (
+                          <p className="px-3 py-3 text-[10px] text-slate-500">No matching businesses.</p>
+                        )}
+                      </div>
+                      <button onClick={() => { setCompanyMenuOpen(false); setBusinessModalMode('standalone'); setBusinessOnboardingOpen(true); }} className="mt-2 flex w-full items-center gap-2 rounded-xl border-t border-slate-200 px-3 py-3 text-left text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50">
+                        <Plus size={15} /> Add a business
+                      </button>
                     </div>
-                    <div className="max-h-56 space-y-1 overflow-y-auto">
-                      {businesses
-                        .filter((business) => `${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase()))
-                        .map((business) => (
-                        <button key={business.id} onClick={() => selectBusiness(business.id)} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] transition ${activeBusinessId === business.id ? 'bg-[#f1f7f4] font-semibold text-[#2c3933]' : 'text-[#637169] hover:bg-[#f7f9f8]'}`}>
-                          <Building2 size={15} className="shrink-0 text-[#84918a]" />
-                          <span className="min-w-0 flex-1 truncate">{business.name}</span>
-                          {activeBusinessId === business.id && <Check size={14} className="shrink-0 text-[#087e63]" />}
-                        </button>
-                      ))}
-                      {businesses.every((business) => !`${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase())) && (
-                        <p className="px-3 py-3 text-[10px] text-[#89958f]">No matching businesses.</p>
-                      )}
-                    </div>
-                    <button onClick={() => { setCompanyMenuOpen(false); setBusinessModalMode('standalone'); setBusinessOnboardingOpen(true); }} className="mt-2 flex w-full items-center gap-2 rounded-xl border-t border-[#edf1ef] px-3 py-3 text-left text-[11px] font-semibold text-[#087e63] hover:bg-[#f7faf8]">
-                      <Plus size={15} /> Add a business
-                    </button>
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -1159,25 +1282,33 @@ export const ExecutiveShell: React.FC = () => {
                   onClick={() => setNotificationsOpen((value) => !value)}
                   aria-label={`Notifications, ${activeAlerts.length} active`}
                   aria-expanded={notificationsOpen}
-                  className="accounting-focus relative rounded-xl p-2.5 text-[#627069] transition-colors hover:bg-[#f1f5f3] hover:text-[#25342d]"
+                  className="accounting-focus relative rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
                 >
                   <Bell size={18} />
-                  {activeAlerts.length > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-[#cb5961]" />}
+                  {activeAlerts.length > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-rose-500" />}
                 </button>
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-12 z-40 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-[#e5ebe8] bg-white p-3 shadow-xl">
-                    <div className="flex items-center justify-between px-2 pb-2">
-                      <p className="text-[13px] font-semibold text-[#25342d]">Notifications</p>
-                      <span className="rounded-full bg-[#fbeded] px-2 py-0.5 text-[10px] font-semibold text-[#a74850]">{activeAlerts.length} open</span>
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Close notifications menu"
+                      className="fixed inset-0 z-40 bg-transparent cursor-default"
+                      onClick={() => setNotificationsOpen(false)}
+                    />
+                    <div className="absolute right-0 top-12 z-50 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-[#e2e8f0] bg-white p-3 shadow-xl text-slate-800">
+                      <div className="flex items-center justify-between px-2 pb-2 border-b border-slate-200">
+                        <p className="text-[13px] font-bold text-slate-900 uppercase tracking-wider font-mono">Notifications</p>
+                        <span className="rounded bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-700">{activeAlerts.length} open</span>
+                      </div>
+                      {activeAlerts.length === 0 ? <p className="p-3 text-[12px] text-slate-500">You’re all caught up.</p> : activeAlerts.slice(0, 4).map((alert) => (
+                        <button key={alert.id} onClick={() => { setNotificationsOpen(false); getAlertAction(alert); }} className="flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left hover:bg-slate-50 transition">
+                          <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-[#ef4444]' : alert.severity === 'WARNING' ? 'bg-[#f59e0b]' : 'bg-[#3b82f6]'}`} />
+                          <span className="min-w-0"><span className="block text-[12px] font-bold text-slate-900">{alert.title}</span><span className="mt-0.5 block text-[10px] text-slate-500">{alert.timestamp} · Open details</span></span>
+                          <ChevronRight size={15} className="mt-1 shrink-0 text-slate-400" />
+                        </button>
+                      ))}
                     </div>
-                    {activeAlerts.length === 0 ? <p className="p-3 text-[12px] text-[#77847e]">You’re all caught up.</p> : activeAlerts.slice(0, 4).map((alert) => (
-                      <button key={alert.id} onClick={() => getAlertAction(alert)} className="flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left hover:bg-[#f7f9f8]">
-                        <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-[#c84d57]' : alert.severity === 'WARNING' ? 'bg-[#d59a2d]' : 'bg-[#4d8bc1]'}`} />
-                        <span className="min-w-0"><span className="block text-[12px] font-medium text-[#33413b]">{alert.title}</span><span className="mt-1 block text-[10px] text-[#89948f]">{alert.timestamp} · Open details</span></span>
-                        <ChevronRight size={15} className="mt-1 shrink-0 text-[#a3ada8]" />
-                      </button>
-                    ))}
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -1186,18 +1317,26 @@ export const ExecutiveShell: React.FC = () => {
                   onClick={() => setProfileMenuOpen((value) => !value)}
                   aria-label="Open user profile menu"
                   aria-expanded={profileMenuOpen}
-                  className="accounting-focus flex items-center gap-2 rounded-xl p-1.5 hover:bg-[#f1f5f3]"
+                  className="accounting-focus flex items-center gap-2 rounded-xl p-1.5 hover:bg-slate-100"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#dfece5] text-[11px] font-bold text-[#2b7259]">AR</span>
-                  <span className="hidden text-left lg:block"><span className="block text-[11px] font-semibold text-[#34413b]">Admin</span><span className="block text-[10px] text-[#8a9691]">Owner</span></span>
-                  <ChevronDown size={13} className="hidden text-[#87938d] lg:block" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 border border-emerald-300 text-[11px] font-bold text-emerald-800 font-mono">AR</span>
+                  <span className="hidden text-left lg:block"><span className="block text-[11px] font-bold text-slate-900">Owner</span><span className="block text-[10px] text-slate-500">distroMesh HQ</span></span>
+                  <ChevronDown size={13} className="hidden text-slate-400 lg:block" />
                 </button>
                 {profileMenuOpen && (
-                  <div className="absolute right-0 top-12 z-40 w-48 rounded-2xl border border-[#e5ebe8] bg-white p-2 shadow-xl">
-                    <p className="px-3 py-2 text-[12px] font-semibold text-[#33413b]">Account settings</p>
-                    <button onClick={() => { setProfileMenuOpen(false); showToast('Profile settings are not configured in this demo'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-[#68746e] hover:bg-[#f5f8f6]">Profile & preferences</button>
-                    <button onClick={() => { setProfileMenuOpen(false); showToast('You are viewing the local demo workspace'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-[#68746e] hover:bg-[#f5f8f6]">Workspace security</button>
-                  </div>
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Close profile menu"
+                      className="fixed inset-0 z-40 bg-transparent cursor-default"
+                      onClick={() => setProfileMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 top-12 z-50 w-48 rounded-2xl border border-[#e2e8f0] bg-white p-2 shadow-xl text-slate-800">
+                      <p className="px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider font-mono">Account settings</p>
+                      <button onClick={() => { setProfileMenuOpen(false); showToast('Profile settings are not configured in this demo'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-100 hover:text-slate-900">Profile &amp; preferences</button>
+                      <button onClick={() => { setProfileMenuOpen(false); showToast('You are viewing the local demo workspace'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-100 hover:text-slate-900">Workspace security</button>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -1223,7 +1362,7 @@ export const ExecutiveShell: React.FC = () => {
             )}
           </header>
 
-          <main id="overview" className="mx-auto w-full max-w-[1600px] px-4 pb-12 pt-7 sm:px-6 lg:px-8">
+          <main id="overview" className={activeSection === 'war-room' ? "w-full pb-12" : "mx-auto w-full max-w-[1600px] px-4 pb-12 pt-7 sm:px-6 lg:px-8"}>
             {isPortfolioView ? (
               <BusinessPortfolioOverview
                 businesses={businesses}

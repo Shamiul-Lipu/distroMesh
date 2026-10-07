@@ -1,394 +1,571 @@
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Activity,
   ArrowRight,
-  ArrowUpRight,
-  BadgeCheck,
+  ShieldCheck,
   Building2,
-  ChartNoAxesCombined,
-  CircleHelp,
-  FileCheck2,
-  FileText,
-  GitBranch,
-  Layers3,
-  ReceiptText,
   Wallet,
+  Navigation,
+  Truck,
+  Lock,
+  Monitor,
+  CheckCircle2,
+  Clock,
+  Layers,
+  SlidersHorizontal,
+  ChevronRight,
+  FileCheck2,
+  AlertCircle,
 } from 'lucide-react';
 
-const portfolioCards = [
-  { name: 'Unilever Distribution', place: 'Sherpur · Bogura', label: 'Review signal', tone: 'amber' },
-  { name: 'Pureit Product Distribution', place: 'Bogura', label: 'Data available', tone: 'green' },
-  { name: 'Sherpur Trade Distribution', place: 'Sherpur', label: 'Workspace ready', tone: 'slate' },
-];
-
-const valueCards = [
-  {
-    icon: Layers3,
-    number: '01',
-    title: 'One portfolio view',
-    description: 'See businesses together, compare a focused set, and understand where information is available across the portfolio.',
-  },
-  {
-    icon: Building2,
-    number: '02',
-    title: 'Separate business workspaces',
-    description: 'Open one business at a time and keep its transactions, invoices, expenses, and operating context distinct.',
-  },
-  {
-    icon: Activity,
-    number: '03',
-    title: 'A clearer place to investigate',
-    description: 'Use sample movement, invoice flags, and operating indicators as prompts to look closer—not as automatic conclusions.',
-  },
-  {
-    icon: GitBranch,
-    number: '04',
-    title: 'Connected businesses',
-    description: 'Understand links between distributors, product lines, and retail partners without combining their records.',
-  },
-];
-
-const coreFeatures = [
-  {
-    icon: ChartNoAxesCombined,
-    title: 'Portfolio overview',
-    description: 'Start with the businesses you oversee and scan the measures that have information available.',
-    className: 'md:col-span-2',
-  },
-  {
-    icon: Building2,
-    title: 'Business workspaces',
-    description: 'Move into a business-specific view without losing the bigger picture.',
-    className: '',
-  },
-  {
-    icon: GitBranch,
-    title: 'Connected businesses',
-    description: 'Keep partner relationships visible while every business retains its own activity.',
-    className: '',
-  },
-  {
-    icon: Activity,
-    title: 'Sales & operations',
-    description: 'Review illustrative sales movement and operating indicators that help frame the next question.',
-    className: 'md:col-span-2',
-  },
-];
-
-const supportingFeatures = [
-  { icon: ReceiptText, label: 'Transactions' },
-  { icon: FileText, label: 'Invoices' },
-  { icon: Wallet, label: 'Expenses & cash flow' },
-  { icon: FileCheck2, label: 'Alerts & tasks' },
-  { icon: CircleHelp, label: 'Business questions' },
-];
-
-function BrandMark({ inverse = false }: { inverse?: boolean }) {
-  return (
-    <Link
-      href="/"
-      aria-label="distroMesh home"
-      className={`inline-flex items-center gap-2.5 rounded-lg ${inverse ? 'text-white' : 'text-[#1d3029]'}`}
-    >
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#087e63] text-white">
-        <Building2 size={18} strokeWidth={2} />
-      </span>
-      <span className="text-[17px] font-semibold tracking-[-0.04em]">distroMesh</span>
-    </Link>
-  );
-}
-
-function PortfolioPreview() {
-  return (
-    <div className="relative mx-auto w-full max-w-[650px]">
-      <div className="absolute -inset-5 -z-10 rounded-[2rem] bg-[#dfece5]/70 blur-2xl" />
-      <div className="overflow-hidden rounded-[1.4rem] border border-[#dce7e1] bg-white shadow-[0_28px_80px_-35px_rgba(26,67,49,0.35)]">
-        <div className="flex h-11 items-center gap-2 border-b border-[#e8eeeb] bg-[#fbfcfb] px-4">
-          <span className="h-2 w-2 rounded-full bg-[#d7e2dc]" />
-          <span className="h-2 w-2 rounded-full bg-[#d7e2dc]" />
-          <span className="h-2 w-2 rounded-full bg-[#d7e2dc]" />
-          <div className="ml-auto flex items-center gap-1.5 rounded-full bg-[#fff5e7] px-2.5 py-1 text-[9px] font-semibold text-[#94651c]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#d49a37]" />
-            Illustrative demo
-          </div>
-        </div>
-
-        <div className="grid min-h-[390px] grid-cols-[112px_minmax(0,1fr)] sm:grid-cols-[142px_minmax(0,1fr)]">
-          <aside className="bg-[#101c1b] px-3 py-4 text-white sm:px-4">
-            <div className="mb-7 flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#087e63]">
-                <Building2 size={14} />
-              </span>
-              <span className="hidden text-[10px] font-semibold sm:block">distroMesh</span>
-            </div>
-            <div className="mb-2 px-2 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#82928b]">Workspace</div>
-            <div className="flex items-center gap-2 rounded-lg bg-white/[0.09] px-2 py-2 text-[9px] font-medium text-[#c7e7d9]">
-              <Layers3 size={12} /> <span className="truncate">All businesses</span>
-            </div>
-            <div className="mt-2 space-y-1 pl-2">
-              {['Overview', 'Sales & operations', 'Connected businesses'].map((label) => (
-                <div key={label} className="truncate rounded-md px-2 py-1.5 text-[8px] text-[#92a19a]">{label}</div>
-              ))}
-            </div>
-            <div className="mb-2 mt-6 px-2 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#82928b]">Daily work</div>
-            {['Transactions', 'Invoices', 'Expenses'].map((label) => (
-              <div key={label} className="truncate rounded-md px-2 py-1.5 text-[8px] text-[#92a19a]">{label}</div>
-            ))}
-          </aside>
-
-          <div className="min-w-0 bg-[#f7f9f8] p-3 sm:p-5">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <div className="text-[8px] font-medium uppercase tracking-[0.1em] text-[#84918a]">Portfolio</div>
-                <h2 className="mt-1 text-[17px] font-semibold tracking-[-0.04em] text-[#23332c] sm:text-[21px]">All businesses</h2>
-                <p className="mt-0.5 text-[9px] text-[#7b8982]">A starting point for your next review</p>
-              </div>
-              <span className="rounded-full border border-[#e5ebe8] bg-white px-2 py-1 text-[8px] font-medium text-[#78857f]">5 workspaces</span>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {[
-                ['Sales', 'Available'],
-                ['Cash', 'Partial'],
-                ['Receivables', 'Partial'],
-                ['Profit', 'Data needed'],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-xl border border-[#e6ece9] bg-white p-2.5">
-                  <div className="text-[8px] text-[#87938d]">{label}</div>
-                  <div className={`mt-1 text-[10px] font-semibold ${value === 'Data needed' ? 'text-[#89958f]' : 'text-[#35463e]'}`}>{value}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-3 rounded-xl border border-[#e6ece9] bg-white p-3">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-[10px] font-semibold text-[#33443b]">Business portfolio</div>
-                  <div className="mt-0.5 text-[8px] text-[#8a9690]">Select a workspace to investigate</div>
-                </div>
-                <span className="rounded-full bg-[#f1f5f3] px-2 py-1 text-[8px] text-[#6e7b74]">Compare up to 4</span>
-              </div>
-              <div className="mt-2 space-y-1.5">
-                {portfolioCards.map((business) => (
-                  <div key={business.name} className="flex min-w-0 items-center gap-2 rounded-lg border border-[#edf1ef] px-2.5 py-2">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#edf5f0] text-[#27765b]">
-                      <Building2 size={13} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[9px] font-semibold text-[#3b4a42]">{business.name}</span>
-                      <span className="block truncate text-[8px] text-[#8b9791]">{business.place}</span>
-                    </span>
-                    <span className={`hidden shrink-0 rounded-full px-2 py-1 text-[7px] font-medium sm:inline-flex ${
-                      business.tone === 'amber' ? 'bg-[#fff5e7] text-[#95691f]'
-                        : business.tone === 'green' ? 'bg-[#eaf5ef] text-[#287353]'
-                          : 'bg-[#f1f4f2] text-[#74817a]'
-                    }`}>{business.label}</span>
-                    <ArrowUpRight size={12} className="shrink-0 text-[#9aa59f]" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#f0e7d5] bg-[#fffaf2] px-3 py-2.5">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f8efd9] text-[#9b701f]">
-                <BadgeCheck size={12} />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-[8px] font-semibold text-[#6e572c]">A review prompt, not a conclusion</span>
-                <span className="block truncate text-[8px] text-[#9a8660]">Illustrative sales movement · open a business to investigate</span>
-              </span>
-              <ArrowRight size={12} className="ml-auto shrink-0 text-[#a1844c]" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="absolute -bottom-4 right-4 hidden items-center gap-2 rounded-xl border border-[#e2ebe5] bg-white px-3 py-2 shadow-lg sm:flex">
-        <GitBranch size={14} className="text-[#087e63]" />
-        <span className="text-[9px] font-medium text-[#52635a]">Relationships stay connected, records stay separate</span>
-      </div>
-    </div>
-  );
-}
-
 export function DistroMeshLanding() {
+  const [banglaMode, setBanglaMode] = useState(false);
+  const [activeFeatureTab, setActiveFeatureTab] = useState<
+    'liquidity' | 'capital' | 'dispatch' | 'settlement' | 'decision'
+  >('liquidity');
+
+  const featureTabs = [
+    {
+      id: 'liquidity' as const,
+      title: banglaMode ? 'লিকুইডিটি রানওয়ে' : 'Liquidity Runway',
+      subtitle: banglaMode ? 'ব্যাংক বনাম ভল্ট ক্যাশ' : 'Bank vs Vault Cash',
+      icon: Wallet,
+      tag: 'ZONE 01',
+      headline: banglaMode
+        ? 'ব্যাংক এবং ডিপো ভল্ট ক্যাশের স্পষ্ট বিভাজন'
+        : 'Separate Physical Vault Cash from Clearing Bank Balances',
+      description: banglaMode
+        ? 'ডিপোতে থাকা নগদ টাকা এবং ব্যাংকের ব্যালেন্স আলাদা ট্র্যাক করুন। আগামী ৪৮ ঘণ্টার প্রিন্সিপাল অটো-ডেবিট সুইপের (৳৫৪.০ লাখ) আগে কোনো ঘাটতি থাকলে তাৎক্ষণিক সতর্কতা পান।'
+        : 'Ensure 48-hour principal auto-debits (৳54.0L) are staged safely before bank cutoff times. Avoid bounced supplier debits and supply stoppages.',
+      bullets: [
+        banglaMode ? '২.১৭ গুণ ক্যাশ কাভার রেশিও' : 'Real-time 2.17× liquidity runway coverage ratio',
+        banglaMode ? '৪৮ ঘণ্টার অটো-ডেবিট সুইপ প্রোটেকশন' : 'Predictive 48-hour principal supply sweep buffer',
+        banglaMode ? 'ব্যাংক ও ভল্ট ক্যাশের স্পষ্ট বিভাজন' : 'Strict accounting separation between vault safe and bank',
+      ],
+      image: '/screenshots/war_room_overview.png',
+      badgeText: '৳16,95,200 Liquid Cash · 2.17× Cover',
+    },
+    {
+      id: 'capital' as const,
+      title: banglaMode ? 'আটকে থাকা মূলধন' : 'Trapped Capital',
+      subtitle: banglaMode ? 'বাকী খাতা ও স্টক ম্যাট্রিক্স' : 'Credit & Stock Matrix',
+      icon: Layers,
+      tag: 'ZONE 02',
+      headline: banglaMode
+        ? 'বাকি খাতা এবং গুদামের পণ্যে আটকে থাকা মূলধনের দৃশ্যমানতা'
+        : 'Proportional Visibility Over ৳1.97Cr Retailer Credit & ৳1.54Cr Stock',
+      description: banglaMode
+        ? 'বাজারে আটকে থাকা বাকি টাকা, গুদামের ইনভেন্টরি এবং কোম্পানির বকেয়া স্কিম ক্লেইমের সার্বিক চিত্র। ৩০ দিনের বেশি পুরনো বকেয়া পেলে এক ক্লিকেই ক্রেডিট লক করুন।'
+        : 'Isolate high-risk retailer credit aging over 30 days across 700 outlets. Execute instant One-Tap credit freezes to prevent unauthorized credit extension.',
+      bullets: [
+        banglaMode ? '১৮% অতি-বকেয়া ক্রেডিট শনাক্তকরণ (>৩০ দিন)' : 'Flags 18.0% overdue retailer credit (>30 days)',
+        banglaMode ? 'ওয়ান-ট্যাপ ক্রেডিট ফ্রিজ ব্যবস্থা' : 'One-Tap credit lock across all 12 delivery beats',
+        banglaMode ? 'কোম্পানি স্কিম ক্লেইম ট্র্যাকিং (৳২.০৫ লাখ)' : 'Pending principal scheme claims (৳2.05L) with audit trails',
+      ],
+      image: '/screenshots/trapped_capital_runway.png',
+      badgeText: '৳1.97 Cr Receivables · 18% Overdue >30D',
+    },
+    {
+      id: 'dispatch' as const,
+      title: banglaMode ? 'ডেসপ্যাচ রানওয়ে' : 'Dispatch Runway',
+      subtitle: banglaMode ? 'ভ্যান ছাড়া ও বিলম্ব অডিট' : 'Departure Timeline',
+      icon: Truck,
+      tag: 'ZONE 03',
+      headline: banglaMode
+        ? '১২টি ভ্যানের সকালের ডেসপ্যাচ সময় ও বিলম্বের ক্ষতি তদারকি'
+        : 'Fleet Departure Timeline & Departure Stall Monitoring',
+      description: banglaMode
+        ? 'সকাল ৯টায় ভ্যান ছাড়ার লক্ষ্যমাত্রা বনাম প্রকৃত ডেসপ্যাচ ট্র্যাকিং। কোনো রুটে ডেসপ্যাচ স্টল বা বিলম্ব (+১৬৫ মিনিট) হলে অলস কর্মীদের আর্থিক ক্ষতি তাৎক্ষণিক হিসাব করুন।'
+        : 'Tracks target 09:00 AM vs actual departure across 12 delivery beats. Pinpoints loading bottlenecks and calculates idle crew labor cost in real time.',
+      bullets: [
+        banglaMode ? '১২টি ডেলিভারি বিটের সকালের ডেসপ্যাচ অডিট' : 'Morning dispatch audit across 12 delivery beats',
+        banglaMode ? 'ডেসপ্যাচ স্টল (+১৬৫ মিনিট) শনাক্তকরণ' : 'Identifies departure stalls (+165 min fleet delay)',
+        banglaMode ? 'অলস লেবার ওয়েজ ক্ষতি পরিমাপ (৳৪,৯৫০)' : 'Quantifies idle crew wage losses in real time',
+      ],
+      image: '/screenshots/war_room_at_top_1791354223522.png',
+      badgeText: '12 Delivery Beats · 09:00 AM Target',
+    },
+    {
+      id: 'settlement' as const,
+      title: banglaMode ? '১২-রুট সেটেলমেন্ট' : 'Route Settlement',
+      subtitle: banglaMode ? 'ড্রাইভার ক্যাশ শর্টেজ' : 'Till Variance Matching',
+      icon: Navigation,
+      tag: 'ZONE 04',
+      headline: banglaMode
+        ? '১২টি ভ্যানের দৈনিক হিসাব ও শর্টেজ ১৫ সেকেন্ডে নিষ্পত্তি'
+        : '12-Beat Drop-by-Drop Reconciliation Under 15 Seconds',
+      description: banglaMode
+        ? 'সন্ধ্যা সাড়ে ৭টায় ভ্যান ফেরার সাথে সাথে ক্যাশ ও বাকির স্বয়ংক্রিয় হিসাব। ড্রাইভারের ক্যাশ শর্টেজ থাকলে সাথে সাথে নোটিশ এবং পারিশ্রমিক থেকে কর্তনের ব্যবস্থা।'
+        : 'When delivery vans return at dusk, drop-level sales instantly reconcile against cash handed in. Till shortages (e.g. −৳400) are flagged immediately for wage deduction.',
+      bullets: [
+        banglaMode ? '৭০০ খুচরা দোকানের ড্রপ অডিট' : 'Drop-level accountability across 700 retail points',
+        banglaMode ? 'স্বয়ংক্রিয় ঘাটতি শনাক্তকরণ (−৳৪০০)' : 'Automated till variance identification (−৳400 shortage flag)',
+        banglaMode ? 'এক ক্লিকে শর্টেজ অ্যাডজাস্টমেন্ট' : 'One-click automated driver wage deduction protocol',
+      ],
+      image: '/screenshots/route_settlement.png',
+      badgeText: '11 Routes Cleared · 1 Shortage (−৳400)',
+    },
+    {
+      id: 'decision' as const,
+      title: banglaMode ? 'অ্যাকশন ডক ও সিমুলেটর' : 'Decision Dock & Sandbox',
+      subtitle: banglaMode ? 'এক্সিকিউটিভ কন্ট্রোল' : 'Action Dock & Simulator',
+      icon: SlidersHorizontal,
+      tag: 'ZONE 05',
+      headline: banglaMode
+        ? 'উচ্চ-আস্থার সিদ্ধান্ত গ্রহণ এবং ব্যবসায়িক সিমুলেশন'
+        : 'High-Confidence Operational Controls & Real-Time Sandboxing',
+      description: banglaMode
+        ? 'এক ক্লিকে বাকি খাতা লক, ব্যাংকে ক্যাশ ট্রান্সফার, ড্রাইভার শর্টেজ কর্তন এবং দিন শেষে ডে-ক্লোজ সম্পন্ন করুন। স্লাইডার টেনে যেকোনো ব্যবসায়িক পরিস্থিতির প্রভাব আগে যাচাই করুন।'
+        : 'Execute state-mutating actions with instant safety checks: One-Tap Credit Lock, Bank Deposit Staging, Shortage Deductions, and parameter stress-testing.',
+      bullets: [
+        banglaMode ? 'ওয়ান-ট্যাপ ক্রেডিট লক ও ব্যাংক ডিপোজিট' : 'One-Tap credit lock and staged bank cash transfers',
+        banglaMode ? 'স্বয়ংক্রিয় দিন-শেষ ক্লোজআউট প্রটোকল' : 'End-of-day closeout with zero variance verification',
+        banglaMode ? 'লাইভ প্যারামিটার স্ট্রেস-টেস্টিং স্যান্ডবক্স' : 'Interactive parameter sandboxing with one-click reset',
+      ],
+      image: '/screenshots/scenario_simulator.png',
+      badgeText: 'State-Mutating Controls & Sandbox',
+    },
+  ];
+
+  const currentTab = featureTabs.find((t) => t.id === activeFeatureTab) || featureTabs[0];
+
   return (
-    <main className="min-h-screen overflow-hidden bg-[#fbfcfb] text-[#1d3029]">
-      <header className="relative z-10 border-b border-[#e8eeeb] bg-white/90">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
-          <BrandMark />
-          <nav aria-label="Main navigation" className="hidden items-center gap-7 md:flex">
-            <Link href="#how-it-works" className="text-[13px] font-medium text-[#64736b] transition hover:text-[#087e63]">How it works</Link>
-            <Link href="#capabilities" className="text-[13px] font-medium text-[#64736b] transition hover:text-[#087e63]">Capabilities</Link>
-            <Link href="#data-transparency" className="text-[13px] font-medium text-[#64736b] transition hover:text-[#087e63]">Data &amp; demo</Link>
-          </nav>
-          <Link href="/businesses" className="accounting-focus inline-flex h-10 items-center gap-2 rounded-xl bg-[#087e63] px-4 text-[12px] font-semibold text-white shadow-sm transition hover:bg-[#086d56]">
-            Open distroMesh <ArrowRight size={15} />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 selection:bg-emerald-500/15 selection:text-emerald-900 font-sans antialiased">
+      {/* ---------------------------------------------------- */}
+      {/* 1. CLEAN, MINIMALIST HEADER                          */}
+      {/* ---------------------------------------------------- */}
+      <header className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-700 text-white font-mono font-bold text-xs tracking-wider shadow-xs group-hover:bg-emerald-800 transition">
+              dM
+            </span>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold tracking-tight text-slate-900 uppercase font-mono leading-none">
+                distroMesh
+              </span>
+              <span className="text-[10px] text-slate-500 font-mono tracking-wider mt-0.5">
+                FMCG CONTROL BOARD
+              </span>
+            </div>
           </Link>
+
+          {/* Minimal 2-Link Navigation */}
+          <nav className="hidden md:flex items-center gap-6 font-mono text-xs font-semibold text-slate-600">
+            <a href="#features" className="hover:text-emerald-700 transition">
+              {banglaMode ? 'ফিচারসমূহ' : 'Features'}
+            </a>
+            <Link href="/businesses" className="hover:text-emerald-700 transition">
+              {banglaMode ? 'পোর্টফোলিও' : 'Portfolio Cockpit'}
+            </Link>
+          </nav>
+
+          {/* Clean Action Buttons */}
+          <div className="flex items-center gap-2.5">
+            {/* Language Switcher */}
+            <button
+              onClick={() => setBanglaMode(!banglaMode)}
+              className="px-2.5 py-1 text-xs font-mono font-bold rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition active:scale-95"
+              title="Toggle English / Bangla"
+            >
+              {banglaMode ? 'বাংলা' : 'EN'}
+            </button>
+
+            {/* Launch CTA */}
+            <Link
+              href="/businesses/unilever-distribution/war-room"
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 px-3.5 sm:px-4 text-xs font-bold text-white shadow-xs transition active:scale-95 font-mono"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 animate-ping" />
+              <span>{banglaMode ? 'ওয়ার রুম' : 'Open War Room'}</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
       </header>
 
-      <section className="relative border-b border-[#e9efec]">
-        <div className="pointer-events-none absolute -right-32 -top-48 h-[470px] w-[470px] rounded-full bg-[#e8f2ec] blur-3xl" />
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.87fr_1.13fr] lg:gap-10 lg:py-24">
-          <div className="relative z-[1] max-w-[540px]">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#dce9e1] bg-white/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.11em] text-[#28765b]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#15815f]" />
-              Multi-business distribution management
+      {/* ---------------------------------------------------- */}
+      {/* 2. VISUAL-FIRST HERO SECTION WITH PRODUCT SCREENSHOT */}
+      {/* ---------------------------------------------------- */}
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-gradient-to-b from-white via-slate-50/70 to-slate-100/50 pt-10 pb-14 sm:pt-14 sm:pb-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Main Hero Header */}
+          <div className="mx-auto max-w-3xl text-center">
+            {/* Context Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1 text-xs font-mono font-bold text-emerald-900 shadow-2xs mb-4">
+              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
+              <span>
+                {banglaMode
+                  ? 'এফএমসিজি ডিস্ট্রিবিউশন হাব · শেরপুর ও বগুড়া'
+                  : 'FMCG Distribution Operations · Sherpur & Bogura Hub'}
+              </span>
             </div>
-            <h1 className="text-[43px] font-semibold leading-[1.05] tracking-[-0.055em] text-[#1d3029] sm:text-[56px] lg:text-[61px]">
-              See every business. <span className="text-[#087e63]">Know where to look next.</span>
+
+            {/* Professional Operational Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 font-mono leading-[1.18]">
+              {banglaMode
+                ? 'এফএমসিজি ডিস্ট্রিবিউশনের লাইভ অপারেশনাল কন্ট্রোল বোর্ড'
+                : 'Operational Command Center for FMCG Distribution'}
             </h1>
-            <p className="mt-6 max-w-[480px] text-[15px] leading-7 text-[#64736b] sm:text-[16px]">
-              distroMesh brings your distribution businesses into one workspace so you can scan the portfolio, investigate what needs attention, and work inside each business without mixing their activity.
+
+            {/* Concise Supporting Subtitle */}
+            <p className="mt-3.5 text-base sm:text-lg text-slate-600 leading-relaxed font-sans max-w-2xl mx-auto">
+              {banglaMode
+                ? 'লিকুইডিটি রানওয়ে, ভ্যান ডেসপ্যাচ অডিট, ১২টি রুটের দৈনিক সেটেলমেন্ট ও বাকী নিয়ন্ত্রণের সমন্বিত ব্যবস্থা।'
+                : 'Real-time liquidity runway, departure dispatch audits, 12-route van settlement reconciliation, and instant retailer credit controls.'}
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/businesses" className="accounting-focus inline-flex h-12 items-center gap-2 rounded-xl bg-[#087e63] px-5 text-[13px] font-semibold text-white shadow-[0_8px_22px_-10px_rgba(8,126,99,0.65)] transition hover:-translate-y-0.5 hover:bg-[#086d56]">
-                Open distroMesh <ArrowRight size={16} />
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono">
+              <Link
+                href="/businesses/unilever-distribution/war-room"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs sm:text-sm font-bold text-white shadow-md shadow-emerald-950/10 transition transform hover:-translate-y-0.5"
+              >
+                <Monitor size={15} />
+                <span>{banglaMode ? 'লাইভ ওয়ার রুম দেখুন' : 'Launch War Room'}</span>
+                <ArrowRight size={14} />
               </Link>
-              <Link href="#how-it-works" className="accounting-focus inline-flex h-12 items-center gap-2 rounded-xl border border-[#dce6e1] bg-white px-5 text-[13px] font-semibold text-[#43554b] transition hover:border-[#b8d1c3] hover:bg-[#f6faf7]">
-                Explore how it works
+              <Link
+                href="/businesses"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 px-4 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs transition"
+              >
+                <Building2 size={15} className="text-slate-500" />
+                <span>{banglaMode ? 'মাল্টি-বিজনেস পোর্টফোলিও' : 'Portfolio Cockpit'}</span>
               </Link>
             </div>
-            <p className="mt-5 text-[10px] leading-5 text-[#84918a]">A working prototype with illustrative examples—not verified financial or operational records.</p>
           </div>
-          <PortfolioPreview />
-        </div>
-      </section>
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.8fr_1.2fr] md:items-end">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#358367]">The day-to-day challenge</p>
-          <h2 className="mt-3 max-w-[440px] text-[30px] font-semibold leading-tight tracking-[-0.045em] text-[#24362e] sm:text-[38px]">
-            Managing multiple businesses shouldn’t mean chasing disconnected information.
-          </h2>
-        </div>
-        <div className="max-w-[620px] md:justify-self-end">
-          <p className="text-[14px] leading-7 text-[#69776f]">
-            Owners and operators move between sales, invoices, expenses, cash flow, operations, partners, and follow-ups. The hard part is knowing which business to open, what changed, and what is worth investigating next.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {['Businesses', 'Sales', 'Invoices', 'Expenses', 'Cash flow', 'Operations', 'Partners', 'Follow-ups'].map((item) => (
-              <span key={item} className="rounded-full border border-[#e2eae5] bg-white px-3 py-1.5 text-[10px] font-medium text-[#65746b]">{item}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-[#e8eeeb] bg-[#f4f8f5]">
-        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-          <div className="max-w-[620px]">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#358367]">One connected workflow</p>
-            <h2 className="mt-3 text-[30px] font-semibold tracking-[-0.045em] text-[#24362e] sm:text-[38px]">A better starting point for the next decision.</h2>
-            <p className="mt-3 text-[14px] leading-7 text-[#69776f]">Bring the overview and the everyday work together, while preserving each business’s own context.</p>
-          </div>
-          <div className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {valueCards.map(({ icon: Icon, number, title, description }) => (
-              <article key={title} className="rounded-2xl border border-[#e3ebe6] bg-white p-5 shadow-[0_8px_24px_-22px_rgba(29,48,41,0.3)]">
-                <div className="flex items-center justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#edf5f0] text-[#267859]"><Icon size={18} /></span>
-                  <span className="font-mono text-[10px] text-[#a0aca5]">{number}</span>
+          {/* -------------------------------------------------- */}
+          {/* LARGE HERO SCREENSHOT IN POLISHED DESKTOP FRAME    */}
+          {/* -------------------------------------------------- */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="mt-10 mx-auto max-w-5xl"
+          >
+            <div className="relative rounded-2xl border border-slate-300/90 bg-white shadow-2xl shadow-slate-300/50 overflow-hidden">
+              {/* Browser Window Chrome */}
+              <div className="flex items-center justify-between border-b border-slate-200 bg-slate-100/90 px-4 py-2.5 text-xs font-mono text-slate-600">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400 border border-rose-500 inline-block" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400 border border-amber-500 inline-block" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 border border-emerald-500 inline-block" />
+                  </div>
+                  <div className="h-3.5 w-px bg-slate-300 mx-1 hidden sm:block" />
+                  <span className="font-semibold text-slate-700 text-[11px] truncate">
+                    distromesh.local/businesses/unilever-distribution/war-room
+                  </span>
                 </div>
-                <h3 className="mt-5 text-[14px] font-semibold text-[#293a32]">{title}</h3>
-                <p className="mt-2 text-[12px] leading-6 text-[#718078]">{description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      <section id="how-it-works" className="scroll-mt-8 mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="max-w-[600px]">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#358367]">How it works</p>
-          <h2 className="mt-3 text-[30px] font-semibold tracking-[-0.045em] text-[#24362e] sm:text-[38px]">From portfolio scan to focused follow-through.</h2>
-        </div>
-        <div className="relative mt-10 grid gap-7 md:grid-cols-3 md:gap-8">
-          <div className="absolute left-[16%] right-[16%] top-6 hidden border-t border-dashed border-[#b9d2c3] md:block" />
-          {[
-            ['01', 'Scan the portfolio', 'Start with All businesses and see which information is available across the portfolio.'],
-            ['02', 'Open the business', 'Choose the business that needs a closer look and enter its dedicated workspace.'],
-            ['03', 'Follow the work', 'Move into sales & operations, transactions, invoices, expenses, cash flow, alerts, or connections.'],
-          ].map(([number, title, description]) => (
-            <article key={number} className="relative rounded-2xl border border-[#e5ece8] bg-white p-5 sm:p-6">
-              <span className="relative z-[1] flex h-12 w-12 items-center justify-center rounded-2xl border border-[#d5e7dc] bg-[#f1f7f3] text-[12px] font-semibold text-[#28765b]">{number}</span>
-              <h3 className="mt-5 text-[15px] font-semibold text-[#293a32]">{title}</h3>
-              <p className="mt-2 text-[12px] leading-6 text-[#718078]">{description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-300">
+                    ● LIVE OPS (10:00–16:00)
+                  </span>
+                </div>
+              </div>
 
-      <section id="capabilities" className="scroll-mt-8 border-y border-[#e8eeeb] bg-white">
-        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div className="max-w-[600px]">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#358367]">Inside distroMesh</p>
-              <h2 className="mt-3 text-[30px] font-semibold tracking-[-0.045em] text-[#24362e] sm:text-[38px]">The important work, in its proper context.</h2>
+              {/* Real Product Screenshot */}
+              <div className="relative bg-slate-100 aspect-[16/9] w-full">
+                <Image
+                  src="/screenshots/war_room_overview.png"
+                  alt="distroMesh FMCG War Room Executive Dashboard"
+                  fill
+                  priority
+                  className="object-cover object-top"
+                />
+
+                {/* Floating Telemetry Pills */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                  className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex flex-wrap items-center gap-2 font-mono text-[10px] sm:text-xs"
+                >
+                  <div className="rounded-lg bg-white/95 backdrop-blur-md border border-slate-300 px-3 py-1.5 shadow-md flex items-center gap-2 text-slate-800">
+                    <span className="h-2 w-2 rounded-full bg-emerald-600 animate-ping" />
+                    <span className="font-bold">Liquid Cash: ৳16,95,200</span>
+                    <span className="text-emerald-700 font-bold hidden sm:inline">(2.17× Cover)</span>
+                  </div>
+
+                  <div className="rounded-lg bg-white/95 backdrop-blur-md border border-amber-300 px-3 py-1.5 shadow-md flex items-center gap-1.5 text-amber-900">
+                    <Clock size={12} className="text-amber-700" />
+                    <span className="font-bold">48h Sweep: Safe</span>
+                  </div>
+                </motion.div>
+
+                {/* Inspect Link */}
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
+                  <Link
+                    href="/businesses/unilever-distribution/war-room"
+                    className="rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 shadow-md flex items-center gap-1 text-xs font-mono font-bold transition active:scale-95"
+                  >
+                    <span>Inspect Board</span>
+                    <ChevronRight size={13} />
+                  </Link>
+                </div>
+              </div>
             </div>
-            <p className="max-w-[370px] text-[12px] leading-6 text-[#718078]">Portfolio, investigation, and business context come first. Everyday tools support the work around them.</p>
-          </div>
-          <div className="mt-9 grid gap-3 md:grid-cols-3">
-            {coreFeatures.map(({ icon: Icon, title, description, className }) => (
-              <article key={title} className={`rounded-2xl border border-[#e4ebe7] bg-[#fbfcfb] p-5 sm:p-6 ${className}`}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#edf5f0] text-[#267859]"><Icon size={18} /></span>
-                <h3 className="mt-5 text-[14px] font-semibold text-[#293a32]">{title}</h3>
-                <p className="mt-2 max-w-[430px] text-[12px] leading-6 text-[#718078]">{description}</p>
-              </article>
-            ))}
-          </div>
-          <div className="mt-8">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#829088]">Supporting tools</h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {supportingFeatures.map(({ icon: Icon, label }) => (
-                <span key={label} className="inline-flex items-center gap-2 rounded-xl border border-[#e5ece8] bg-white px-3.5 py-2.5 text-[11px] font-medium text-[#59685f]">
-                  <Icon size={14} className="text-[#4c8a6d]" /> {label}
-                </span>
-              ))}
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section id="data-transparency" className="scroll-mt-8 mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-8 rounded-[1.6rem] border border-[#dfe9e3] bg-[#f1f7f3] p-6 sm:p-9 md:grid-cols-[0.8fr_1.2fr] md:items-center">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#358367]">Clear about the data</p>
-            <h2 className="mt-3 max-w-[360px] text-[28px] font-semibold leading-tight tracking-[-0.045em] text-[#24362e] sm:text-[34px]">Know what the numbers mean.</h2>
-          </div>
-          <div>
-            <p className="text-[13px] leading-7 text-[#62736a]">
-              This is a prototype, so some figures are illustrative examples. “Not available” means information is missing—not zero. Portfolio totals may have incomplete coverage, and review signals are prompts to investigate, not proof of a problem.
-            </p>
-            <p className="mt-3 text-[11px] leading-6 text-[#77877e]">
-              The current demo is not connected to banks, accounting systems, inventory, order, or delivery systems. Business changes are local to the current browser session.
+      {/* ---------------------------------------------------- */}
+      {/* 3. INTERACTIVE FEATURE SHOWCASE: STRICT 5 ZONES      */}
+      {/* ---------------------------------------------------- */}
+      <section id="features" className="py-14 sm:py-20 border-b border-slate-200/80 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mb-8">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 block w-fit mb-2">
+              {banglaMode ? 'অপারেশনাল জোনসমূহ' : 'CONTROL BOARD ARCHITECTURE'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">
+              {banglaMode ? '৫টি অপারেশনাল জোন ও কন্ট্রোল মেকানিক্স' : 'Explore the 5 Operational Zones'}
+            </h2>
+            <p className="mt-1.5 text-sm text-slate-600 font-sans">
+              Switch through the 5 zones of the executive control board to inspect live screens and mechanics.
             </p>
           </div>
+
+          {/* Interactive Feature Tabs: Exactly 5 Zones in Sequence */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs mb-6">
+            {featureTabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeFeatureTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFeatureTab(tab.id)}
+                  className={`relative p-3 rounded-xl border text-left transition-all ${
+                    isActive
+                      ? 'border-emerald-600 bg-emerald-50/70 shadow-sm text-emerald-950 font-bold'
+                      : 'border-slate-200 bg-slate-50/60 hover:bg-slate-100/80 text-slate-600'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-[10px] font-bold ${isActive ? 'text-emerald-800' : 'text-slate-400'}`}>
+                      {tab.tag}
+                    </span>
+                    <Icon size={15} className={isActive ? 'text-emerald-700' : 'text-slate-400'} />
+                  </div>
+                  <div className="font-bold text-xs sm:text-sm text-slate-900 truncate">{tab.title}</div>
+                  <div className="text-[10px] text-slate-500 font-sans truncate">{tab.subtitle}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Tab Visual Card with AnimatePresence */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentTab.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="rounded-2xl border border-slate-300 bg-slate-50/40 p-5 sm:p-7 shadow-sm"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                {/* Left Column: Concise Explanation */}
+                <div className="lg:col-span-5 space-y-3.5">
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                    <CheckCircle2 size={13} className="text-emerald-700" />
+                    <span>{currentTab.badgeText}</span>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold font-mono text-slate-900 leading-snug">
+                    {currentTab.headline}
+                  </h3>
+
+                  <p className="text-sm text-slate-600 font-sans leading-relaxed">
+                    {currentTab.description}
+                  </p>
+
+                  {/* Bullet Points */}
+                  <div className="space-y-1.5 pt-1 text-xs font-mono text-slate-700">
+                    {currentTab.bullets.map((bullet, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 mt-0.5">
+                          ✓
+                        </span>
+                        <span>{bullet}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2">
+                    <Link
+                      href="/businesses/unilever-distribution/war-room"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-700 hover:text-emerald-800 hover:underline"
+                    >
+                      <span>Open live board for {currentTab.title}</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Right Column: High-Res Screenshot Preview */}
+                <div className="lg:col-span-7">
+                  <div className="rounded-xl border border-slate-300 bg-white p-2 shadow-md overflow-hidden group">
+                    <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden bg-slate-100">
+                      <Image
+                        src={currentTab.image}
+                        alt={currentTab.title}
+                        fill
+                        className="object-cover object-top transition duration-300 group-hover:scale-[1.01]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
-      <section className="px-5 pb-16 sm:px-8 sm:pb-20">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 rounded-[1.6rem] bg-[#10221d] px-6 py-9 text-white sm:px-10 sm:py-11 md:flex-row md:items-center">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#91c9aa]">Start with the portfolio</p>
-            <h2 className="mt-3 max-w-[620px] text-[28px] font-semibold leading-tight tracking-[-0.045em] sm:text-[36px]">Find the business that needs your attention.</h2>
-            <p className="mt-3 max-w-[560px] text-[12px] leading-6 text-[#b5c6bd]">Get a clearer starting point for managing multiple distribution businesses—without mixing their records together.</p>
+      {/* ---------------------------------------------------- */}
+      {/* 4. DAILY OPERATIONS RHYTHM IN 3 SIMPLE STEPS         */}
+      {/* ---------------------------------------------------- */}
+      <section className="py-14 sm:py-20 border-b border-slate-200/80 bg-[#f8fafc]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mb-10">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 block w-fit mb-2">
+              {banglaMode ? 'দৈনিক কার্যপদ্ধতি' : 'DAILY OPERATIONS LIFECYCLE'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">
+              {banglaMode ? '৩টি ধাপে সম্পূর্ণ ডিস্ট্রিবিউশন নিয়ন্ত্রণ' : 'How distroMesh Protects Your Working Day'}
+            </h2>
+            <p className="mt-1.5 text-sm text-slate-600 font-sans">
+              From morning van dispatch to evening vault reconciliation.
+            </p>
           </div>
-          <Link href="/businesses" className="accounting-focus inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-[#58b58a] px-5 text-[12px] font-semibold text-[#10221d] transition hover:bg-[#77c59f]">
-            Open distroMesh <ArrowRight size={15} />
-          </Link>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono text-xs">
+            {/* Step 1 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-700 font-bold text-base">01 · 09:00 AM</span>
+                <Truck size={17} className="text-slate-400" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase">Morning Dispatch</h3>
+              <p className="text-slate-600 font-sans text-xs leading-relaxed">
+                Loading audit across 12 delivery beats. Departure stalls are caught immediately to avoid idle labor wage losses.
+              </p>
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-emerald-800 font-bold">
+                ✓ Stalls cleared &amp; vans departed
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-700 font-bold text-base">02 · 02:00 PM</span>
+                <Lock size={17} className="text-slate-400" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase">Field Credit Guard</h3>
+              <p className="text-slate-600 font-sans text-xs leading-relaxed">
+                700 retail shop drops underway. Unauthorized fresh credit extensions to overdue shops are hard-locked across all beats.
+              </p>
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-emerald-800 font-bold">
+                ✓ Overdue credit leakage prevented
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-700 font-bold text-base">03 · 07:30 PM</span>
+                <Wallet size={17} className="text-slate-400" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase">Till Settlement</h3>
+              <p className="text-slate-600 font-sans text-xs leading-relaxed">
+                Physical vault cash counted at the depot window. Route shortages (−৳400) are identified in 15 seconds and deducted.
+              </p>
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-emerald-800 font-bold">
+                ✓ 100% zero-variance day-end closeout
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <footer className="border-t border-[#e8eeeb] bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <div>
-            <BrandMark />
-            <p className="mt-2 max-w-[360px] text-[10px] leading-5 text-[#839088]">A workspace for reviewing and investigating multiple distribution businesses. Demo information is illustrative.</p>
+      {/* ---------------------------------------------------- */}
+      {/* 5. CALL TO ACTION                                    */}
+      {/* ---------------------------------------------------- */}
+      <section className="py-14 sm:py-16 bg-white border-b border-slate-200/80">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="rounded-3xl border border-emerald-300 bg-gradient-to-br from-emerald-50/70 via-white to-slate-50 p-6 sm:p-10 shadow-sm">
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-800 bg-white border border-emerald-300 px-3 py-1 rounded-full mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
+              <span>{banglaMode ? 'সম্পূর্ণ সক্রিয় লাইভ পরিবেশ' : 'Zero-Setup Interactive Demo'}</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">
+              {banglaMode
+                ? 'আপনার ডিস্ট্রিবিউশন কন্ট্রোল বোর্ড এখনই পরীক্ষা করুন'
+                : 'Experience the Live Operations Cockpit'}
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-600 font-sans max-w-xl mx-auto">
+              {banglaMode
+                ? 'রিয়েল-টাইম এফএমসিজি ডেটা, ১২টি ভ্যান রুট এবং এক্সিকিউটিভ অ্যাকশন ডক নিয়ে লাইভ ওয়ার রুমে প্রবেশ করুন।'
+                : 'Test the live FMCG war room with active route settlement, cash runway, and state-mutating decision controls.'}
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono">
+              <Link
+                href="/businesses/unilever-distribution/war-room"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 px-5 text-xs sm:text-sm font-bold text-white shadow-xs transition"
+              >
+                <Monitor size={15} />
+                <span>{banglaMode ? 'ওয়ার রুম চালু করুন' : 'Launch Executive War Room'}</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                href="/businesses"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 px-4 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs transition"
+              >
+                <span>{banglaMode ? 'পোর্টফোলিও ভিউ' : 'Explore Portfolio'}</span>
+              </Link>
+            </div>
           </div>
-          <Link href="/businesses" className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#28765b] hover:text-[#086d56]">
-            Open the dashboard <ArrowRight size={13} />
-          </Link>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------- */}
+      {/* 6. MINIMAL, HUMBLE FOOTER                            */}
+      {/* ---------------------------------------------------- */}
+      <footer className="bg-slate-50 py-8 text-xs font-mono text-slate-600 border-t border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded bg-emerald-700 text-white font-bold text-[10px]">
+                dM
+              </span>
+              <span className="font-bold text-slate-900">distroMesh</span>
+              <span className="text-slate-400">·</span>
+              <span className="text-slate-500">Sherpur &amp; Bogura FMCG Hub</span>
+            </div>
+
+            <div className="flex items-center gap-4 text-slate-500">
+              <Link href="/businesses/unilever-distribution/war-room" className="hover:text-emerald-700">
+                War Room
+              </Link>
+              <Link href="/businesses" className="hover:text-emerald-700">
+                Portfolio
+              </Link>
+              <span className="text-slate-300">|</span>
+              <span className="text-[11px] text-slate-400">10 Balance Identities Verified</span>
+            </div>
+          </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

@@ -2,15 +2,17 @@
 
 @layer base {
   :root {
-    --background: #f5f7f8;
-    --foreground: #17211f;
-    --sidebar: #101c1b;
-    --muted: #66736f;
-    --line: #e6ece9;
-    --green: #087e63;
-    --green-dark: #08634f;
-    --green-soft: #e9f5f0;
-    --red: #b74750;
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --surface: #ffffff;
+    --elevated: #ffffff;
+    --border: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --status-emerald: #047857;
+    --status-amber: #b45309;
+    --status-crimson: #be123c;
     color-scheme: light;
   }
 
@@ -22,13 +24,14 @@
     min-height: 100vh;
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    font-family: var(--font-geist-sans), Inter, system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   button,
   input,
-  select {
+  select,
+  textarea {
     font: inherit;
   }
 
@@ -38,58 +41,63 @@
 }
 
 ::selection {
-  background: #cce9dd;
-  color: #10241d;
+  background: rgba(4, 120, 87, 0.15);
+  color: #065f46;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f8fafc;
 }
 
 ::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: #c7d2ce;
+  background: #cbd5e1;
   background-clip: padding-box;
 }
 
-.accounting-app {
-  min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 65% 0%, rgba(226, 241, 234, 0.5), transparent 35rem),
-    var(--background);
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.accounting-sidebar {
-  background:
-    radial-gradient(ellipse at 0% 0%, rgba(20, 91, 72, 0.3), transparent 24rem),
-    var(--sidebar);
+/* Executive Control Board Corporate Surfaces */
+.exec-surface {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
 }
 
-.glass-card {
-  border: 1px solid rgba(223, 231, 227, 0.9);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 2px 5px rgba(25, 47, 39, 0.025), 0 12px 30px rgba(25, 47, 39, 0.035);
-  backdrop-filter: blur(16px);
+.exec-elevated {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.exec-border {
+  border-color: #e2e8f0;
+}
+
+.exec-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .chart-grid {
-  stroke: #e9efec;
+  stroke: #e2e8f0;
   stroke-dasharray: 3 5;
 }
 
 .chart-label {
-  fill: #83908b;
+  fill: #64748b;
   font-size: 11px;
 }
 
 .accounting-focus:focus-visible {
-  outline: 3px solid rgba(8, 126, 99, 0.45);
+  outline: 2px solid #047857;
   outline-offset: 2px;
 }
 

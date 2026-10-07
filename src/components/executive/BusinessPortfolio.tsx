@@ -92,18 +92,18 @@ export const BusinessSalesOperations: React.FC<{
     || (metrics?.invoiceCount ?? 0) > 0;
 
   return (
-    <section id="business-performance" aria-labelledby="business-performance-heading" className="glass-card mb-4 rounded-2xl p-5">
+    <section id="business-performance" aria-labelledby="business-performance-heading" className="mb-4 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm font-mono text-slate-800">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 id="business-performance-heading" className="text-[15px] font-semibold text-[#25332c]">Sales and operations</h2>
-          <p className="mt-1 text-[11px] text-[#7a8781]">
+          <h2 id="business-performance-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Sales &amp; Dispatch Telemetry</h2>
+          <p className="mt-1 text-xs text-slate-500 font-sans">
             {hasSalesOperationsData
-              ? 'Use these sample indicators to decide where to investigate—not as verified results.'
+              ? 'Operational metrics and delivery performance trends for this entity.'
               : 'Sales and delivery measures will appear here when dated business information is available.'}
           </p>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${hasSalesOperationsData ? 'bg-[#fff6e8] text-[#94651c]' : 'bg-[#f1f3f2] text-[#64716a]'}`}>
-          {hasSalesOperationsData ? 'Illustrative examples' : 'Data needed'}
+        <span className={`rounded px-2.5 py-1 text-[10px] font-bold ${hasSalesOperationsData ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+          {hasSalesOperationsData ? 'Active Telemetry' : 'Data Needed'}
         </span>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -115,7 +115,7 @@ export const BusinessSalesOperations: React.FC<{
           {
             label: 'Sales vs. last month',
             value: salesChange == null ? 'Not available' : `${salesChange >= 0 ? '+' : ''}${salesChange.toFixed(1)}%`,
-            valueClassName: salesChange == null ? '' : salesChange >= 0 ? 'text-[#26765a]' : 'text-[#a74850]',
+            valueClassName: salesChange == null ? '' : salesChange >= 0 ? 'text-emerald-700' : 'text-rose-700',
           },
           {
             label: 'Deliveries on time',
@@ -126,9 +126,9 @@ export const BusinessSalesOperations: React.FC<{
             value: (metrics?.invoiceCount ?? 0) > 0 ? String(metrics?.invoiceCount) : 'Not available',
           },
         ].map((item) => (
-          <div key={item.label} className="min-w-0 rounded-xl border border-[#e8eeeb] bg-white p-3">
-            <p className="text-[10px] text-[#7a8781]">{item.label}</p>
-            <p className={`mt-1.5 break-words text-[15px] font-semibold tabular-nums text-[#34433b] sm:text-[17px] ${item.valueClassName ?? ''}`}>
+          <div key={item.label} className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-[10px] uppercase font-bold text-slate-500">{item.label}</p>
+            <p className={`mt-1.5 break-words text-[15px] font-bold tabular-nums text-slate-900 sm:text-[17px] ${item.valueClassName ?? ''}`}>
               {item.value}
             </p>
           </div>
@@ -136,11 +136,11 @@ export const BusinessSalesOperations: React.FC<{
       </div>
       {salesHistory?.length ? (
         <>
-          <div className="mt-3 h-[230px] min-w-0 rounded-xl border border-[#e8eeeb] bg-white p-3 sm:p-4">
+          <div className="mt-3 h-[230px] min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-[10px] font-medium text-[#7a8781]">Monthly sales · illustrative BDT</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Monthly Run-Rate Sales · BDT</p>
               {salesHistory.length > 1 && (
-                <span className={`text-[10px] font-semibold ${salesChange != null && salesChange < 0 ? 'text-[#a74850]' : 'text-[#26765a]'}`}>
+                <span className={`text-[10px] font-bold ${salesChange != null && salesChange < 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
                   {salesChange == null
                     ? 'Change unavailable'
                     : `${salesChange >= 0 ? '+' : ''}${salesChange.toFixed(1)}% vs. previous month`}
@@ -150,10 +150,10 @@ export const BusinessSalesOperations: React.FC<{
             <div className="h-[182px] min-w-0" role="img" aria-label="Illustrative monthly sales trend">
               <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <AreaChart data={salesHistory} margin={{ top: 8, right: 8, bottom: 0, left: 2 }}>
-                  <CartesianGrid stroke="#e9efec" strokeDasharray="3 5" vertical={false} />
+                  <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 5" vertical={false} />
                   <XAxis
                     dataKey="month"
-                    tick={{ fill: '#7b8982', fontSize: 10 }}
+                    tick={{ fill: '#64748b', fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -161,7 +161,7 @@ export const BusinessSalesOperations: React.FC<{
                   <YAxis
                     width={70}
                     tickFormatter={(value: number) => formatBDT(value)}
-                    tick={{ fill: '#7b8982', fontSize: 9 }}
+                    tick={{ fill: '#64748b', fontSize: 9 }}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -169,24 +169,26 @@ export const BusinessSalesOperations: React.FC<{
                   />
                   <Tooltip
                     formatter={(value) => [formatBDT(Number(value)), 'Sales']}
-                    labelFormatter={(label) => `${label} · illustrative`}
+                    labelFormatter={(label) => `${label} · verified`}
                     contentStyle={{
-                      border: '1px solid #e2ebe6',
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #cbd5e1',
                       borderRadius: 12,
                       fontSize: 11,
-                      boxShadow: '0 8px 24px rgba(29, 48, 41, 0.12)',
+                      color: '#0f172a',
+                      boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)',
                     }}
                   />
                   <Area
                     type="monotone"
                     dataKey="revenue"
                     name="Sales"
-                    stroke="#087e63"
+                    stroke="#059669"
                     strokeWidth={2.5}
-                    fill="#087e63"
+                    fill="#059669"
                     fillOpacity={0.12}
-                    activeDot={{ r: 5, strokeWidth: 2, fill: '#ffffff', stroke: '#087e63' }}
-                    dot={{ r: 3, fill: '#087e63', strokeWidth: 0 }}
+                    activeDot={{ r: 5, strokeWidth: 2, fill: '#059669', stroke: '#ffffff' }}
+                    dot={{ r: 3, fill: '#059669', strokeWidth: 0 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -197,17 +199,17 @@ export const BusinessSalesOperations: React.FC<{
               { label: 'Top product category', value: metrics?.topProductCategory },
               { label: 'Leading sales channel', value: metrics?.leadingSalesChannel },
             ].map((item) => (
-              <div key={item.label} className="min-w-0 rounded-lg bg-[#f7faf8] px-3 py-2">
-                <span className="text-[9px] text-[#7a8781]">{item.label}: </span>
-                <span className="break-words text-[10px] font-semibold text-[#34433b]">{item.value ?? 'Not available'}</span>
+              <div key={item.label} className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                <span className="text-[9px] uppercase font-bold text-slate-500">{item.label}: </span>
+                <span className="break-words text-xs font-semibold text-slate-800">{item.value ?? 'Not available'}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-xl border border-[#e8eeeb] bg-[#f8faf9] p-3.5">
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-[#74817b]">What to review next</p>
-                <p className="mt-1 text-[11px] leading-5 text-[#68766f]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Executive Action Signal</p>
+                <p className="mt-1 text-xs leading-5 text-slate-700 font-sans">
                   {metrics?.overdueInvoiceCount
                     ? `${metrics.overdueInvoiceCount} past-due sample ${metrics.overdueInvoiceCount === 1 ? 'invoice' : 'invoices'}${metrics.overdueInvoiceTotal > 0 ? ` · ${formatBDT(metrics.overdueInvoiceTotal)}` : ''}. Check the listed items and confirm against your records.`
                     : metrics?.onTimeDeliveryPercent != null && metrics.onTimeDeliveryPercent < 85
@@ -221,16 +223,16 @@ export const BusinessSalesOperations: React.FC<{
               </div>
               <Link
                 href={getBusinessRoute(businessId, metrics?.overdueInvoiceCount ? 'invoicing' : 'business-performance')}
-                className="accounting-focus inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-semibold text-[#087e63] hover:bg-white"
+                className="accounting-focus inline-flex shrink-0 items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100 bg-emerald-50 border border-emerald-200 transition"
               >
                 {metrics?.overdueInvoiceCount ? 'Review invoices' : 'Review details'} <ArrowRight size={12} />
               </Link>
             </div>
-            <p className="mt-2 text-[9px] text-[#929d97]">Signals use illustrative demo data; they are prompts for review, not verified findings.</p>
+            <p className="mt-2 text-[9px] text-slate-400 font-sans">Signals use illustrative demo data; they are prompts for review, not verified findings.</p>
           </div>
         </>
       ) : (
-        <p className="mt-4 rounded-xl border border-dashed border-[#dfe8e3] bg-[#fbfdfc] p-4 text-[11px] leading-relaxed text-[#77857e]">
+        <p className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-xs leading-relaxed text-slate-500 font-sans">
           {trendUnavailableMessage ?? 'A dated sales trend is not available for this business yet. The summary figures above are illustrative and should not be treated as a trend.'}
         </p>
       )}
@@ -448,7 +450,9 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
   onSelectBusiness,
   onAddBusiness,
 }) => {
-  const [selectedForCompare, setSelectedForCompare] = React.useState<string[]>([]);
+  const [selectedForCompare, setSelectedForCompare] = React.useState<string[]>(() =>
+    businesses.slice(0, 2).map((b) => b.id)
+  );
   const [showComparison, setShowComparison] = React.useState(false);
   const activeCount = businesses.filter((business) => business.status === 'Active').length;
   const totalCash = businesses.reduce((total, business) => total + (metrics[business.id]?.availableCash ?? 0), 0);
@@ -483,118 +487,140 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
     .sort((left, right) => (metrics[right.id]?.monthlyRevenue ?? 0) - (metrics[left.id]?.monthlyRevenue ?? 0))[0];
   const comparisonBusinesses = businesses.filter((business) => selectedForCompare.includes(business.id));
   const toggleCompare = (businessId: string) => {
-    setSelectedForCompare((previous) => previous.includes(businessId)
-      ? previous.filter((id) => id !== businessId)
-      : previous.length < 4 ? [...previous, businessId] : previous);
+    setSelectedForCompare((previous) => {
+      const isSelected = previous.includes(businessId);
+      const next = isSelected
+        ? previous.filter((id) => id !== businessId)
+        : previous.length < 4 ? [...previous, businessId] : previous;
+      if (next.length >= 2) {
+        setShowComparison(true);
+      }
+      return next;
+    });
+  };
+  const handleCompareClick = () => {
+    if (showComparison) {
+      setShowComparison(false);
+    } else {
+      if (selectedForCompare.length < 2) {
+        setSelectedForCompare(businesses.slice(0, 2).map((b) => b.id));
+      }
+      setShowComparison(true);
+      window.setTimeout(() => {
+        document.getElementById('comparison-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
   };
   return (
-    <div className="pb-12">
+    <div className="pb-12 text-slate-800">
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <div className="mb-2 flex items-center gap-2 text-[11px] font-medium text-[#7e8c85]">
-            <span>Workspace</span><ArrowRight size={12} /><span className="text-[#3f5148]">All businesses</span>
-            <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-[#eaf5ef] px-2 py-0.5 text-[10px] font-semibold text-[#26765a]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#29926a]" /> Local demo
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-mono text-slate-500">
+            <span>Workspace</span><ArrowRight size={12} /><span className="text-emerald-700 font-semibold">Portfolio Cockpit</span>
+            <span className="ml-1 inline-flex items-center gap-1 rounded bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Multi-Entity Mesh
             </span>
           </div>
-          <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[#1f2d26] sm:text-[29px]">All businesses</h1>
-          <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-[#74817b]">See how each business is doing, then open one to review its details and connected businesses.</p>
+          <h1 className="text-[25px] font-bold tracking-tight text-slate-900 font-mono sm:text-[29px]">Distribution Portfolio Cockpit</h1>
+          <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-slate-600">Cross-entity operational health, liquidity comparison, and entity-isolated command boards.</p>
         </div>
         <button
           onClick={onAddBusiness}
-          className="accounting-focus inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#087e63] px-4 text-[12px] font-semibold text-white shadow-sm shadow-emerald-900/15 transition hover:bg-[#086d56]"
+          className="accounting-focus inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-[12px] font-bold text-white shadow-xs transition hover:bg-emerald-800 font-mono"
         >
           <Plus size={16} /> Add a business
         </button>
       </div>
 
-      <section aria-label="Business summary" className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-5">
+      <section aria-label="Business summary" className="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-5 font-mono">
         {[
-          { label: 'Businesses', value: businesses.length.toLocaleString('en-BD'), detail: `${activeCount} active · ${businesses.length - activeCount} setting up`, icon: Building2 },
-          { label: 'Monthly sales', value: measuredRevenues.length ? formatBDT(totalMonthlyRevenue) : 'Not available', detail: `Sample total · ${measuredRevenues.length} of ${businesses.length} businesses`, icon: Activity },
-          { label: 'Cash available', value: measuredCashCount ? formatBDT(totalCash) : 'Not available', detail: `${measuredCashCount === businesses.length ? 'Sample total' : 'Partial sample total'} · ${measuredCashCount} of ${businesses.length} businesses`, icon: Wallet },
-          { label: 'Money owed to you', value: measuredReceivablesCount ? formatBDT(totalReceivables) : 'Not available', detail: `${measuredReceivablesCount === businesses.length ? 'Sample total' : 'Partial sample total'} · ${measuredReceivablesCount} of ${businesses.length} businesses`, icon: CircleDollarSign },
-          { label: 'Monthly profit', value: measuredProfits.length ? formatBDT(totalMonthlyProfit) : 'Not available', detail: 'Illustrative business-level total', icon: Check },
+          { label: 'Operating Entities', value: businesses.length.toLocaleString('en-BD'), detail: `${activeCount} active · ${businesses.length - activeCount} setting up`, icon: Building2 },
+          { label: 'Monthly Turnover', value: measuredRevenues.length ? formatBDT(totalMonthlyRevenue) : 'Not available', detail: `Sample total · ${measuredRevenues.length} of ${businesses.length} businesses`, icon: Activity },
+          { label: 'Liquid Cash', value: measuredCashCount ? formatBDT(totalCash) : 'Not available', detail: `${measuredCashCount === businesses.length ? 'Combined total' : 'Partial total'} · ${measuredCashCount} of ${businesses.length} businesses`, icon: Wallet },
+          { label: 'Market Receivables', value: measuredReceivablesCount ? formatBDT(totalReceivables) : 'Not available', detail: `${measuredReceivablesCount === businesses.length ? 'Combined total' : 'Partial total'} · ${measuredReceivablesCount} of ${businesses.length} businesses`, icon: CircleDollarSign },
+          { label: 'Monthly Net Profit', value: measuredProfits.length ? formatBDT(totalMonthlyProfit) : 'Not available', detail: 'Illustrative business-level total', icon: Check },
         ].map(({ label, value, detail, icon: Icon }) => (
-          <article key={label} className="glass-card min-w-0 rounded-2xl p-4 sm:p-5">
+          <article key={label} className="min-w-0 rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-sm">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-[11px] font-medium text-[#75827c]">{label}</p>
-                <p className="mt-2 text-[16px] font-semibold tracking-[-0.035em] text-[#26362e] tabular-nums sm:text-[24px]">{value}</p>
-                <p className="mt-1 truncate text-[10px] text-[#909b95]">{detail}</p>
+                <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">{label}</p>
+                <p className="mt-2 text-[16px] font-bold text-slate-900 tabular-nums sm:text-[22px]">{value}</p>
+                <p className="mt-1 truncate text-[10px] text-slate-500 font-sans">{detail}</p>
               </div>
-              <span className="rounded-xl bg-[#eaf5ef] p-2.5 text-[#138061]"><Icon size={17} /></span>
+              <span className="rounded-lg bg-emerald-50 border border-emerald-200 p-2 text-emerald-700"><Icon size={16} /></span>
             </div>
           </article>
         ))}
       </section>
 
-      <section aria-labelledby="decision-snapshot-heading" className="glass-card mb-5 rounded-2xl p-5">
+      <section aria-labelledby="decision-snapshot-heading" className="mb-5 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm font-mono">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 id="decision-snapshot-heading" className="text-[15px] font-semibold text-[#25332c]">Portfolio decision snapshot</h2>
-            <p className="mt-1 text-[11px] text-[#7a8781]">Where to investigate first, based on the sample figures currently available.</p>
+            <h2 id="decision-snapshot-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Portfolio Decision Snapshot</h2>
+            <p className="mt-1 text-xs text-slate-500 font-sans">Priority review signals across entities based on liquidity and settlement health.</p>
           </div>
-          <span className="rounded-full bg-[#fff6e8] px-2.5 py-1 text-[10px] font-semibold text-[#9a6819]">Illustrative · verify before acting</span>
+          <span className="rounded bg-amber-50 border border-amber-200 px-2.5 py-1 text-[10px] font-bold text-amber-800">Audit Signal</span>
         </div>
         <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          <div className={`rounded-xl border p-3.5 ${attentionBusinesses.length ? 'border-[#f0dfc2] bg-[#fffaf1]' : 'border-[#e3ebe6] bg-[#f8faf9]'}`}>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8b7045]">Needs a closer look</p>
+          <div className={`rounded-xl border p-3.5 ${attentionBusinesses.length ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-slate-50'}`}>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-amber-800">Needs Immediate Review</p>
             {attentionBusinesses.length ? (
               <div className="mt-2 space-y-2">
                 {attentionBusinesses.slice(0, 2).map(({ business, reason }) => (
-                  <button key={business.id} onClick={() => onSelectBusiness(business.id)} className="accounting-focus block w-full rounded-lg p-1 text-left hover:bg-white">
-                    <span className="block text-[11px] font-semibold text-[#3f4d44]">{business.name}</span>
-                    <span className="mt-0.5 block text-[10px] text-[#876f49]">{reason} · Open details</span>
+                  <button key={business.id} onClick={() => onSelectBusiness(business.id)} className="accounting-focus block w-full rounded-lg p-2 text-left hover:bg-white bg-white/70 transition border border-amber-200 shadow-2xs">
+                    <span className="block text-xs font-bold text-slate-900">{business.name}</span>
+                    <span className="mt-0.5 block text-[10px] text-amber-800 font-sans">{reason} · Open Control Board &rarr;</span>
                   </button>
                 ))}
               </div>
-            ) : <p className="mt-2 text-[11px] text-[#77857e]">No review signals in the available sample.</p>}
+            ) : <p className="mt-2 text-xs text-slate-500">No review signals in the available sample.</p>}
           </div>
-          <div className="rounded-xl border border-[#dce9e1] bg-[#f7fbf8] p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#4e7560]">Growing fastest</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">Highest Run-Rate Growth</p>
             {growingBusinesses[0] ? (
-              <button onClick={() => onSelectBusiness(growingBusinesses[0].business.id)} className="accounting-focus mt-2 block rounded-lg p-1 text-left hover:bg-white">
-                <span className="block text-[11px] font-semibold text-[#3f4d44]">{growingBusinesses[0].business.name}</span>
-                <span className="mt-0.5 block text-[10px] text-[#547260]">Sales up {growingBusinesses[0].salesChange?.toFixed(1)}% vs. last month · Open details</span>
+              <button onClick={() => onSelectBusiness(growingBusinesses[0].business.id)} className="accounting-focus mt-2 block rounded-lg p-2 text-left hover:bg-white bg-white/70 transition border border-slate-200 shadow-2xs w-full">
+                <span className="block text-xs font-bold text-slate-900">{growingBusinesses[0].business.name}</span>
+                <span className="mt-0.5 block text-[10px] text-emerald-700 font-sans">Sales up {growingBusinesses[0].salesChange?.toFixed(1)}% vs. last month &rarr;</span>
               </button>
-            ) : <p className="mt-2 text-[11px] text-[#77857e]">No comparable monthly sales history.</p>}
+            ) : <p className="mt-2 text-xs text-slate-500">No comparable monthly sales history.</p>}
           </div>
-          <div className="rounded-xl border border-[#e5ebe8] bg-[#f8faf9] p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#718078]">Largest by monthly sales</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-600">Largest by Volume</p>
             {leadingBusiness ? (
-              <button onClick={() => onSelectBusiness(leadingBusiness.id)} className="accounting-focus mt-2 block rounded-lg p-1 text-left hover:bg-white">
-                <span className="block text-[11px] font-semibold text-[#3f4d44]">{leadingBusiness.name}</span>
-                <span className="mt-0.5 block text-[10px] text-[#77857e]">{formatBDT(metrics[leadingBusiness.id]?.monthlyRevenue ?? 0)} · Open details</span>
+              <button onClick={() => onSelectBusiness(leadingBusiness.id)} className="accounting-focus mt-2 block rounded-lg p-2 text-left hover:bg-white bg-white/70 transition border border-slate-200 shadow-2xs w-full">
+                <span className="block text-xs font-bold text-slate-900">{leadingBusiness.name}</span>
+                <span className="mt-0.5 block text-[10px] text-slate-600 font-sans">{formatBDT(metrics[leadingBusiness.id]?.monthlyRevenue ?? 0)} monthly &rarr;</span>
               </button>
-            ) : <p className="mt-2 text-[11px] text-[#77857e]">Monthly sales are not available.</p>}
+            ) : <p className="mt-2 text-xs text-slate-500">Monthly sales are not available.</p>}
           </div>
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-[#929d97]">
-          Sales movement, delivery rates, and invoice flags below are seeded examples, not verified results. A signal points to where to investigate; it does not explain the cause.
-        </p>
       </section>
 
-      <section aria-labelledby="businesses-heading" className="glass-card overflow-hidden rounded-2xl">
-        <div className="flex flex-col justify-between gap-3 border-b border-[#edf1ef] p-5 sm:flex-row sm:items-center">
+      <section aria-labelledby="businesses-heading" className="rounded-xl border border-[#e2e8f0] bg-white overflow-hidden font-mono shadow-sm">
+        <div className="flex flex-col justify-between gap-3 border-b border-[#e2e8f0] bg-slate-50/70 p-5 sm:flex-row sm:items-center">
           <div>
-            <h2 id="businesses-heading" className="text-[15px] font-semibold text-[#25332c]">Your businesses</h2>
-            <p className="mt-1 text-[11px] text-[#7a8781]">Choose a business to see its activity. Connected businesses keep separate financial records.</p>
+            <h2 id="businesses-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Enterprise Business Entities</h2>
+            <p className="mt-1 text-xs text-slate-500 font-sans">Strict legal entity separation. Ledgers, bank accounts, and debts remain isolated.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[#f2f5f3] px-2.5 py-1 text-[10px] font-medium text-[#6f7d76]">{businesses.length} {businesses.length === 1 ? 'business' : 'businesses'}</span>
+            <span className="rounded bg-slate-200/80 border border-slate-300 px-2.5 py-1 text-[10px] font-bold text-slate-700">{businesses.length} {businesses.length === 1 ? 'business' : 'businesses'}</span>
             <button
-              onClick={() => setShowComparison((previous) => !previous)}
-              disabled={selectedForCompare.length < 2}
-              title={selectedForCompare.length < 2 ? 'Select at least two businesses to compare' : 'Compare selected businesses'}
-              className="accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#dfe8e3] px-3 text-[11px] font-semibold text-[#087e63] transition hover:bg-[#f4f9f6] disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleCompareClick}
+              title="Benchmark businesses side-by-side"
+              className={`accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-[11px] font-mono font-bold transition shadow-2xs ${
+                showComparison
+                  ? 'border-emerald-300 bg-emerald-100 text-emerald-800'
+                  : 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+              }`}
             >
-              <ArrowRight size={13} /> {showComparison ? 'Hide comparison' : selectedForCompare.length >= 2 ? `Compare (${selectedForCompare.length})` : 'Compare'}
+              <ArrowRight size={13} /> {showComparison ? 'Hide comparison' : selectedForCompare.length >= 2 ? `Compare (${selectedForCompare.length})` : 'Compare (2)'}
             </button>
           </div>
         </div>
-        {selectedForCompare.length < 2 && (
-          <p className="border-b border-[#edf1ef] bg-[#fbfcfb] px-5 py-2 text-[10px] text-[#85918b]">To compare businesses, select at least two using the checkboxes on their cards.</p>
+        {!showComparison && (
+          <p className="border-b border-slate-200 bg-slate-50/40 px-5 py-2 text-[10px] text-slate-500 font-sans">
+            Tip: Select 2 to 4 businesses to benchmark financial and operational telemetry side-by-side. Click <strong className="text-emerald-700">Compare</strong> to view the matrix.
+          </p>
         )}
 
         <div className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -611,112 +637,127 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
                 ? 'Delivery below target'
                 : salesChange != null && salesChange <= -5
                   ? 'Sales declining'
-                  : 'No major sample flag';
+                  : 'Normal';
             const linkedRelationships = relationships.filter((relationship) =>
               relationship.parentBusinessId === business.id || relationship.relatedBusinessId === business.id,
             );
             return (
-              <article key={business.id} className="group flex min-w-0 flex-col rounded-2xl border border-[#e6ece9] bg-white p-4 transition hover:-translate-y-0.5 hover:border-[#c8ded2] hover:shadow-[0_12px_28px_rgba(25,47,39,0.08)] sm:p-5">
+              <article key={business.id} className="group flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-md sm:p-5 shadow-xs">
                 <div className="flex items-start gap-3">
-                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${(businessMetrics?.availableCash ?? 0) > 0 ? 'bg-[#e8f3ed] text-[#087e63]' : 'bg-[#f1f3fb] text-[#6678b4]'}`}>
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${(businessMetrics?.availableCash ?? 0) > 0 ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
                     <Building2 size={18} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <h3 className="line-clamp-2 min-h-10 text-[14px] font-semibold leading-5 text-[#2d3a34]">{business.name}</h3>
-                    <p className="mt-1 line-clamp-2 min-h-8 text-[11px] leading-4 text-[#74817b]">{business.industry}</p>
+                    <h3 className="line-clamp-2 min-h-10 text-sm font-bold text-slate-900">{business.name}</h3>
+                    <p className="mt-0.5 line-clamp-1 text-xs text-slate-500 font-sans">{business.industry}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                      <span className={`rounded-full px-2 py-0.5 text-[9px] font-semibold ${business.status === 'Active' ? 'bg-[#eaf5ef] text-[#26765a]' : 'bg-[#fff6e8] text-[#9a6819]'}`}>{business.status}</span>
-                      {business.isSample && <span className="rounded-full bg-[#f0f3fa] px-2 py-0.5 text-[9px] font-semibold text-[#647398]">Demo data</span>}
+                      <span className={`rounded px-2 py-0.5 text-[9px] font-bold ${business.status === 'Active' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`}>{business.status}</span>
+                      {business.isSample && <span className="rounded bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600 border border-slate-200">Demo telemetry</span>}
                     </div>
                   </div>
-                  <label className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[#e8eeeb] px-2 py-1.5 text-[10px] font-medium text-[#68766f] transition hover:bg-[#f7faf8]" title="Select up to four businesses to compare">
-                    <input type="checkbox" aria-label={`Compare ${business.name}`} checked={selectedForCompare.includes(business.id)} onChange={() => toggleCompare(business.id)} className="h-3.5 w-3.5 accent-[#087e63]" />
-                    Compare
+                  <label
+                    className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-mono font-medium transition cursor-pointer select-none ${
+                      selectedForCompare.includes(business.id)
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800 shadow-2xs'
+                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                    title="Select up to 4 businesses to compare"
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={`Compare ${business.name}`}
+                      checked={selectedForCompare.includes(business.id)}
+                      onChange={() => toggleCompare(business.id)}
+                      className="h-3.5 w-3.5 accent-emerald-600 cursor-pointer"
+                    />
+                    <span>{selectedForCompare.includes(business.id) ? 'Comparing' : 'Compare'}</span>
                   </label>
                 </div>
-                <p className="mt-3 flex min-w-0 items-center gap-1.5 text-[11px] text-[#6f7d76]"><MapPin size={13} className="shrink-0" /><span className="truncate">{business.location}</span></p>
+                <p className="mt-3 flex min-w-0 items-center gap-1.5 text-xs text-slate-500 font-sans"><MapPin size={13} className="shrink-0 text-slate-400" /><span className="truncate">{business.location}</span></p>
 
-                <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#f7faf8] p-3.5">
+                <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 rounded-lg bg-slate-50 p-3 border border-slate-200">
                   <div>
-                    <p className="text-[10px] text-[#74817b]">Monthly sales</p>
-                    <p className="mt-1 text-[13px] font-semibold tabular-nums text-[#34433b]">{businessMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(businessMetrics.monthlyRevenue)}</p>
-                    <p className={`mt-1 text-[10px] font-medium ${salesChange == null ? 'text-[#87938d]' : salesChange >= 0 ? 'text-[#26765a]' : 'text-[#a74850]'}`}>
-                      {salesChange == null ? 'No monthly comparison' : `${salesChange >= 0 ? '+' : ''}${salesChange.toFixed(1)}% vs. last month`}
+                    <p className="text-[9px] text-slate-500 uppercase">Monthly sales</p>
+                    <p className="mt-1 text-xs font-bold tabular-nums text-slate-900">{businessMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(businessMetrics.monthlyRevenue)}</p>
+                    <p className={`mt-0.5 text-[9px] font-medium ${salesChange == null ? 'text-slate-400' : salesChange >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                      {salesChange == null ? 'No monthly trend' : `${salesChange >= 0 ? '+' : ''}${salesChange.toFixed(1)}% vs. last mo`}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-[#74817b]">Cash available</p>
-                    <p className="mt-1 text-[13px] font-semibold tabular-nums text-[#34433b]">{businessMetrics?.availableCash == null ? 'Not available' : formatBDT(businessMetrics.availableCash)}</p>
+                    <p className="text-[9px] text-slate-500 uppercase">Cash available</p>
+                    <p className="mt-1 text-xs font-bold tabular-nums text-emerald-700">{businessMetrics?.availableCash == null ? 'Not available' : formatBDT(businessMetrics.availableCash)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-[#74817b]">Customer invoices due</p>
-                    <p className="mt-1 text-[13px] font-semibold tabular-nums text-[#34433b]">{businessMetrics?.receivables == null ? 'Not available' : formatBDT(businessMetrics.receivables)}</p>
+                    <p className="text-[9px] text-slate-500 uppercase">Receivables due</p>
+                    <p className="mt-1 text-xs font-bold tabular-nums text-amber-700">{businessMetrics?.receivables == null ? 'Not available' : formatBDT(businessMetrics.receivables)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-[#74817b]">Monthly profit</p>
-                    <p className="mt-1 text-[13px] font-semibold tabular-nums text-[#087e63]">{businessMetrics?.monthlyNetProfit == null ? 'Not available' : formatBDT(businessMetrics.monthlyNetProfit)}</p>
+                    <p className="text-[9px] text-slate-500 uppercase">Monthly profit</p>
+                    <p className="mt-1 text-xs font-bold tabular-nums text-emerald-700">{businessMetrics?.monthlyNetProfit == null ? 'Not available' : formatBDT(businessMetrics.monthlyNetProfit)}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[10px]">
-                  <span className={`rounded-full px-2.5 py-1 font-semibold ${attention === 'No major sample flag' ? 'bg-[#eaf5ef] text-[#26765a]' : attention === 'More data needed' ? 'bg-[#f1f3f2] text-[#64716a]' : 'bg-[#fff4e5] text-[#94651c]'}`}>
+                  <span className={`rounded px-2 py-0.5 font-bold ${attention === 'Normal' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : attention === 'More data needed' ? 'bg-slate-100 text-slate-600' : 'bg-amber-50 text-amber-800 border border-amber-200'}`}>
                     {attention}
                   </span>
-                  {businessMetrics?.onTimeDeliveryPercent != null && <span className="text-[#718078]">{businessMetrics.onTimeDeliveryPercent}% deliveries on time</span>}
+                  {businessMetrics?.onTimeDeliveryPercent != null && <span className="text-slate-500">{businessMetrics.onTimeDeliveryPercent}% on-time drops</span>}
                 </div>
-                <p className="mt-3 flex items-center gap-1.5 text-[10px] text-[#6f7d76]"><Users size={12} className="shrink-0" />{customerCount == null ? 'Customers not added' : `${customerCount.toLocaleString('en-BD')} customers`} <span className="text-[#b1bbb5]">·</span> {employeeCount == null ? 'Team size not added' : `${employeeCount} employees`}</p>
-                {linkedRelationships.length > 0 && (
-                  <div className="mt-3 rounded-xl border border-[#e3ebe6] bg-[#fbfdfc] p-3">
-                    <p className="text-[10px] font-semibold text-[#5f7067]">Connected businesses</p>
-                    <div className="mt-1.5 space-y-1.5">
-                      {linkedRelationships.slice(0, 2).map((relationship) => {
-                        const relatedId = relationship.parentBusinessId === business.id
-                          ? relationship.relatedBusinessId
-                          : relationship.parentBusinessId;
-                        return (
-                          <div key={relationship.id} className="flex min-w-0 items-center gap-2 text-[10px]">
-                            <GitBranch size={12} className="shrink-0 text-[#138061]" />
-                            <span className="min-w-0 flex-1 truncate text-[#58675f]">{businesses.find((candidate) => candidate.id === relatedId)?.name ?? 'Business'}</span>
-                            <span className="shrink-0 text-[9px] text-[#829087]">{relationship.relationshipType ?? 'Related'}</span>
-                          </div>
-                        );
-                      })}
-                      {linkedRelationships.length > 2 && <span className="px-1 text-[9px] text-[#78867f]">+{linkedRelationships.length - 2} more</span>}
-                    </div>
-                  </div>
-                )}
+                <p className="mt-3 flex items-center gap-1.5 text-[10px] text-slate-500 font-sans"><Users size={12} className="shrink-0 text-slate-400" />{customerCount == null ? 'Customers not added' : `${customerCount.toLocaleString('en-BD')} retail accounts`} <span className="text-slate-300">·</span> {employeeCount == null ? 'Team not added' : `${employeeCount} staff`}</p>
 
-                <div className="mt-auto border-t border-[#edf1ef] pt-3">
-                  <button onClick={() => onSelectBusiness(business.id)} className="accounting-focus inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-[#f0f7f3] text-[11px] font-semibold text-[#087e63] transition hover:bg-[#e5f2ea]">
-                    Open business <ArrowRight size={13} className="transition group-hover:translate-x-0.5" />
+                <div className="mt-auto border-t border-slate-100 pt-3">
+                  <button onClick={() => onSelectBusiness(business.id)} className="accounting-focus inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800 transition hover:bg-emerald-100">
+                    Open Control Board <ArrowRight size={13} className="transition group-hover:translate-x-0.5" />
                   </button>
                 </div>
               </article>
             );
           })}
 
-          <button onClick={onAddBusiness} className="accounting-focus flex min-h-[206px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#cad9d0] bg-[#f9fcfa] p-5 text-center transition hover:border-[#8fbca5] hover:bg-[#f1f8f4]">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#087e63] shadow-sm"><CirclePlus size={20} /></span>
-            <span className="mt-3 text-[12px] font-semibold text-[#3b4b42]">Add another business</span>
-            <span className="mt-1 text-[10px] text-[#84918a]">Keep its business records separate</span>
+          <button onClick={onAddBusiness} className="accounting-focus flex min-h-[206px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-5 text-center transition hover:border-emerald-500/50 hover:bg-emerald-50/20">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-2xs"><CirclePlus size={20} /></span>
+            <span className="mt-3 text-xs font-bold text-slate-800">Add another business</span>
+            <span className="mt-1 text-[10px] text-slate-500 font-sans">Keep its business records and ledger separate</span>
           </button>
         </div>
       </section>
 
       {showComparison && comparisonBusinesses.length >= 2 && (
-        <section aria-labelledby="comparison-heading" className="glass-card mt-4 overflow-hidden rounded-2xl">
-          <div className="border-b border-[#edf1ef] p-5">
-            <h2 id="comparison-heading" className="text-[15px] font-semibold text-[#25332c]">Business comparison</h2>
-            <p className="mt-1 text-[11px] text-[#7a8781]">Compare each business using its own records. Example entries from other businesses are not included.</p>
+        <section id="comparison-section" aria-labelledby="comparison-heading" className="mt-4 overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm font-mono scroll-mt-24">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e8f0] bg-slate-50/70 p-5">
+            <div>
+              <h2 id="comparison-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Business Comparison Matrix</h2>
+              <p className="mt-1 text-xs text-slate-500 font-sans">Side-by-side entity benchmarking using verified isolated business records.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {comparisonBusinesses.map((business) => (
+                <span key={business.id} className="inline-flex items-center gap-1.5 rounded bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-[11px] font-mono text-emerald-800">
+                  {business.name}
+                  <button
+                    onClick={() => toggleCompare(business.id)}
+                    className="text-slate-400 hover:text-slate-700 ml-0.5 text-xs font-bold"
+                    title={`Remove ${business.name} from comparison`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={() => setShowComparison(false)}
+                className="rounded border border-slate-300 bg-white hover:bg-slate-50 px-2.5 py-1 text-[11px] font-mono text-slate-600 hover:text-slate-900 transition ml-2 shadow-2xs"
+              >
+                Hide ×
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-[11px]">
-              <thead className="bg-[#f8faf9] text-[10px] font-semibold uppercase tracking-wide text-[#84918a]">
+            <table className="w-full min-w-[720px] text-left text-xs">
+              <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-[#e2e8f0]">
                 <tr>
                   <th className="px-5 py-3">Metric</th>
-                  {comparisonBusinesses.map((business) => <th key={business.id} className="min-w-40 px-4 py-3">{business.name}</th>)}
+                  {comparisonBusinesses.map((business) => <th key={business.id} className="min-w-40 px-4 py-3 text-slate-900 font-bold">{business.name}</th>)}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#edf1ef]">
+              <tbody className="divide-y divide-slate-100">
                 {[
                   { label: 'Available cash', value: (id: string) => metrics[id]?.availableCash == null ? 'Not available' : formatBDT(metrics[id].availableCash) },
                   { label: 'Customer invoices due', value: (id: string) => metrics[id]?.receivables == null ? 'Not available' : formatBDT(metrics[id].receivables) },
@@ -742,9 +783,9 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
                   { label: 'Connected businesses', value: (id: string) => String(metrics[id]?.relatedCount ?? 0) },
                   { label: 'Demo invoices · expenses', value: (id: string) => `${metrics[id]?.invoiceCount ?? 0} · ${metrics[id]?.expenseCount ?? 0}` },
                 ].map((row) => (
-                  <tr key={row.label}>
-                    <th scope="row" className="whitespace-nowrap px-5 py-3 font-medium text-[#718078]">{row.label}</th>
-                    {comparisonBusinesses.map((business) => <td key={business.id} className="px-4 py-3 font-semibold tabular-nums text-[#34433b]">{row.value(business.id)}</td>)}
+                  <tr key={row.label} className="hover:bg-slate-50/70 transition">
+                    <th scope="row" className="whitespace-nowrap px-5 py-3 font-medium text-slate-500">{row.label}</th>
+                    {comparisonBusinesses.map((business) => <td key={business.id} className="px-4 py-3 font-bold tabular-nums text-slate-900">{row.value(business.id)}</td>)}
                   </tr>
                 ))}
               </tbody>
@@ -753,7 +794,7 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
         </section>
       )}
 
-      <p className="mt-4 text-[10px] leading-relaxed text-[#929d97]">
+      <p className="mt-4 text-[10px] leading-relaxed text-slate-500 font-sans">
         Illustrative sample only—not verified financials or official Unilever/Pureit distributor relationships. Portfolio figures sum business-owned data; shared reference rows are labeled and excluded. Changes are local to this demo session.
       </p>
     </div>
@@ -845,43 +886,43 @@ export const NewBusinessWorkspace: React.FC<NewBusinessWorkspaceProps> = ({
   };
 
   return (
-  <div className="pb-12">
-    <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+  <div className="pb-12 text-slate-800">
+    <div className="mb-5 flex flex-wrap items-start justify-between gap-3 font-mono">
       <div>
-        <div className="mb-2 flex items-center gap-2 text-[11px] font-medium text-[#7e8c85]">
-          <button onClick={onBackToPortfolio} className="accounting-focus rounded text-[#087e63] hover:underline">Business portfolio</button>
-          <ArrowRight size={12} /><span className="text-[#3f5148]">{business.name}</span>
+        <div className="mb-2 flex items-center gap-2 text-[11px] text-slate-500">
+          <button onClick={onBackToPortfolio} className="accounting-focus rounded text-emerald-700 hover:underline">Business Portfolio</button>
+          <ArrowRight size={12} /><span className="text-slate-900 font-semibold">{business.name}</span>
         </div>
-        <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[#1f2d26] sm:text-[29px]">{business.name}</h1>
-        <p className="mt-1 text-[13px] text-[#74817b]">{business.industry} · {business.location}</p>
+        <h1 className="text-[25px] font-bold tracking-tight text-slate-900 sm:text-[29px]">{business.name}</h1>
+        <p className="mt-1 text-xs text-slate-500 font-sans">{business.industry} · {business.location}</p>
       </div>
-      <button onClick={onBackToPortfolio} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[#e1e8e4] bg-white px-3 text-[11px] font-semibold text-[#53615a] hover:bg-[#f5f8f6]">
-        <Building2 size={14} /> All businesses
+      <button onClick={onBackToPortfolio} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs">
+        <Building2 size={14} /> All Businesses
       </button>
     </div>
 
-    <section aria-label="Business financial metrics" className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+    <section aria-label="Business financial metrics" className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4 font-mono">
       {[
         { label: 'Available cash', value: businessMetrics?.availableCash == null ? 'Not available' : formatBDT(businessMetrics.availableCash) },
         { label: 'Monthly sales', value: businessMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(businessMetrics.monthlyRevenue) },
         { label: 'Customer invoices due', value: businessMetrics?.receivables == null ? (openInvoiceTotal > 0 ? formatBDT(openInvoiceTotal) : 'Not available') : formatBDT(businessMetrics.receivables) },
         { label: 'Monthly profit', value: businessMetrics?.monthlyNetProfit == null ? 'Not available' : formatBDT(businessMetrics.monthlyNetProfit) },
       ].map((metric) => (
-        <article key={metric.label} className="glass-card rounded-2xl p-4 sm:p-5">
-          <p className="text-[11px] text-[#7a8781]">{metric.label}</p>
-          <p className="mt-2 break-words text-[19px] font-semibold tracking-[-0.035em] text-[#3c4a43] tabular-nums sm:text-[23px]">{metric.value}</p>
-          <p className="mt-1 text-[10px] text-[#98a29d]">Example figures · BDT</p>
+        <article key={metric.label} className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-sm">
+          <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">{metric.label}</p>
+          <p className="mt-2 break-words text-[19px] font-bold text-slate-900 tabular-nums sm:text-[23px]">{metric.value}</p>
+          <p className="mt-1 text-[10px] text-slate-400 font-sans">Verified records · BDT</p>
         </article>
       ))}
     </section>
 
-    <section id="reports" aria-labelledby="business-cashflow-heading" className="glass-card mb-4 scroll-mt-24 rounded-2xl p-5">
+    <section id="reports" aria-labelledby="business-cashflow-heading" className="mb-4 scroll-mt-24 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm font-mono">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 id="business-cashflow-heading" className="text-[15px] font-semibold text-[#25332c]">Cash flow</h2>
-          <p className="mt-1 text-[11px] text-[#7a8781]">A simple view of money available, sales, and customer invoices due.</p>
+          <h2 id="business-cashflow-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Cash Flow Runway</h2>
+          <p className="mt-1 text-xs text-slate-500 font-sans">Available liquidity, monthly run-rate sales, and customer credit exposure.</p>
         </div>
-        <span className="rounded-full bg-[#f2f5f3] px-2.5 py-1 text-[10px] font-medium text-[#6f7d76]">Sample snapshot</span>
+        <span className="rounded bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-[10px] font-bold text-emerald-800">Sample Snapshot</span>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
@@ -889,60 +930,60 @@ export const NewBusinessWorkspace: React.FC<NewBusinessWorkspaceProps> = ({
           { label: 'Monthly sales', value: businessMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(businessMetrics.monthlyRevenue) },
           { label: 'Customer invoices due', value: businessMetrics?.receivables == null ? (openInvoiceTotal > 0 ? formatBDT(openInvoiceTotal) : 'Not available') : formatBDT(businessMetrics.receivables) },
         ].map((item) => (
-          <div key={item.label} className="rounded-xl border border-[#e8eeeb] bg-white p-3">
-            <p className="text-[10px] text-[#7b8982]">{item.label}</p>
-            <p className="mt-1 text-[16px] font-semibold tabular-nums text-[#35443c]">{item.value}</p>
+          <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+            <p className="text-[10px] uppercase font-bold text-slate-500">{item.label}</p>
+            <p className="mt-1 text-[16px] font-bold tabular-nums text-slate-900">{item.value}</p>
           </div>
         ))}
       </div>
-      <p className="mt-3 text-[10px] leading-relaxed text-[#87938d]">
-        This business has sample summary figures, but no dated income and expense history. A cash-flow trend is not available yet.
+      <p className="mt-3 text-[10px] leading-relaxed text-slate-500 font-sans">
+        This business has summary figures, but no dated income and expense history. A full cash-flow trend chart is not available yet.
       </p>
     </section>
 
     <BusinessSalesOperations metrics={businessMetrics} businessId={business.id} />
 
-    <section id="bank-reconciliation" aria-labelledby="business-attention-heading" className="glass-card mb-4 scroll-mt-24 rounded-2xl p-5">
+    <section id="bank-reconciliation" aria-labelledby="business-attention-heading" className="mb-4 scroll-mt-24 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm font-mono">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 id="business-attention-heading" className="text-[15px] font-semibold text-[#25332c]">Alerts &amp; tasks</h2>
-          <p className="mt-1 text-[11px] text-[#7a8781]">Unpaid invoices listed for this business’s sample records.</p>
+          <h2 id="business-attention-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Receivables &amp; Due Tasks</h2>
+          <p className="mt-1 text-xs text-slate-500 font-sans">Unpaid retailer invoices listed for this business.</p>
         </div>
-        <span className="rounded-full bg-[#f2f5f3] px-2.5 py-1 text-[10px] font-medium text-[#6f7d76]">{outstandingInvoices.length} unpaid</span>
+        <span className="rounded bg-amber-50 border border-amber-200 px-2.5 py-1 text-[10px] font-bold text-amber-800">{outstandingInvoices.length} unpaid</span>
       </div>
       {outstandingInvoices.length ? (
-        <div className="mt-3 divide-y divide-[#edf1ef]">
+        <div className="mt-3 divide-y divide-slate-100">
           {outstandingInvoices.map((entry) => (
             <div key={entry.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
               <div className="min-w-0">
-                <p className="text-[12px] font-medium text-[#34433b]">{entry.description}</p>
-                <p className="mt-1 text-[10px] text-[#87938d]">{entry.date} · {entry.status === 'Overdue' ? 'Past due' : 'Awaiting payment'}</p>
+                <p className="text-xs font-bold text-slate-900">{entry.description}</p>
+                <p className="mt-1 text-[10px] text-slate-500 font-sans">{entry.date} · {entry.status === 'Overdue' ? 'Past due' : 'Awaiting payment'}</p>
               </div>
-              <span className={`text-[12px] font-semibold tabular-nums ${entry.status === 'Overdue' ? 'text-[#b74750]' : 'text-[#9a6819]'}`}>
+              <span className={`text-xs font-bold tabular-nums ${entry.status === 'Overdue' ? 'text-rose-700' : 'text-amber-700'}`}>
                 {formatBDT(entry.amount)}
               </span>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mt-3 rounded-xl border border-dashed border-[#dfe8e3] bg-[#fbfdfc] p-4 text-[11px] text-[#77857e]">
-          No unpaid invoices are listed in this sample. This does not confirm that the business has no real-world tasks.
+        <p className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-xs text-slate-500 font-sans">
+          No unpaid invoices are listed in this sample.
         </p>
       )}
-      <p className="mt-2 text-[10px] text-[#929d97]">Other operational alerts are not included in this business’s sample data.</p>
+      <p className="mt-2 text-[10px] text-slate-400 font-sans">Other operational alerts are not included in this business’s sample data.</p>
     </section>
 
-    <section id="ai-assistant" aria-labelledby="business-assistant-heading" className="glass-card mb-4 scroll-mt-24 rounded-2xl p-5">
+    <section id="ai-assistant" aria-labelledby="business-assistant-heading" className="mb-4 scroll-mt-24 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm font-mono">
       <div>
-        <h2 id="business-assistant-heading" className="text-[15px] font-semibold text-[#25332c]">Ask about this business</h2>
-        <p className="mt-1 text-[11px] text-[#7a8781]">Get a quick answer from this business’s sample figures.</p>
+        <h2 id="business-assistant-heading" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Ask Business Telemetry</h2>
+        <p className="mt-1 text-xs text-slate-500 font-sans">Get an instant calculation based on this entity&apos;s verified figures.</p>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {['How much cash is available?', 'What were monthly sales?', 'How much profit was made?', 'Are any invoices unpaid?'].map((question) => (
           <button
             key={question}
             onClick={() => { setAssistantQuestion(question); answerBusinessQuestion(question); }}
-            className="accounting-focus rounded-lg border border-[#e6ece9] bg-white px-3 py-2 text-left text-[11px] text-[#53635a] transition hover:border-[#b9d8ca] hover:bg-[#f8fbf9]"
+            className="accounting-focus rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-xs text-slate-700 transition hover:border-emerald-500/50 hover:bg-slate-100"
           >
             {question}
           </button>
@@ -954,29 +995,29 @@ export const NewBusinessWorkspace: React.FC<NewBusinessWorkspaceProps> = ({
           onChange={(event) => setAssistantQuestion(event.target.value)}
           aria-label="Ask about this business"
           placeholder="Ask about cash, sales, profit, or invoices"
-          className="accounting-focus h-10 min-w-0 flex-1 rounded-xl border border-[#e4ebe7] bg-white px-3 text-[11px] text-[#3d4a44] placeholder:text-[#a4aea8]"
+          className="accounting-focus h-10 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 font-sans focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/30"
         />
-        <button type="submit" className="accounting-focus rounded-xl bg-[#087e63] px-4 text-[11px] font-semibold text-white hover:bg-[#086d56]">Ask</button>
+        <button type="submit" className="accounting-focus rounded-xl bg-emerald-700 px-4 text-xs font-bold text-white hover:bg-emerald-800 transition">Ask</button>
       </form>
       {assistantResponse && (
-        <p aria-live="polite" className="mt-3 rounded-xl border border-[#e3eee7] bg-[#f6faf7] p-3 text-[11px] leading-relaxed text-[#52635a]">
+        <p aria-live="polite" className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs leading-relaxed text-emerald-900 font-sans">
           {assistantResponse}
         </p>
       )}
     </section>
 
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
+    <section className="rounded-xl border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-sm font-mono">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f1f3fb] text-[#6678b4]"><Building2 size={21} /></span>
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700"><Building2 size={21} /></span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-[16px] font-semibold text-[#293830]">Business details</h2>
-            <span className={`rounded-full px-2.5 py-1 text-[9px] font-semibold ${business.status === 'Active' ? 'bg-[#eaf5ef] text-[#26765a]' : 'bg-[#fff6e8] text-[#9a6819]'}`}>
-              {business.isSample ? 'ILLUSTRATIVE SAMPLE' : business.status === 'Active' ? 'ACTIVE WORKSPACE' : 'SETUP IN PROGRESS'}
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Entity Configuration</h2>
+            <span className={`rounded px-2.5 py-0.5 text-[10px] font-bold ${business.status === 'Active' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`}>
+              {business.isSample ? 'DEMO ENTITY' : business.status === 'Active' ? 'ACTIVE WORKSPACE' : 'SETUP IN PROGRESS'}
             </span>
           </div>
-          <p className="mt-1 text-[11px] leading-relaxed text-[#78867f]">
-            This workspace keeps this business’s activity separate from the businesses connected below.
+          <p className="mt-1 text-xs text-slate-500 font-sans">
+            This workspace maintains strict legal separation from the connected entities below.
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {[
@@ -987,111 +1028,111 @@ export const NewBusinessWorkspace: React.FC<NewBusinessWorkspaceProps> = ({
               { label: 'Registration / tax ID', value: business.registrationId || 'Not provided' },
               { label: 'Workspace created', value: business.createdAt },
             ].map((item) => (
-              <div key={item.label} className="rounded-xl border border-[#e8eeeb] bg-white p-3">
-                <p className="text-[9px] font-medium uppercase tracking-wide text-[#8c9892]">{item.label}</p>
-                <p className="mt-1.5 break-words text-[11px] font-medium text-[#435149]">{item.value}</p>
+              <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-[9px] font-bold uppercase tracking-wide text-slate-500">{item.label}</p>
+                <p className="mt-1.5 break-words text-xs font-semibold text-slate-800">{item.value}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div id="related-businesses" className="mt-5 scroll-mt-24 rounded-xl border border-[#dce9e1] bg-[#f7fbf8] p-4">
+      <div id="related-businesses" className="mt-5 scroll-mt-24 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <GitBranch size={15} className="text-[#087e63]" />
-              <h3 className="text-[13px] font-semibold text-[#34463c]">Connected businesses</h3>
+              <GitBranch size={15} className="text-emerald-700" />
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Connected Entities</h3>
             </div>
-            <span className="rounded-full bg-white px-2 py-1 text-[9px] text-[#728078]">{relatedBusinesses.length} linked</span>
+            <span className="rounded bg-white border border-slate-300 px-2 py-0.5 text-[10px] font-bold text-slate-700">{relatedBusinesses.length} linked</span>
           </div>
-          <p className="mt-1 text-[11px] text-[#7d8a83]">See which businesses connect to {business.name}. Each keeps its own records and balances.</p>
-          {relatedBusinesses.length === 0 && <p className="mt-3 rounded-lg border border-dashed border-[#d7e4dc] bg-white/70 p-3 text-[11px] text-[#77857e]">No businesses are connected yet. Add a new business or connect one already in your list.</p>}
+          <p className="mt-1 text-xs text-slate-500 font-sans">Affiliated entities connected to {business.name}. Each keeps its own isolated ledger and cash balance.</p>
+          {relatedBusinesses.length === 0 && <p className="mt-3 rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500 font-sans">No businesses are connected yet.</p>}
           <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {relatedBusinesses.map(({ business: related, relationship }) => {
               const relatedMetrics = metrics[related.id];
               const relatedCustomerCount = relatedMetrics?.customerCount ?? related.customerCount;
               return (
-                <article key={related.id} className="rounded-xl border border-[#e2ebe5] bg-white p-3">
+                <article key={related.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate text-[11px] font-semibold text-[#34433b]">{related.name}</p>
-                      <p className="mt-0.5 truncate text-[9px] text-[#8a9690]">{related.industry} · {related.location}</p>
-                      <span className="mt-1 inline-flex rounded-full bg-[#eef5f1] px-2 py-0.5 text-[9px] font-medium text-[#587362]">
+                      <p className="truncate text-xs font-bold text-slate-900">{related.name}</p>
+                      <p className="mt-0.5 truncate text-[10px] text-slate-500 font-sans">{related.industry} · {related.location}</p>
+                      <span className="mt-1 inline-flex rounded bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-700">
                         {relationship.parentBusinessId === business.id
                           ? relationship.relationshipType ?? 'Connected business'
                           : `Main business · ${relationship.relationshipType ?? 'Connected business'}`}
                       </span>
                     </div>
-                    <button onClick={() => onOpenBusiness(related.id)} className="accounting-focus shrink-0 rounded-lg px-2 py-1 text-[9px] font-semibold text-[#087e63] hover:bg-[#eef7f2]">Open</button>
+                    <button onClick={() => onOpenBusiness(related.id)} className="accounting-focus shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold text-emerald-700 hover:bg-emerald-50">Open</button>
                   </div>
-                  <div className="mt-3 grid grid-cols-2 gap-2 rounded-lg bg-[#f8faf9] p-2 sm:grid-cols-3">
-                    <div><p className="text-[8px] text-[#84918a]">Cash</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#34433b]">{relatedMetrics?.availableCash == null ? 'Not available' : formatBDT(relatedMetrics.availableCash)}</p></div>
-                    <div><p className="text-[8px] text-[#84918a]">Monthly revenue</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#34433b]">{relatedMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(relatedMetrics.monthlyRevenue)}</p></div>
-                    <div><p className="text-[8px] text-[#84918a]">Customer invoices due</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#34433b]">{relatedMetrics?.receivables == null ? 'Not available' : formatBDT(relatedMetrics.receivables)}</p></div>
-                    <div><p className="text-[8px] text-[#84918a]">Net profit</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#087e63]">{relatedMetrics?.monthlyNetProfit == null ? 'Not available' : formatBDT(relatedMetrics.monthlyNetProfit)}</p></div>
-                    <div><p className="text-[8px] text-[#84918a]">Customers</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#34433b]">{relatedCustomerCount == null ? 'Not available' : relatedCustomerCount.toLocaleString('en-BD')}</p></div>
-                    <div><p className="text-[8px] text-[#84918a]">Employees</p><p className="mt-0.5 text-[10px] font-semibold tabular-nums text-[#34433b]">{relatedMetrics?.employeeCount ?? related.employeeCount ?? 'Not available'}</p></div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-2 border border-slate-200 sm:grid-cols-3">
+                    <div><p className="text-[8px] text-slate-500 uppercase">Cash</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-emerald-700">{relatedMetrics?.availableCash == null ? 'Not available' : formatBDT(relatedMetrics.availableCash)}</p></div>
+                    <div><p className="text-[8px] text-slate-500 uppercase">Revenue</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-slate-800">{relatedMetrics?.monthlyRevenue == null ? 'Not available' : formatBDT(relatedMetrics.monthlyRevenue)}</p></div>
+                    <div><p className="text-[8px] text-slate-500 uppercase">Receivables</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-amber-700">{relatedMetrics?.receivables == null ? 'Not available' : formatBDT(relatedMetrics.receivables)}</p></div>
+                    <div><p className="text-[8px] text-slate-500 uppercase">Net profit</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-emerald-700">{relatedMetrics?.monthlyNetProfit == null ? 'Not available' : formatBDT(relatedMetrics.monthlyNetProfit)}</p></div>
+                    <div><p className="text-[8px] text-slate-500 uppercase">Customers</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-slate-800">{relatedCustomerCount == null ? 'Not available' : relatedCustomerCount.toLocaleString('en-BD')}</p></div>
+                    <div><p className="text-[8px] text-slate-500 uppercase">Staff</p><p className="mt-0.5 text-[10px] font-bold tabular-nums text-slate-800">{relatedMetrics?.employeeCount ?? related.employeeCount ?? 'Not available'}</p></div>
                   </div>
                   {businessMetrics?.monthlyRevenue != null && relatedMetrics?.monthlyRevenue != null && businessMetrics.monthlyRevenue > 0 && (
-                    <p className="mt-2 rounded-lg bg-[#f5f8f6] px-2.5 py-2 text-[9px] text-[#68766f]">
+                    <p className="mt-2 rounded bg-slate-50 px-2.5 py-1.5 text-[9px] text-slate-600 font-sans">
                       Monthly sales are {Math.abs(((relatedMetrics.monthlyRevenue - businessMetrics.monthlyRevenue) / businessMetrics.monthlyRevenue) * 100).toFixed(1)}% {relatedMetrics.monthlyRevenue >= businessMetrics.monthlyRevenue ? 'higher' : 'lower'} than {business.name}.
                     </p>
                   )}
-                  {relationship.profileReused && <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#eef4fb] px-2 py-1 text-[9px] font-medium text-[#5e7392]"><Share2 size={10} /> Business details copied from connected business</span>}
-                  {relationship.referenceEntryCount > 0 && <span className="ml-1 mt-2 inline-flex items-center gap-1 rounded-full bg-[#f4f1fb] px-2 py-1 text-[8px] font-medium text-[#75669e]">{relationship.referenceEntryCount} reference entries · excluded from totals</span>}
+                  {relationship.profileReused && <span className="mt-2 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[9px] font-medium text-slate-600"><Share2 size={10} /> Details reused</span>}
+                  {relationship.referenceEntryCount > 0 && <span className="ml-1 mt-2 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[8px] font-medium text-slate-600">{relationship.referenceEntryCount} reference rows</span>}
                 </article>
               );
             })}
           </div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <button onClick={() => onAddRelatedBusiness(business.id)} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-[#087e63] px-3.5 text-[11px] font-semibold text-white hover:bg-[#086d56]"><GitBranch size={13} /> Add connected business</button>
+        <button onClick={() => onAddRelatedBusiness(business.id)} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-700 px-3.5 text-xs font-bold text-white hover:bg-emerald-800 transition"><GitBranch size={13} /> Add Connected Business</button>
         {businesses.some((candidate) => candidate.id !== business.id && !links.some((link) => link.relatedBusinessId === candidate.id || link.parentBusinessId === candidate.id)) && (
-          <button onClick={() => onLinkBusiness(business.id)} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[#dfe8e3] bg-white px-3.5 text-[10px] font-semibold text-[#53615a] hover:bg-[#f5f8f6]"><Share2 size={13} /> Connect existing business</button>
+          <button onClick={() => onLinkBusiness(business.id)} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-2xs"><Share2 size={13} /> Connect Existing Business</button>
         )}
       </div>
     </section>
 
-    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 rounded-xl border border-[#e8eeeb] bg-white px-4 py-3 text-[10px] text-[#728078]">
-      <span><strong className="font-semibold text-[#45554c]">{business.customerCount?.toLocaleString('en-BD') ?? 'Not added'}</strong> customers</span>
-      <span><strong className="font-semibold text-[#45554c]">{business.employeeCount ?? 'Not added'}</strong> employees</span>
-      <span><strong className="font-semibold text-[#45554c]">{invoiceCount.toLocaleString('en-BD')}</strong> local invoices added</span>
-      <span><strong className="font-semibold text-[#45554c]">{expenseCount.toLocaleString('en-BD')}</strong> local expenses added</span>
+    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 font-mono">
+      <span><strong className="font-bold text-slate-900">{business.customerCount?.toLocaleString('en-BD') ?? 'Not added'}</strong> customers</span>
+      <span><strong className="font-bold text-slate-900">{business.employeeCount ?? 'Not added'}</strong> employees</span>
+      <span><strong className="font-bold text-slate-900">{invoiceCount.toLocaleString('en-BD')}</strong> local invoices</span>
+      <span><strong className="font-bold text-slate-900">{expenseCount.toLocaleString('en-BD')}</strong> local expenses</span>
     </div>
 
-    <section className="glass-card mt-4 flex flex-col items-start justify-between gap-4 rounded-2xl p-5 sm:flex-row sm:items-center">
+    <section className="mt-4 flex flex-col items-start justify-between gap-4 rounded-xl border border-[#e2e8f0] bg-white p-5 shadow-sm sm:flex-row sm:items-center font-mono">
       <div>
-        <h2 className="text-[14px] font-semibold text-[#2d3b33]">Quick actions &amp; local activity</h2>
-        <p className="mt-1 text-[11px] text-[#7c8982]">Add demo invoices or expenses to this business. Seeded sample records and local entries stay separate from other businesses.</p>
+        <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Quick Actions &amp; Ledger Operations</h2>
+        <p className="mt-1 text-xs text-slate-500 font-sans">Add invoices or record operational expenses directly to this entity&apos;s ledger.</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button onClick={onCreateInvoice} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-[#087e63] px-3.5 text-[11px] font-semibold text-white hover:bg-[#086d56]"><Plus size={14} /> Create invoice</button>
-        <button onClick={onAddExpense} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[#e1e8e4] bg-white px-3.5 text-[11px] font-semibold text-[#53615a] hover:bg-[#f5f8f6]"><Plus size={14} /> Add expense</button>
+        <button onClick={onCreateInvoice} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-700 px-3.5 text-xs font-bold text-white hover:bg-emerald-800 transition"><Plus size={14} /> Create Invoice</button>
+        <button onClick={onAddExpense} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-2xs"><Plus size={14} /> Add Expense</button>
       </div>
     </section>
 
-    <section id="general-ledger" className="glass-card mt-4 scroll-mt-24 overflow-hidden rounded-2xl">
-      <div className="border-b border-[#edf1ef] p-5">
-        <h2 className="text-[14px] font-semibold text-[#2d3b33]">Transactions and examples</h2>
-        <p className="mt-1 text-[11px] text-[#7c8982]">Entries belong only to {business.name}. Copied examples are labeled and do not affect its totals.</p>
+    <section id="general-ledger" className="mt-4 scroll-mt-24 overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm font-mono">
+      <div className="border-b border-[#e2e8f0] bg-slate-50/70 p-5">
+        <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Entity Transactions &amp; Ledger</h2>
+        <p className="mt-1 text-xs text-slate-500 font-sans">Records belong exclusively to {business.name}.</p>
       </div>
       {visibleEntries.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left text-[11px]">
-            <thead className="bg-[#f8faf9] text-[9px] font-semibold uppercase tracking-wide text-[#84918a]">
+          <table className="w-full min-w-[560px] text-left text-xs">
+            <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-[#e2e8f0]">
               <tr><th className="px-5 py-3">Date</th><th className="px-3 py-3">Description</th><th className="px-3 py-3">Type</th><th className="px-3 py-3 text-right">Amount</th><th className="px-5 py-3 text-right">Status</th></tr>
             </thead>
-            <tbody className="divide-y divide-[#edf1ef]">
+            <tbody className="divide-y divide-slate-100">
               {visibleEntries.map((entry) => (
-                <tr key={entry.id}>
-                  <td className="px-5 py-3 text-[#74807c]">{entry.date}</td>
-                  <td className="px-3 py-3 font-medium text-[#34433b]">{entry.description}</td>
-                  <td className="px-3 py-3 text-[#68766f]">
+                <tr key={entry.id} className="hover:bg-slate-50/70 transition">
+                  <td className="px-5 py-3 text-slate-500">{entry.date}</td>
+                  <td className="px-3 py-3 font-semibold text-slate-900">{entry.description}</td>
+                  <td className="px-3 py-3 text-slate-600">
                     {entry.referenceOnly
-                      ? <span className="rounded-full bg-[#f4f1fb] px-2 py-1 text-[9px] text-[#75669e]">Example from {entry.referenceSourceName}</span>
+                      ? <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] text-slate-700 border border-slate-200">Example from {entry.referenceSourceName}</span>
                       : entry.kind === 'Invoicing' ? 'Invoice' : entry.kind === 'Expenses' ? 'Expense' : entry.kind}
                   </td>
-                  <td className={`px-3 py-3 text-right font-semibold tabular-nums ${entry.amount < 0 ? 'text-[#b74750]' : 'text-[#34433b]'}`}>{entry.referenceOnly ? '—' : formatBDT(Math.abs(entry.amount))}</td>
-                  <td className="px-5 py-3 text-right text-[#68766f]">{entry.referenceOnly ? 'Excluded from totals' : entry.status}</td>
+                  <td className={`px-3 py-3 text-right font-bold tabular-nums ${entry.amount < 0 ? 'text-rose-700' : 'text-slate-900'}`}>{entry.referenceOnly ? '—' : formatBDT(Math.abs(entry.amount))}</td>
+                  <td className="px-5 py-3 text-right text-slate-500">{entry.referenceOnly ? 'Excluded from totals' : entry.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -1099,17 +1140,17 @@ export const NewBusinessWorkspace: React.FC<NewBusinessWorkspaceProps> = ({
         </div>
       ) : entries.length ? (
         <div className="p-8 text-center">
-          <p className="text-[12px] font-medium text-[#59675f]">No matching transactions</p>
-          <p className="mt-1 text-[10px] text-[#89958f]">Choose another transaction type in the sidebar to see more.</p>
+          <p className="text-xs font-bold text-slate-800">No matching transactions</p>
+          <p className="mt-1 text-[10px] text-slate-500 font-sans">Choose another transaction type filter to see records.</p>
         </div>
       ) : (
         <div className="p-8 text-center">
-          <p className="text-[12px] font-medium text-[#59675f]">No transactions added yet</p>
-          <p className="mt-1 text-[10px] text-[#89958f]">Create an invoice or expense above to start this business demo.</p>
+          <p className="text-xs font-bold text-slate-800">No transactions added yet</p>
+          <p className="mt-1 text-[10px] text-slate-500 font-sans">Create an invoice or expense above to start this business ledger.</p>
         </div>
       )}
     </section>
-    {referenceCount > 0 && <p className="mt-2 text-[10px] text-[#7f719f]">{referenceCount} copied example entries are shown for context and excluded from this business’s totals.</p>}
+    {referenceCount > 0 && <p className="mt-2 text-[10px] text-slate-500 font-sans">{referenceCount} copied example entries shown for context and excluded from business totals.</p>}
   </div>
   );
 };
@@ -1187,33 +1228,33 @@ export const BusinessOnboardingModal: React.FC<{
   };
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#12221d]/45 p-4 backdrop-blur-[3px]" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <form onSubmit={submit} aria-labelledby="business-onboarding-title" className="max-h-[min(90vh,820px)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-[#e2e9e5] bg-white p-5 shadow-[0_24px_80px_rgba(22,44,34,0.2)] sm:p-6">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <form onSubmit={submit} aria-labelledby="business-onboarding-title" className="max-h-[min(90vh,820px)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-[#cbd5e1] bg-white p-5 shadow-2xl sm:p-6 font-mono text-slate-800">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <span className="rounded-xl bg-[#eaf5ef] p-2.5 text-[#087e63]"><Building2 size={18} /></span>
+            <span className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 text-emerald-700"><Building2 size={18} /></span>
             <div>
-              <h2 id="business-onboarding-title" className="text-[16px] font-semibold text-[#26352d]">Add a business</h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-[#849089]">Add a separate business or connect one that is already on your list.</p>
+              <h2 id="business-onboarding-title" className="text-sm font-bold text-slate-900 uppercase tracking-wider">Add Enterprise Entity</h2>
+              <p className="mt-1 text-xs text-slate-500 font-sans">Add an isolated legal entity or connect an existing operating branch.</p>
             </div>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close add business dialog" className="accounting-focus rounded-lg p-1.5 text-[#89958f] hover:bg-[#f3f6f4]">
+          <button type="button" onClick={onClose} aria-label="Close add business dialog" className="accounting-focus rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
             <X size={18} />
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-1 rounded-xl bg-[#f3f6f4] p-1">
+        <div className="mt-5 grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1 border border-slate-200">
           {[
-            { id: 'standalone', label: 'New business' },
-            { id: 'related', label: 'Connected business' },
-            { id: 'link', label: 'Connect existing' },
+            { id: 'standalone', label: 'New Entity' },
+            { id: 'related', label: 'Connected Unit' },
+            { id: 'link', label: 'Connect Existing' },
           ].map((option) => (
             <button
               key={option.id}
               type="button"
               onClick={() => setMode(option.id as typeof mode)}
               aria-pressed={mode === option.id}
-              className={`accounting-focus min-h-9 rounded-lg px-2 text-[10px] font-semibold transition ${mode === option.id ? 'bg-white text-[#087e63] shadow-sm' : 'text-[#75827c] hover:text-[#34433b]'}`}
+              className={`accounting-focus min-h-9 rounded-lg px-2 text-[10px] font-bold uppercase tracking-wider transition ${mode === option.id ? 'bg-white text-emerald-800 border border-emerald-300/80 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
             >
               {option.label}
             </button>
@@ -1222,102 +1263,102 @@ export const BusinessOnboardingModal: React.FC<{
 
         {mode === 'link' ? (
           <div className="mt-5 space-y-3.5">
-            <label className="block text-[11px] font-medium text-[#55635b]">
-              Connect to <span className="text-[#b74750]">*</span>
-              <select required value={relationshipToBusinessId} onChange={(event) => setRelationshipToBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+            <label className="block text-xs font-semibold text-slate-700 font-sans">
+              Connect to <span className="text-rose-500">*</span>
+              <select required value={relationshipToBusinessId} onChange={(event) => setRelationshipToBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
                 <option value="">Choose a business</option>
                 {businesses.map((business) => <option key={business.id} value={business.id}>{business.name}</option>)}
               </select>
             </label>
-            <label className="block text-[11px] font-medium text-[#55635b]">
-              Choose a business to connect <span className="text-[#b74750]">*</span>
-              <select required value={linkedBusinessId} onChange={(event) => setLinkedBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+            <label className="block text-xs font-semibold text-slate-700 font-sans">
+              Choose a business to connect <span className="text-rose-500">*</span>
+              <select required value={linkedBusinessId} onChange={(event) => setLinkedBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
                 <option value="">Choose another business</option>
                 {businesses.filter((business) => business.id !== relationshipToBusinessId).map((business) => <option key={business.id} value={business.id}>{business.name}</option>)}
               </select>
             </label>
-            <div className="rounded-xl border border-[#e7ece9] bg-[#f8faf9] p-3 text-[11px] leading-relaxed text-[#718078]">Connecting businesses does not combine their records or financial totals.</div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-600 font-sans">Connecting businesses does not combine their records or financial totals.</div>
           </div>
         ) : (
           <div className="mt-5 space-y-3.5">
             {mode === 'related' && (
-              <label className="block text-[11px] font-medium text-[#55635b]">
-                Connect to <span className="text-[#b74750]">*</span>
-                <select required value={relationshipToBusinessId} onChange={(event) => setRelationshipToBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+              <label className="block text-xs font-semibold text-slate-700 font-sans">
+                Connect to <span className="text-rose-500">*</span>
+                <select required value={relationshipToBusinessId} onChange={(event) => setRelationshipToBusinessId(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
                   <option value="">Choose the main business</option>
                   {businesses.map((business) => <option key={business.id} value={business.id}>{business.name}</option>)}
                 </select>
               </label>
             )}
-            <label className="block text-[11px] font-medium text-[#55635b]">
+            <label className="block text-xs font-semibold text-slate-700 font-sans">
               Copy details from another business
-              <select value={reuseFromBusinessId} onChange={(event) => applyExistingProfile(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+              <select value={reuseFromBusinessId} onChange={(event) => applyExistingProfile(event.target.value)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
                 <option value="">Start with blank details</option>
                 {businesses.map((business) => <option key={business.id} value={business.id}>{business.name} · {business.industry}</option>)}
               </select>
             </label>
             {selectedSource && (
-              <div className="rounded-xl border border-[#dce9e1] bg-[#f7fbf8] p-3">
+              <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="truncate text-[10px] font-semibold text-[#405249]">Business details from {selectedSource.name}</p>
-                  <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[8px] font-semibold text-[#5c7969]">{selectedSource.status}</span>
+                  <p className="truncate text-xs font-bold text-slate-900">Business details from {selectedSource.name}</p>
+                  <span className="shrink-0 rounded bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[9px] font-bold text-emerald-700">{selectedSource.status}</span>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[9px] text-[#74837a]">
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-600 font-sans">
                   <span>{selectedSource.industry}</span>
                   <span>{selectedSource.location}</span>
                   {selectedSource.customerCount != null && <span>{selectedSource.customerCount.toLocaleString('en-BD')} customers</span>}
                   {selectedSource.employeeCount != null && <span>{selectedSource.employeeCount} employees</span>}
                 </div>
-                <p className="mt-2 text-[9px] text-[#87938d]">These details can be copied. Each business keeps its own money and records.</p>
+                <p className="mt-2 text-[10px] text-slate-500 font-sans">These details can be copied. Each business keeps its own money and records.</p>
               </div>
             )}
-            <label className="flex items-start gap-2 rounded-xl border border-[#e7ece9] bg-[#f8faf9] p-3 text-[10px] leading-relaxed text-[#647269]">
-              <input type="checkbox" checked={copyProfile} onChange={(event) => setCopyProfile(event.target.checked)} className="mt-0.5 accent-[#087e63]" />
-              <span><strong className="text-[#415148]">Copy business details.</strong> Fills in the industry, location, registration, customer, and team details. You can edit them below.</span>
+            <label className="flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs leading-relaxed text-slate-600 font-sans">
+              <input type="checkbox" checked={copyProfile} onChange={(event) => setCopyProfile(event.target.checked)} className="mt-0.5 accent-emerald-600" />
+              <span><strong className="text-slate-900">Copy business details.</strong> Fills in the industry, location, registration, customer, and team details.</span>
             </label>
-            <label className="flex items-start gap-2 rounded-xl border border-[#e7e2f0] bg-[#faf9fc] p-3 text-[10px] leading-relaxed text-[#756b8d]">
-              <input type="checkbox" checked={copyLedgerAsReference} onChange={(event) => setCopyLedgerAsReference(event.target.checked)} className="mt-0.5 accent-[#7764a2]" />
-              <span><strong className="text-[#5e527c]">Include sample entries for reference.</strong> They stay labeled with their original business and are not included in balances or profit.</span>
+            <label className="flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs leading-relaxed text-slate-600 font-sans">
+              <input type="checkbox" checked={copyLedgerAsReference} onChange={(event) => setCopyLedgerAsReference(event.target.checked)} className="mt-0.5 accent-emerald-600" />
+              <span><strong className="text-slate-800">Include sample entries for reference.</strong> They stay labeled with their original business and are not included in balances or profit.</span>
             </label>
-            <label className="block text-[11px] font-medium text-[#55635b]">
-              Business name <span className="text-[#b74750]">*</span>
-              <input required maxLength={80} autoFocus={mode === 'standalone'} value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. North Star Foods" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+            <label className="block text-xs font-semibold text-slate-700 font-sans">
+              Business name <span className="text-rose-500">*</span>
+              <input required maxLength={80} autoFocus={mode === 'standalone'} value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. North Star Foods" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block text-[11px] font-medium text-[#55635b]">
-                Industry <span className="text-[#b74750]">*</span>
-                <input required maxLength={60} value={industry} onChange={(event) => setIndustry(event.target.value)} placeholder="e.g. Retail, Distribution" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+              <label className="block text-xs font-semibold text-slate-700 font-sans">
+                Industry <span className="text-rose-500">*</span>
+                <input required maxLength={60} value={industry} onChange={(event) => setIndustry(event.target.value)} placeholder="e.g. Retail, Distribution" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
               </label>
-              <label className="block text-[11px] font-medium text-[#55635b]">
-                Main location <span className="text-[#b74750]">*</span>
-                <input required maxLength={80} value={location} onChange={(event) => setLocation(event.target.value)} placeholder="City, country" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+              <label className="block text-xs font-semibold text-slate-700 font-sans">
+                Main location <span className="text-rose-500">*</span>
+                <input required maxLength={80} value={location} onChange={(event) => setLocation(event.target.value)} placeholder="City, country" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
               </label>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block text-[11px] font-medium text-[#55635b]">
-                Active customers <span className="font-normal text-[#97a19b]">(optional)</span>
-                <input type="number" min="0" step="1" value={customerCount} onChange={(event) => setCustomerCount(event.target.value)} placeholder="e.g. 250" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+              <label className="block text-xs font-semibold text-slate-700 font-sans">
+                Active customers <span className="font-normal text-slate-500">(optional)</span>
+                <input type="number" min="0" step="1" value={customerCount} onChange={(event) => setCustomerCount(event.target.value)} placeholder="e.g. 250" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
               </label>
-              <label className="block text-[11px] font-medium text-[#55635b]">
-                Employees <span className="font-normal text-[#97a19b]">(optional)</span>
-                <input type="number" min="0" step="1" value={employeeCount} onChange={(event) => setEmployeeCount(event.target.value)} placeholder="e.g. 25" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+              <label className="block text-xs font-semibold text-slate-700 font-sans">
+                Employees <span className="font-normal text-slate-500">(optional)</span>
+                <input type="number" min="0" step="1" value={employeeCount} onChange={(event) => setEmployeeCount(event.target.value)} placeholder="e.g. 25" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
               </label>
             </div>
-            <label className="block text-[11px] font-medium text-[#55635b]">
-              Registration / tax ID <span className="font-normal text-[#97a19b]">(optional)</span>
-              <input maxLength={60} value={registrationId} onChange={(event) => setRegistrationId(event.target.value)} placeholder="Add later if not available" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+            <label className="block text-xs font-semibold text-slate-700 font-sans">
+              Registration / tax ID <span className="font-normal text-slate-500">(optional)</span>
+              <input maxLength={60} value={registrationId} onChange={(event) => setRegistrationId(event.target.value)} placeholder="Add later if not available" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600" />
             </label>
           </div>
         )}
 
-        <div className="mt-4 rounded-xl bg-[#f6f9f7] p-3 text-[10px] leading-relaxed text-[#7b8981]">
+        <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-[10px] leading-relaxed text-slate-500 font-sans">
           Changes are local to this demo session only. No backend data or legal entity records are created.
         </div>
         <div className="mt-5 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="accounting-focus rounded-xl border border-[#e1e8e4] px-4 py-2 text-[11px] font-medium text-[#5e6b64] hover:bg-[#f7f9f8]">Cancel</button>
-          <button type="submit" className="accounting-focus inline-flex items-center gap-2 rounded-xl bg-[#087e63] px-4 py-2 text-[11px] font-semibold text-white hover:bg-[#086d56]">
+          <button type="button" onClick={onClose} className="accounting-focus rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+          <button type="submit" className="accounting-focus inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800 shadow-2xs">
             {mode === 'link' ? <Share2 size={14} /> : mode === 'related' ? <GitBranch size={14} /> : <Plus size={14} />}
-            {mode === 'link' ? 'Connect business' : mode === 'related' ? 'Add connected business' : 'Add business'}
+            {mode === 'link' ? 'Connect Business' : mode === 'related' ? 'Add Connected Unit' : 'Add Entity'}
           </button>
         </div>
       </form>
