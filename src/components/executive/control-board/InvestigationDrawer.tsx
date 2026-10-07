@@ -95,27 +95,27 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
 
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
-                      <span className="text-[var(--foreground-muted)] block text-[10px]">Delivered Sales:</span>
+                      <span className="text-[var(--foreground-muted)] block text-[10px]">{state.banglaMode ? 'ডেলিভারি বিক্রয়:' : 'Delivered Sales:'}</span>
                       <strong className="text-base font-bold text-[var(--foreground)]">
-                        {formatBDT(selectedRoute.deliveredSales)}
+                        {formatBDT(selectedRoute.deliveredSales, { mode: 'exact', bangla: state.banglaMode })}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[var(--foreground-muted)] block text-[10px]">Cash Collected:</span>
+                      <span className="text-[var(--foreground-muted)] block text-[10px]">{state.banglaMode ? 'নগদ আদায়:' : 'Cash Collected:'}</span>
                       <strong className="text-base font-bold text-[var(--success)]">
-                        {formatBDT(selectedRoute.cashHandedIn)}
+                        {formatBDT(selectedRoute.cashHandedIn, { mode: 'exact', bangla: state.banglaMode })}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[var(--foreground-muted)] block text-[10px]">Credit Granted:</span>
+                      <span className="text-[var(--foreground-muted)] block text-[10px]">{state.banglaMode ? 'প্রদত্ত বাকি:' : 'Credit Granted:'}</span>
                       <strong className="text-base font-bold text-[var(--warning)]">
-                        {formatBDT(selectedRoute.creditSales)}
+                        {formatBDT(selectedRoute.creditSales, { mode: 'exact', bangla: state.banglaMode })}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[var(--foreground-muted)] block text-[10px]">Till Variance:</span>
+                      <span className="text-[var(--foreground-muted)] block text-[10px]">{state.banglaMode ? 'ক্যাশ তফাত:' : 'Till Variance:'}</span>
                       <strong className={`text-base font-bold ${selectedRoute.variance < 0 ? 'text-[var(--danger)]' : 'text-[var(--foreground)]'}`}>
-                        {formatVariance(selectedRoute.variance)}
+                        {formatVariance(selectedRoute.variance, state.banglaMode)}
                       </strong>
                     </div>
                   </div>
@@ -162,8 +162,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
                           <div className="text-[10px] text-[var(--foreground-muted)] font-sans">{drop.marketPoint} · {drop.billNumber}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[var(--success)] font-bold">{formatBDT(drop.cashPaid, { mode: 'summary' })}</div>
-                          <div className="text-[10px] text-[var(--warning)] font-medium">Credit: {formatBDT(drop.creditGranted, { mode: 'summary' })}</div>
+                          <div className="text-[var(--success)] font-bold">{formatBDT(drop.cashPaid, { mode: 'summary', bangla: state.banglaMode })}</div>
+                          <div className="text-[10px] text-[var(--warning)] font-medium">{state.banglaMode ? 'বাকি: ' : 'Credit: '}{formatBDT(drop.creditGranted, { mode: 'summary', bangla: state.banglaMode })}</div>
                         </div>
                       </div>
                     ))}

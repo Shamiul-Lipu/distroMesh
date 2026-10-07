@@ -35,7 +35,7 @@ const getDhakaTime = (): string => {
 export const AsOf: React.FC<AsOfProps> = ({
   period = 'Today',
   scope = 'Company-wide',
-  bangla = false,
+  bangla = true,
 }) => {
   const [timestamp, setTimestamp] = useState<string>('');
   const [secondsAgo, setSecondsAgo] = useState(0);

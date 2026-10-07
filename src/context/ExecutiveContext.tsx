@@ -124,7 +124,7 @@ export const initialExecutiveState: ExecutiveState = {
   warRoomTier: 'desktop',
   isTabletView: false,
   wakeLockActive: false,
-  banglaMode: false,
+  banglaMode: true,
   dayClosed: false,
   depositPrepared: false,
   creditLockActive: false,

@@ -25,7 +25,7 @@ import { useTheme } from '../../context/ThemeContext';
 
 export function DistroMeshLanding() {
   const { theme, toggleTheme } = useTheme();
-  const [banglaMode, setBanglaMode] = useState(false);
+  const [banglaMode, setBanglaMode] = useState(true);
   const [activeFeatureTab, setActiveFeatureTab] = useState<
     'liquidity' | 'capital' | 'dispatch' | 'settlement' | 'decision'
   >('liquidity');
