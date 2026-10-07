@@ -7,7 +7,7 @@
 In high-velocity FMCG distribution, distributors operate on razor-thin net margins (1.0%–2.0%), cycle crores of taka in working capital, handle complex daily cash sweeps across dozens of van routes, and navigate strict 48-hour auto-debit obligations from multinational principals (such as Unilever Bangladesh). 
 
 distroMesh bridges the gap between high-level executive portfolio governance and granular warehouse floor execution:
-1. **Portfolio Governance**: Aggregates disparate businesses (FMCG distributorships, flour mills, beverage logistics, agro-trade) into a unified executive cockpit while strictly isolating ledgers, balances, and legal entities.
+1. **Portfolio Governance**: Aggregates disparate businesses (FMCG distributorships, flour mills, beverage logistics, agro-trade) into a unified executive platform while strictly isolating ledgers, balances, and legal entities.
 2. **Operations War Room**: Delivers a high-density, real-time command center (`/war-room`) featuring a 12-route van settlement ledger, invoice-level retail shop drill-downs, Net Operating Working Capital (NOWC) waterfalls, receivables ageing distribution, and hardware bottleneck economics.
 3. **Data Integrity & Reconciled Identities**: Enforces mathematical zero-leakage accounting across sales, cash collections, credit allocations, expense vouchers, and vault counts.
 

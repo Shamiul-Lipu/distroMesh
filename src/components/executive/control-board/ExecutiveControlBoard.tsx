@@ -66,7 +66,7 @@ export const ExecutiveControlBoard: React.FC<ExecutiveControlBoardProps> = ({
       burnInSafe ? 'translate-x-0.5 translate-y-0.5' : ''
     }`}>
       {/* =========================================================================
-          ZONE 1: EXECUTIVE STATUS & HEADER (Cockpit Topbar)
+          ZONE 1: EXECUTIVE STATUS & HEADER (Executive Topbar)
           ========================================================================= */}
       <ExecutiveHeader
         businessName="M/S Popy Traders"

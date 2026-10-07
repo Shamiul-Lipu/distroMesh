@@ -14,7 +14,7 @@ export const ActionCenter: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-blue-500"></div>
           <h2 className="text-base font-bold text-[#F9FAFB] tracking-tight uppercase font-sans">
-            Executive Decision & Action Cockpit
+            Executive Decision & Action Center
           </h2>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1F2937] text-blue-400 border border-[#374151]">
             STATE-MUTATING CONTROLS

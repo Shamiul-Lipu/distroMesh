@@ -1239,7 +1239,7 @@ export const ExecutiveShell: React.FC = () => {
                       onClick={() => setCompanyMenuOpen(false)}
                     />
                     <div className="absolute right-0 top-12 z-50 w-[min(320px,calc(100vw-24px))] rounded-2xl border border-[#e2e8f0] bg-white p-2 shadow-xl text-slate-800">
-                      <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Portfolio Cockpit</p>
+                      <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Business Portfolio</p>
                       <button onClick={() => { setCompanyMenuOpen(false); selectBusiness('all'); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold transition ${isPortfolioView ? 'bg-emerald-50 text-emerald-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
                         <BriefcaseBusiness size={15} className="text-emerald-700" /> All businesses
                         {isPortfolioView && <Check size={14} className="ml-auto text-emerald-700" />}

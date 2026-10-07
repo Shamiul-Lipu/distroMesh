@@ -18,8 +18,6 @@ import {
   Layers,
   SlidersHorizontal,
   ChevronRight,
-  FileCheck2,
-  AlertCircle,
 } from 'lucide-react';
 
 export function DistroMeshLanding() {
@@ -36,15 +34,15 @@ export function DistroMeshLanding() {
       icon: Wallet,
       tag: 'ZONE 01',
       headline: banglaMode
-        ? 'ব্যাংক এবং ডিপো ভল্ট ক্যাশের স্পষ্ট বিভাজন'
-        : 'Separate Physical Vault Cash from Clearing Bank Balances',
+        ? 'কোম্পানির ৪৮ ঘণ্টার ব্যাংক অটো-ডেবিটের প্রস্তুতি'
+        : 'Keep Your Bank Ready for the Company\'s 48-Hour Auto-Debit',
       description: banglaMode
-        ? 'ডিপোতে থাকা নগদ টাকা এবং ব্যাংকের ব্যালেন্স আলাদা ট্র্যাক করুন। আগামী ৪৮ ঘণ্টার প্রিন্সিপাল অটো-ডেবিট সুইপের (৳৫৪.০ লাখ) আগে কোনো ঘাটতি থাকলে তাৎক্ষণিক সতর্কতা পান।'
-        : 'Ensure 48-hour principal auto-debits (৳54.0L) are staged safely before bank cutoff times. Avoid bounced supplier debits and supply stoppages.',
+        ? 'ইউনিলিভার প্রতি ৪৮ ঘণ্টায় নতুন মালের জন্য ব্যাংক থেকে টাকা কেটে নেয়। ব্যাংকে কত ব্যালেন্স আছে আর ডিপোর ভল্ট সিন্দুকে কত ক্যাশ পড়ে আছে তা আলাদা জানুন, যাতে চেক বাউন্স বা সাপ্লাই বন্ধ না হয়।'
+        : 'The principal auto-debits your bank account every 48 hours for stock shipments. Know exactly how much clearing cash is in your bank versus cash sitting in your depot safe, preventing bounced supplier debits.',
       bullets: [
-        banglaMode ? '২.১৭ গুণ ক্যাশ কাভার রেশিও' : 'Real-time 2.17× liquidity runway coverage ratio',
-        banglaMode ? '৪৮ ঘণ্টার অটো-ডেবিট সুইপ প্রোটেকশন' : 'Predictive 48-hour principal supply sweep buffer',
-        banglaMode ? 'ব্যাংক ও ভল্ট ক্যাশের স্পষ্ট বিভাজন' : 'Strict accounting separation between vault safe and bank',
+        banglaMode ? 'ভল্ট সিন্দুকের ক্যাশ ও ব্যাংক ব্যালেন্স আলাদা ট্র্যাকিং' : 'Separates physical depot safe cash from clearing bank balance',
+        banglaMode ? '৪৮ ঘণ্টার মধ্যে ৳৫৪.০ লাখ ব্যাংক ডেবিটের হিসাব' : 'Tracks upcoming ৳54.0L company auto-debit before bank cutoffs',
+        banglaMode ? '২.১৭ গুণ ক্যাশ কাভার রেশিওতে সাপ্লাইয়ের নিরাপত্তা' : 'Real-time 2.17× liquidity coverage ratio against supply halts',
       ],
       image: '/screenshots/war_room_overview.png',
       badgeText: '৳16,95,200 Liquid Cash · 2.17× Cover',
@@ -52,19 +50,19 @@ export function DistroMeshLanding() {
     {
       id: 'capital' as const,
       title: banglaMode ? 'আটকে থাকা মূলধন' : 'Trapped Capital',
-      subtitle: banglaMode ? 'বাকী খাতা ও স্টক ম্যাট্রিক্স' : 'Credit & Stock Matrix',
+      subtitle: banglaMode ? 'বাজারের বাকি ও গুদাম স্টক' : 'Market Credit & Stock',
       icon: Layers,
       tag: 'ZONE 02',
       headline: banglaMode
-        ? 'বাকি খাতা এবং গুদামের পণ্যে আটকে থাকা মূলধনের দৃশ্যমানতা'
-        : 'Proportional Visibility Over ৳1.97Cr Retailer Credit & ৳1.54Cr Stock',
+        ? 'বাজারে আটকে থাকা বাকি টাকা ও গুদাম স্টকের স্পষ্ট হিসাব'
+        : 'Visibility Over ৳1.97 Cr in Market Credit & ৳1.54 Cr in Warehouse Stock',
       description: banglaMode
-        ? 'বাজারে আটকে থাকা বাকি টাকা, গুদামের ইনভেন্টরি এবং কোম্পানির বকেয়া স্কিম ক্লেইমের সার্বিক চিত্র। ৩০ দিনের বেশি পুরনো বকেয়া পেলে এক ক্লিকেই ক্রেডিট লক করুন।'
-        : 'Isolate high-risk retailer credit aging over 30 days across 700 outlets. Execute instant One-Tap credit freezes to prevent unauthorized credit extension.',
+        ? 'আপনার নিজস্ব কোটি টাকার মূলধন ৭০০ খুচরা মুদি দোকানে ছড়িয়ে আছে। ৩০ দিনের বেশি পুরনো বকেয়া চিহ্নিত করুন এবং টাকা আটকে যাওয়ার আগেই এক ক্লিকে সেই দোকানে নতুন মাল বাকিতে দেওয়া বন্ধ করুন।'
+        : 'Your own business capital is exposed across 700 retail grocery shops. Automatically isolate credit aging past 30 days and execute One-Tap credit freezes before unauthorized credit causes cash defaults.',
       bullets: [
-        banglaMode ? '১৮% অতি-বকেয়া ক্রেডিট শনাক্তকরণ (>৩০ দিন)' : 'Flags 18.0% overdue retailer credit (>30 days)',
-        banglaMode ? 'ওয়ান-ট্যাপ ক্রেডিট ফ্রিজ ব্যবস্থা' : 'One-Tap credit lock across all 12 delivery beats',
-        banglaMode ? 'কোম্পানি স্কিম ক্লেইম ট্র্যাকিং (৳২.০৫ লাখ)' : 'Pending principal scheme claims (৳2.05L) with audit trails',
+        banglaMode ? '১৮% অতি-বকেয়া বাকী শনাক্তকরণ (>৩০ দিন)' : 'Flags 18.0% overdue retailer credit stuck past 30 days',
+        banglaMode ? 'এক ক্লিকে বাকি খাতা লক করার সুবিধা' : 'One-Tap credit lock prevents drivers from extending fresh credit',
+        banglaMode ? 'কোম্পানির কাছে পাওনা ৳২.০৫ লাখ স্কিম ক্লেইম অডিট' : 'Audits ৳2.05L in pending trade scheme claims owed by the principal',
       ],
       image: '/screenshots/trapped_capital_runway.png',
       badgeText: '৳1.97 Cr Receivables · 18% Overdue >30D',
@@ -72,19 +70,19 @@ export function DistroMeshLanding() {
     {
       id: 'dispatch' as const,
       title: banglaMode ? 'ডেসপ্যাচ রানওয়ে' : 'Dispatch Runway',
-      subtitle: banglaMode ? 'ভ্যান ছাড়া ও বিলম্ব অডিট' : 'Departure Timeline',
+      subtitle: banglaMode ? 'সকালের ভ্যান ছাড়ার অডিট' : 'Morning Van Departures',
       icon: Truck,
       tag: 'ZONE 03',
       headline: banglaMode
-        ? '১২টি ভ্যানের সকালের ডেসপ্যাচ সময় ও বিলম্বের ক্ষতি তদারকি'
-        : 'Fleet Departure Timeline & Departure Stall Monitoring',
+        ? '১২টি ডেলিভারি ভ্যান সকাল ৯টায় সময়মতো ছাড়ার তদারকি'
+        : 'Ensure 12 Loaded Delivery Vans Leave Depot by 09:00 AM',
       description: banglaMode
-        ? 'সকাল ৯টায় ভ্যান ছাড়ার লক্ষ্যমাত্রা বনাম প্রকৃত ডেসপ্যাচ ট্র্যাকিং। কোনো রুটে ডেসপ্যাচ স্টল বা বিলম্ব (+১৬৫ মিনিট) হলে অলস কর্মীদের আর্থিক ক্ষতি তাৎক্ষণিক হিসাব করুন।'
-        : 'Tracks target 09:00 AM vs actual departure across 12 delivery beats. Pinpoints loading bottlenecks and calculates idle crew labor cost in real time.',
+        ? 'চালান প্রিন্টিং বা লোডিংয়ে দেরি হলে ড্রাইভার ও ডেলিভারিম্যানরা ইয়ার্ডে বসে থাকে। ভ্যান ছাড়তে আড়াই ঘণ্টা (+১৬৫ মিনিট) দেরি হলে লেবারের যে টাকা জলে যায় তা তাৎক্ষণিক সামনে আসে।'
+        : 'When memo printing or loading stalls, delivery crews sit idle in your depot yard. Pinpoint yard departure stalls in real time and calculate the exact idle labor crew cost.',
       bullets: [
-        banglaMode ? '১২টি ডেলিভারি বিটের সকালের ডেসপ্যাচ অডিট' : 'Morning dispatch audit across 12 delivery beats',
-        banglaMode ? 'ডেসপ্যাচ স্টল (+১৬৫ মিনিট) শনাক্তকরণ' : 'Identifies departure stalls (+165 min fleet delay)',
-        banglaMode ? 'অলস লেবার ওয়েজ ক্ষতি পরিমাপ (৳৪,৯৫০)' : 'Quantifies idle crew wage losses in real time',
+        banglaMode ? '১২টি রুটের সকালের ভ্যান ছাড়ার সময়সূচি' : 'Depot departure timeline across all 12 distribution beats',
+        banglaMode ? 'ডেসপ্যাচ স্টল (+১৬৫ মিনিট বিলম্ব) সাথে সাথে শনাক্ত' : 'Catches departure stalls (+165 min delay) before route hours are lost',
+        banglaMode ? 'ইয়ার্ড জ্যামের কারণে অলস লেবার খরচ (৳৪,৯৫০) পরিমাপ' : 'Calculates idle labor crew cost (৳4,950) from yard bottlenecks',
       ],
       image: '/screenshots/war_room_at_top_1791354223522.png',
       badgeText: '12 Delivery Beats · 09:00 AM Target',
@@ -92,39 +90,39 @@ export function DistroMeshLanding() {
     {
       id: 'settlement' as const,
       title: banglaMode ? '১২-রুট সেটেলমেন্ট' : 'Route Settlement',
-      subtitle: banglaMode ? 'ড্রাইভার ক্যাশ শর্টেজ' : 'Till Variance Matching',
+      subtitle: banglaMode ? 'সন্ধ্যায় ড্রাইভার ক্যাশ মেলানো' : 'Driver Till Reconciliation',
       icon: Navigation,
       tag: 'ZONE 04',
       headline: banglaMode
-        ? '১২টি ভ্যানের দৈনিক হিসাব ও শর্টেজ ১৫ সেকেন্ডে নিষ্পত্তি'
-        : '12-Beat Drop-by-Drop Reconciliation Under 15 Seconds',
+        ? 'ভ্যান ফেরার পর ড্রাইভারের ক্যাশ শর্টেজ ১৫ সেকেন্ডে শনাক্ত'
+        : 'Catch Driver Cash Shortages in 15 Seconds at the Cashier Window',
       description: banglaMode
-        ? 'সন্ধ্যা সাড়ে ৭টায় ভ্যান ফেরার সাথে সাথে ক্যাশ ও বাকির স্বয়ংক্রিয় হিসাব। ড্রাইভারের ক্যাশ শর্টেজ থাকলে সাথে সাথে নোটিশ এবং পারিশ্রমিক থেকে কর্তনের ব্যবস্থা।'
-        : 'When delivery vans return at dusk, drop-level sales instantly reconcile against cash handed in. Till shortages (e.g. −৳400) are flagged immediately for wage deduction.',
+        ? 'সন্ধ্যায় ভ্যান ফিরলে ক্যাশিয়ারের কাছে জমা দেওয়া টাকার সাথে বিক্রি ও পুরোনো বাকি আদায় মেলানো হয়। ড্রাইভারের ক্যাশে কোনো ঘাটতি (যেমন −৳৪০০) থাকলে স্টাফ বাড়ি যাওয়ার আগেই তা ধরা পড়ে।'
+        : 'When vans return at dusk, physical cash handed in must match delivered sales and collected dues. Any till shortage (like −৳400) is flagged instantly on the spot before staff depart.',
       bullets: [
-        banglaMode ? '৭০০ খুচরা দোকানের ড্রপ অডিট' : 'Drop-level accountability across 700 retail points',
-        banglaMode ? 'স্বয়ংক্রিয় ঘাটতি শনাক্তকরণ (−৳৪০০)' : 'Automated till variance identification (−৳400 shortage flag)',
-        banglaMode ? 'এক ক্লিকে শর্টেজ অ্যাডজাস্টমেন্ট' : 'One-click automated driver wage deduction protocol',
+        banglaMode ? '৭০০ খুচরা দোকানের ড্রপ-বাই-ড্রপ বিক্রির হিসাব' : 'Drop-level sales audit across 700 retail grocery shops',
+        banglaMode ? 'ড্রাইভারের ক্যাশ ঘাটতি (−৳৪০০) তাৎক্ষণিক নোটিশ' : 'Instant detection of driver cash shortage (−৳400 till variance)',
+        banglaMode ? 'এক ক্লিকে ড্রাইভারের বেতন থেকে শর্টেজ সমন্বয়' : 'One-click wage deduction protocol stops distributor cash leakages',
       ],
       image: '/screenshots/route_settlement.png',
       badgeText: '11 Routes Cleared · 1 Shortage (−৳400)',
     },
     {
       id: 'decision' as const,
-      title: banglaMode ? 'অ্যাকশন ডক ও সিমুলেটর' : 'Decision Dock & Sandbox',
-      subtitle: banglaMode ? 'এক্সিকিউটিভ কন্ট্রোল' : 'Action Dock & Simulator',
+      title: banglaMode ? 'মালিকের অ্যাকশন ডক' : 'Owner Action Dock',
+      subtitle: banglaMode ? 'তাৎক্ষণিক সিদ্ধান্ত ও কন্ট্রোল' : 'State-Mutating Controls',
       icon: SlidersHorizontal,
       tag: 'ZONE 05',
       headline: banglaMode
-        ? 'উচ্চ-আস্থার সিদ্ধান্ত গ্রহণ এবং ব্যবসায়িক সিমুলেশন'
-        : 'High-Confidence Operational Controls & Real-Time Sandboxing',
+        ? 'মালিকের সরাসরি নিয়ন্ত্রণ: ক্রেডিট লক, ব্যাংক জমা ও ঝুঁকি টেস্ট'
+        : 'High-Confidence Owner Controls: Credit Locks & Bank Staging',
       description: banglaMode
-        ? 'এক ক্লিকে বাকি খাতা লক, ব্যাংকে ক্যাশ ট্রান্সফার, ড্রাইভার শর্টেজ কর্তন এবং দিন শেষে ডে-ক্লোজ সম্পন্ন করুন। স্লাইডার টেনে যেকোনো ব্যবসায়িক পরিস্থিতির প্রভাব আগে যাচাই করুন।'
-        : 'Execute state-mutating actions with instant safety checks: One-Tap Credit Lock, Bank Deposit Staging, Shortage Deductions, and parameter stress-testing.',
+        ? 'মালিক হিসেবে নিজের ব্যবসার গুরুত্বপূর্ণ সিদ্ধান্ত এক ক্লিকে নিন: ঋণখেলাপি দোকানে বাকি দেওয়া বন্ধ করুন, ভল্ট ক্যাশ ব্যাংকে পাঠান, শর্টেজ কর্তন করুন এবং কালেকশন কম হলে কী হবে তা টেস্ট করুন।'
+        : 'Execute critical ownership decisions with instant verification: freeze credit on defaulting shops, stage vault cash to the bank, deduct driver shortages, and stress-test your runway.',
       bullets: [
-        banglaMode ? 'ওয়ান-ট্যাপ ক্রেডিট লক ও ব্যাংক ডিপোজিট' : 'One-Tap credit lock and staged bank cash transfers',
-        banglaMode ? 'স্বয়ংক্রিয় দিন-শেষ ক্লোজআউট প্রটোকল' : 'End-of-day closeout with zero variance verification',
-        banglaMode ? 'লাইভ প্যারামিটার স্ট্রেস-টেস্টিং স্যান্ডবক্স' : 'Interactive parameter sandboxing with one-click reset',
+        banglaMode ? '১২টি রুটে এক ক্লিকে বাকি খাতা লক করার ক্ষমতা' : 'One-Tap credit lock across all 12 van delivery routes',
+        banglaMode ? 'ভল্ট ক্যাশ ব্যাংকে স্থানান্তর ও দিন-শেষ হিসাব ক্লোজ' : 'Stage vault cash to bank and approve zero-variance day closeout',
+        banglaMode ? 'কালেকশন কমে গেলে ক্যাশ কেমন থাকবে তার লাইভ সিমুলেশন' : 'Stress-test your cash runway against lower collection days',
       ],
       image: '/screenshots/scenario_simulator.png',
       badgeText: 'State-Mutating Controls & Sandbox',
@@ -150,7 +148,7 @@ export function DistroMeshLanding() {
                 distroMesh
               </span>
               <span className="text-[10px] text-slate-500 font-mono tracking-wider mt-0.5">
-                FMCG CONTROL BOARD
+                DISTRIBUTOR CONTROL BOARD
               </span>
             </div>
           </Link>
@@ -161,7 +159,7 @@ export function DistroMeshLanding() {
               {banglaMode ? 'ফিচারসমূহ' : 'Features'}
             </a>
             <Link href="/businesses" className="hover:text-emerald-700 transition">
-              {banglaMode ? 'পোর্টফোলিও' : 'Portfolio Cockpit'}
+              {banglaMode ? 'পোর্টফোলিও' : 'Business Portfolio'}
             </Link>
           </nav>
 
@@ -190,7 +188,7 @@ export function DistroMeshLanding() {
       </header>
 
       {/* ---------------------------------------------------- */}
-      {/* 2. VISUAL-FIRST HERO SECTION WITH PRODUCT SCREENSHOT */}
+      {/* 2. VISUAL-FIRST HERO SECTION                         */}
       {/* ---------------------------------------------------- */}
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-gradient-to-b from-white via-slate-50/70 to-slate-100/50 pt-10 pb-14 sm:pt-14 sm:pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -201,23 +199,23 @@ export function DistroMeshLanding() {
               <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
               <span>
                 {banglaMode
-                  ? 'এফএমসিজি ডিস্ট্রিবিউশন হাব · শেরপুর ও বগুড়া'
-                  : 'FMCG Distribution Operations · Sherpur & Bogura Hub'}
+                  ? 'ডিস্ট্রিবিউশন হাউজ মালিকদের জন্য তৈরি · শেরপুর ও বগুড়া হাব'
+                  : 'Built for Distribution Business Owners · Sherpur & Bogura Hub'}
               </span>
             </div>
 
-            {/* Professional Operational Headline */}
+            {/* Grounded Headline for the Business Owner */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 font-mono leading-[1.18]">
               {banglaMode
-                ? 'এফএমসিজি ডিস্ট্রিবিউশনের লাইভ অপারেশনাল কন্ট্রোল বোর্ড'
-                : 'Operational Command Center for FMCG Distribution'}
+                ? 'ডিস্ট্রিবিউশন ব্যবসা মালিকের প্রতিদিনের কন্ট্রোল বোর্ড'
+                : 'The Daily Control Board for Distribution Business Owners'}
             </h1>
 
-            {/* Concise Supporting Subtitle */}
+            {/* Subtitle Grounded in Real Operations */}
             <p className="mt-3.5 text-base sm:text-lg text-slate-600 leading-relaxed font-sans max-w-2xl mx-auto">
               {banglaMode
-                ? 'লিকুইডিটি রানওয়ে, ভ্যান ডেসপ্যাচ অডিট, ১২টি রুটের দৈনিক সেটেলমেন্ট ও বাকী নিয়ন্ত্রণের সমন্বিত ব্যবস্থা।'
-                : 'Real-time liquidity runway, departure dispatch audits, 12-route van settlement reconciliation, and instant retailer credit controls.'}
+                ? 'কোম্পানির ৪৮ ঘণ্টার ব্যাংক ডেবিট, বাজারের বাকি টাকা এবং ১২টি ভ্যানের ক্যাশ শর্টেজ নিয়ন্ত্রণে মালিকের নির্ভরযোগ্য সমাধান।'
+                : 'Protect your bank before 48-hour principal auto-debits, track overdue credit across 700 retail shops, and settle van driver cash without shortage.'}
             </p>
 
             {/* Action Buttons */}
@@ -235,7 +233,7 @@ export function DistroMeshLanding() {
                 className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 px-4 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs transition"
               >
                 <Building2 size={15} className="text-slate-500" />
-                <span>{banglaMode ? 'মাল্টি-বিজনেস পোর্টফোলিও' : 'Portfolio Cockpit'}</span>
+                <span>{banglaMode ? 'মাল্টি-বিজনেস পোর্টফোলিও' : 'Business Portfolio'}</span>
               </Link>
             </div>
           </div>
@@ -275,7 +273,7 @@ export function DistroMeshLanding() {
               <div className="relative bg-slate-100 aspect-[16/9] w-full">
                 <Image
                   src="/screenshots/war_room_overview.png"
-                  alt="distroMesh FMCG War Room Executive Dashboard"
+                  alt="distroMesh Distribution Control Board"
                   fill
                   priority
                   className="object-cover object-top"
@@ -323,7 +321,7 @@ export function DistroMeshLanding() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-8">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 block w-fit mb-2">
-              {banglaMode ? 'অপারেশনাল জোনসমূহ' : 'CONTROL BOARD ARCHITECTURE'}
+              {banglaMode ? 'অপারেশনাল জোনসমূহ' : 'DISTRIBUTOR OPERATIONS ARCHITECTURE'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">
               {banglaMode ? '৫টি অপারেশনাল জোন ও কন্ট্রোল মেকানিক্স' : 'Explore the 5 Operational Zones'}
@@ -442,7 +440,7 @@ export function DistroMeshLanding() {
               {banglaMode ? '৩টি ধাপে সম্পূর্ণ ডিস্ট্রিবিউশন নিয়ন্ত্রণ' : 'How distroMesh Protects Your Working Day'}
             </h2>
             <p className="mt-1.5 text-sm text-slate-600 font-sans">
-              From morning van dispatch to evening vault reconciliation.
+              From morning van dispatch to evening cashier vault reconciliation.
             </p>
           </div>
 
@@ -509,13 +507,13 @@ export function DistroMeshLanding() {
             <h2 className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">
               {banglaMode
                 ? 'আপনার ডিস্ট্রিবিউশন কন্ট্রোল বোর্ড এখনই পরীক্ষা করুন'
-                : 'Experience the Live Operations Cockpit'}
+                : 'Experience the Live Operations Board'}
             </h2>
 
             <p className="mt-2 text-sm text-slate-600 font-sans max-w-xl mx-auto">
               {banglaMode
                 ? 'রিয়েল-টাইম এফএমসিজি ডেটা, ১২টি ভ্যান রুট এবং এক্সিকিউটিভ অ্যাকশন ডক নিয়ে লাইভ ওয়ার রুমে প্রবেশ করুন।'
-                : 'Test the live FMCG war room with active route settlement, cash runway, and state-mutating decision controls.'}
+                : 'Step into the live operations board with active route settlement, cash runway, and state-mutating decision controls.'}
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono">

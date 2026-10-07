@@ -516,12 +516,12 @@ export const BusinessPortfolioOverview: React.FC<BusinessPortfolioProps> = ({
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <div className="mb-2 flex items-center gap-2 text-[11px] font-mono text-slate-500">
-            <span>Workspace</span><ArrowRight size={12} /><span className="text-emerald-700 font-semibold">Portfolio Cockpit</span>
+            <span>Workspace</span><ArrowRight size={12} /><span className="text-emerald-700 font-semibold">Business Portfolio</span>
             <span className="ml-1 inline-flex items-center gap-1 rounded bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-800">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Multi-Entity Mesh
             </span>
           </div>
-          <h1 className="text-[25px] font-bold tracking-tight text-slate-900 font-mono sm:text-[29px]">Distribution Portfolio Cockpit</h1>
+          <h1 className="text-[25px] font-bold tracking-tight text-slate-900 font-mono sm:text-[29px]">Distribution Business Portfolio</h1>
           <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-slate-600">Cross-entity operational health, liquidity comparison, and entity-isolated command boards.</p>
         </div>
         <button
