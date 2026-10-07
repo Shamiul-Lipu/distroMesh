@@ -2,18 +2,87 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --surface: #ffffff;
-    --elevated: #ffffff;
-    --border: #e2e8f0;
-    --border-subtle: #f1f5f9;
-    --text-muted: #64748b;
-    --text-dim: #94a3b8;
-    --status-emerald: #047857;
-    --status-amber: #b45309;
-    --status-crimson: #be123c;
+    /* =========================================================================
+       LIGHT THEME (Editorial, Clean, High-Contrast & Warm Precision)
+       ========================================================================= */
+    --background-deep: #F1F2F5;
+    --background: #F7F8FA;
+    --background-elevated: #FFFFFF;
+
+    --surface: rgba(255, 255, 255, 0.82);
+    --surface-hover: #FFFFFF;
+    --surface-elevated: #FFFFFF;
+    --surface-inset: #EEF0F4;
+
+    --foreground: #17181C;
+    --foreground-muted: #626772;
+    --foreground-subtle: #8B909A;
+
+    --accent: #4F5BC7;
+    --accent-bright: #5966D4;
+    --accent-soft: rgba(79, 91, 199, 0.08);
+
+    --border: rgba(20, 24, 35, 0.08);
+    --border-hover: rgba(20, 24, 35, 0.14);
+    --border-subtle: rgba(20, 24, 35, 0.04);
+
+    --success: #047857;
+    --success-soft: rgba(4, 120, 87, 0.08);
+    --warning: #b45309;
+    --warning-soft: rgba(180, 83, 9, 0.08);
+    --danger: #be123c;
+    --danger-soft: rgba(190, 18, 60, 0.08);
+    --info: #0369a1;
+    --info-soft: rgba(3, 105, 161, 0.08);
+
+    --shadow-sm: 0 1px 2px 0 rgba(20, 24, 35, 0.03);
+    --shadow-md: 0 4px 6px -1px rgba(20, 24, 35, 0.05), 0 2px 4px -2px rgba(20, 24, 35, 0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(20, 24, 35, 0.07), 0 4px 6px -4px rgba(20, 24, 35, 0.03);
+    --shadow-glow: 0 0 20px -3px rgba(79, 91, 199, 0.12);
+
     color-scheme: light;
+  }
+
+  .dark, [data-theme="dark"] {
+    /* =========================================================================
+       DARK THEME (Deep, Cinematic, Technical & Calm Precision)
+       ========================================================================= */
+    --background-deep: #020203;
+    --background: #050506;
+    --background-elevated: #0A0A0C;
+
+    --surface: rgba(255, 255, 255, 0.045);
+    --surface-hover: rgba(255, 255, 255, 0.075);
+    --surface-elevated: #0E1015;
+    --surface-inset: rgba(0, 0, 0, 0.40);
+
+    --foreground: #EDEDEF;
+    --foreground-muted: #8A8F98;
+    --foreground-subtle: rgba(255, 255, 255, 0.60);
+
+    --accent: #5E6AD2;
+    --accent-bright: #6872D9;
+    --accent-soft: rgba(94, 106, 210, 0.12);
+
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.03);
+
+    --success: #10b981;
+    --success-soft: rgba(16, 185, 129, 0.12);
+    --warning: #f59e0b;
+    --warning-soft: rgba(245, 158, 11, 0.12);
+    --danger: #ef4444;
+    --danger-soft: rgba(239, 68, 68, 0.12);
+    --info: #38bdf8;
+    --info-soft: rgba(56, 189, 248, 0.12);
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+    --shadow-glow: 0 0 25px -4px rgba(94, 106, 210, 0.25);
+
+    color-scheme: dark;
   }
 
   * {
@@ -22,10 +91,11 @@
 
   body {
     min-height: 100vh;
-    background: var(--background);
+    background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-geist-sans), Inter, system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   button,
@@ -40,65 +110,180 @@
   }
 }
 
-::selection {
-  background: rgba(4, 120, 87, 0.15);
-  color: #065f46;
+/* =========================================================================
+   SIGNATURE DESIGN SURFACES (Semantic Token Utilities)
+   ========================================================================= */
+
+.dm-bg-deep {
+  background-color: var(--background-deep);
 }
 
+.dm-bg-base {
+  background-color: var(--background);
+}
+
+.dm-bg-elevated {
+  background-color: var(--background-elevated);
+}
+
+.dm-surface {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dm-surface-elevated {
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.dm-surface-inset {
+  background-color: var(--surface-inset);
+  border: 1px solid var(--border-subtle);
+}
+
+.dm-interactive {
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dm-interactive:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.dm-border {
+  border-color: var(--border);
+}
+
+.dm-border-hover:hover {
+  border-color: var(--border-hover);
+}
+
+.dm-text-primary {
+  color: var(--foreground);
+}
+
+.dm-text-muted {
+  color: var(--foreground-muted);
+}
+
+.dm-text-subtle {
+  color: var(--foreground-subtle);
+}
+
+.dm-accent {
+  color: var(--accent);
+}
+
+.dm-bg-accent {
+  background-color: var(--accent);
+}
+
+.dm-bg-accent-soft {
+  background-color: var(--accent-soft);
+}
+
+.dm-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Financial number emphasis */
+.dm-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Button System */
+.dm-button-primary {
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  font-weight: 600;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dm-button-primary:hover {
+  background-color: var(--accent-bright);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+.dm-button-primary:active {
+  transform: scale(0.98);
+}
+
+.dm-button-secondary {
+  background-color: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dm-button-secondary:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.dm-button-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Focus System */
+.dm-focus:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-soft);
+  color: var(--foreground);
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   border: 1px solid transparent;
   border-radius: 999px;
-  background: #cbd5e1;
+  background: var(--border-hover);
   background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--foreground-muted);
 }
 
-/* Executive Control Board Corporate Surfaces */
-.exec-surface {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
-}
-
-.exec-elevated {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-}
-
-.exec-border {
-  border-color: #e2e8f0;
-}
-
-.exec-mono {
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-variant-numeric: tabular-nums;
-}
-
+/* Charts */
 .chart-grid {
-  stroke: #e2e8f0;
+  stroke: var(--border);
   stroke-dasharray: 3 5;
 }
 
 .chart-label {
-  fill: #64748b;
+  fill: var(--foreground-muted);
   font-size: 11px;
 }
 
-.accounting-focus:focus-visible {
-  outline: 2px solid #047857;
-  outline-offset: 2px;
+/* Subtle Technical Background Grids */
+.dm-grid-pattern-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dm-grid-pattern-light {
+  background-image: radial-gradient(rgba(20, 24, 35, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 @media (prefers-reduced-motion: reduce) {

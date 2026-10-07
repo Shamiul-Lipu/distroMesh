@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Truck, Clock, AlertTriangle, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Truck, Clock, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useExecutive } from '../../../context/ExecutiveContext';
 import { deriveDispatchMetrics } from '../../../utils/derivedRules';
-import { toBanglaNumeral } from '../../../utils/formatters';
+import { toBanglaNumeral, formatBDT } from '../../../utils/formatters';
 
 interface DispatchRunwayProps {
   onInspectBottleneck?: () => void;
@@ -51,22 +51,22 @@ export const DispatchRunway: React.FC<DispatchRunwayProps> = ({
   ];
 
   return (
-    <div className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-sm flex flex-col justify-between text-slate-800">
-      <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 shadow-xs flex flex-col justify-between text-[var(--foreground)] backdrop-blur-md transition-colors duration-200">
+      <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <Truck size={14} className="text-sky-700" />
-          <h2 className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-800">
+          <Truck size={14} className="text-sky-400" />
+          <h2 className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--foreground)]">
             {state.banglaMode ? 'ফিল্ড এক্সিকিউশন ও ডেসপ্যাচ রানওয়ে' : 'FIELD EXECUTION & DISPATCH RUNWAY'}
           </h2>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono text-slate-500">
+          <span className="text-[10px] font-mono text-[var(--foreground-muted)]">
             {state.banglaMode ? '১২টি ভ্যান ফ্লিট' : '12 Delivery Beats'}
           </span>
           {onInspectBottleneck && (
             <button
               onClick={onInspectBottleneck}
-              className="text-[10px] font-mono text-rose-600 hover:text-rose-700 font-semibold underline underline-offset-2"
+              className="text-[10px] font-mono text-rose-400 hover:text-rose-300 font-semibold underline underline-offset-2"
             >
               {state.banglaMode ? 'বটলনেক বিশ্লেষণ' : 'Bottleneck Details'}
             </button>
@@ -76,105 +76,91 @@ export const DispatchRunway: React.FC<DispatchRunwayProps> = ({
 
       {/* Target vs Actual vs EMPHASIZED VARIANCE */}
       <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono">
-        <div className="rounded-lg bg-slate-50 p-3 border border-slate-200">
-          <span className="text-[10px] text-slate-500 uppercase block font-semibold">
+        <div className="rounded-xl bg-[var(--surface-elevated)] p-3 border border-[var(--border)] dm-interactive">
+          <span className="text-[10px] text-[var(--foreground-muted)] uppercase block font-semibold">
             {state.banglaMode ? 'নির্ধারিত সময়' : 'TARGET DISPATCH'}
           </span>
-          <div className="mt-1 text-2xl font-bold text-slate-800">
+          <div className="mt-1 text-2xl font-bold text-[var(--foreground)] dm-tabular">
             {state.banglaMode ? toBanglaNumeral(state.dispatchTarget) : state.dispatchTarget} AM
           </div>
-          <span className="text-[9px] text-slate-400 mt-0.5 block">Depot Yard Departure Target</span>
+          <span className="text-[9px] text-[var(--foreground-subtle)] mt-0.5 block">Depot Yard Departure Target</span>
         </div>
 
-        <div className="rounded-lg bg-slate-50 p-3 border border-slate-200">
-          <span className="text-[10px] text-slate-500 uppercase block font-semibold">
+        <div className="rounded-xl bg-[var(--surface-elevated)] p-3 border border-[var(--border)] dm-interactive">
+          <span className="text-[10px] text-[var(--foreground-muted)] uppercase block font-semibold">
             {state.banglaMode ? 'প্রকৃত প্রস্থান' : 'ACTUAL DISPATCH'}
           </span>
-          <div className="mt-1 text-2xl font-bold text-slate-800">
+          <div className="mt-1 text-2xl font-bold text-[var(--foreground)] dm-tabular">
             {state.banglaMode ? toBanglaNumeral(actualTime) : actualTime} AM
           </div>
-          <span className="text-[9px] text-slate-400 mt-0.5 block">Last Van Departure</span>
+          <span className="text-[9px] text-[var(--foreground-subtle)] mt-0.5 block">Last Van Departure</span>
         </div>
 
         {/* Emphasized Variance */}
-        <div className={`rounded-lg p-3 border ${
-          currentDelay > 0
-            ? 'bg-rose-50/70 border-rose-200 text-rose-950'
-            : 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
+        <div className={`rounded-xl p-3 border dm-interactive ${
+          isRecovered
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+            : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
         }`}>
-          <span className={`text-[10px] uppercase font-bold tracking-wider block ${
-            currentDelay > 0 ? 'text-rose-800' : 'text-emerald-800'
-          }`}>
-            {state.banglaMode ? 'সময় অপচয় (ভ্যারিয়েন্স)' : 'DISPATCH DELAY VARIANCE'}
+          <span className="text-[10px] uppercase block font-bold">
+            {state.banglaMode ? 'ডেসপ্যাচ বিলম্বের পার্থক্য' : 'DISPATCH DELAY VARIANCE'}
           </span>
-          <div className={`mt-1 text-2xl sm:text-3xl font-bold tracking-tight ${
-            currentDelay > 0 ? 'text-rose-700' : 'text-emerald-700'
-          }`}>
-            {currentDelay > 0
-              ? `+${state.banglaMode ? toBanglaNumeral(currentDelay.toString()) : currentDelay} MIN`
-              : state.banglaMode ? 'সময়মতো সম্পন্ন' : 'ON TARGET (0m)'}
+          <div className="mt-1 text-2xl font-bold flex items-baseline gap-1.5 dm-tabular">
+            <span>{isRecovered ? '0 MIN' : `+${currentDelay} MIN`}</span>
+            {isRecovered ? (
+              <CheckCircle2 size={16} className="text-emerald-400" />
+            ) : (
+              <span className="text-[10px] font-normal uppercase text-rose-400">
+                ({dispatchMetrics.vanMinutesLost} van-min lost)
+              </span>
+            )}
           </div>
-          <span className={`text-[9px] mt-0.5 block ${
-            currentDelay > 0 ? 'text-rose-600' : 'text-emerald-600'
-          }`}>
-            {currentDelay > 0 ? `${dispatchMetrics.vanMinutesLost} van-min lost across fleet` : 'All routes departed on schedule'}
+          <span className="text-[9px] mt-0.5 block text-[var(--foreground-muted)]">
+            {isRecovered
+              ? 'Schedule recovered · High-speed thermal billing active'
+              : `Idle labor crew cost ≈ ${formatBDT(dispatchMetrics.idleCrewCost)}`}
           </span>
         </div>
       </div>
 
-      {/* HORIZONTAL DISPATCH TIMELINE WITH BOTTLENECK POSITION */}
-      <div className="mt-4 pt-3 border-t border-[#e2e8f0]">
-        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 mb-2">
+      {/* Visual Pipeline Progression */}
+      <div className="mt-3.5 pt-2.5 border-t border-[var(--border)]">
+        <div className="flex items-center justify-between text-[10px] font-mono text-[var(--foreground-muted)] mb-2">
           <span>OPERATIONAL DEPARTURE PIPELINE</span>
-          <span className={`font-bold ${isRecovered ? 'text-emerald-700' : 'text-amber-700'}`}>
-            {isRecovered ? 'PIPELINE CLEAR' : 'ACTIVE BOTTLENECK: BILLING'}
+          <span className={isRecovered ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
+            {isRecovered ? 'STATUS: NORMAL' : 'ACTIVE BOTTLENECK: BILLING'}
           </span>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono">
-          {steps.map((step, idx) => {
-            const isBottleneck = step.status === 'BOTTLENECK';
-            const isDone = step.status === 'DONE';
-            return (
-              <div
-                key={step.id}
-                className={`rounded-lg p-2.5 border relative overflow-hidden ${
-                  isBottleneck
-                    ? 'bg-rose-50 border-rose-300 shadow-xs text-rose-950'
-                    : isDone
-                    ? 'bg-slate-50 border-slate-200 text-slate-800'
-                    : 'bg-slate-50/70 border-slate-200 text-slate-600'
-                }`}
-              >
-                {/* Step indicator */}
-                <div className="flex items-center justify-between text-[9px]">
-                  <span className={`font-bold ${isBottleneck ? 'text-rose-700' : 'text-slate-400'}`}>0{idx + 1}</span>
-                  <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${
-                    isBottleneck
-                      ? 'bg-rose-600 text-white animate-pulse'
-                      : isDone
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-slate-200 text-slate-700'
-                  }`}>
-                    {step.status}
-                  </span>
-                </div>
-
-                <div className="mt-1.5 font-bold text-xs text-slate-900 truncate">
-                  {step.label}
-                </div>
-                <div className="text-[10px] text-slate-500 mt-0.5">
-                  {step.time} AM
-                </div>
-
-                {step.bottleneckMsg && (
-                  <div className="mt-1 text-[9px] text-rose-800 font-bold bg-rose-100 border border-rose-200 px-1.5 py-0.5 rounded">
-                    {step.bottleneckMsg}
-                  </div>
-                )}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-xs">
+          {steps.map((s, idx) => (
+            <div
+              key={s.id}
+              className={`rounded-xl p-2.5 border transition ${
+                s.status === 'DONE'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  : s.status === 'BOTTLENECK'
+                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 font-bold shadow-xs'
+                  : s.status === 'DELAYED'
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                  : 'bg-[var(--surface-elevated)] border-[var(--border)] text-[var(--foreground-muted)]'
+              }`}
+            >
+              <div className="flex items-center justify-between text-[9px] mb-1">
+                <span>0{idx + 1}</span>
+                <span className="font-bold px-1.5 py-0.2 rounded bg-[var(--surface-inset)]">
+                  {s.status}
+                </span>
               </div>
-            );
-          })}
+              <div className="font-bold text-[11px] truncate text-[var(--foreground)]">{s.label}</div>
+              <div className="text-[10px] text-[var(--foreground-muted)] mt-0.5">{s.time} AM</div>
+              {s.bottleneckMsg && (
+                <div className="text-[9px] text-rose-400 font-semibold mt-1 truncate">
+                  {s.bottleneckMsg}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

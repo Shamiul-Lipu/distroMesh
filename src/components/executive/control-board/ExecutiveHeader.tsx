@@ -7,15 +7,17 @@ import {
   AlertTriangle,
   Zap,
   Sliders,
-  Maximize2,
   Monitor,
   Tablet,
   Tv,
   SlidersHorizontal,
   ChevronDown,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useExecutive } from '../../../context/ExecutiveContext';
-import { UserRole, WarRoomTier } from '../../../types/executive';
+import { useTheme } from '../../../context/ThemeContext';
+import { UserRole } from '../../../types/executive';
 import { deriveLiquidityStatus } from '../../../utils/derivedRules';
 import { toBanglaNumeral } from '../../../utils/formatters';
 
@@ -26,18 +28,18 @@ interface ExecutiveHeaderProps {
 }
 
 export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
-  businessName = 'M/S Popy Traders',
   location = 'Sherpur & Bogura Hub',
   onOpenSimulation,
 }) => {
   const {
     state,
-    setOperatingMode,
     setUserRole,
     setWarRoomTier,
     toggleWakeLock,
     toggleBanglaMode,
   } = useExecutive();
+
+  const { theme, toggleTheme } = useTheme();
 
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
@@ -73,21 +75,21 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
     if (liquidity.status === 'CRITICAL' || state.cashVariance < -1000) {
       return {
         label: state.banglaMode ? '■ ঝুঁকিপূর্ণ' : '■ AT RISK',
-        color: 'text-rose-700 bg-rose-50 border-rose-200',
-        icon: <ShieldAlert size={12} className="text-rose-600" />,
+        color: 'text-rose-400 bg-rose-950/40 border-rose-500/30',
+        icon: <ShieldAlert size={12} className="text-rose-400" />,
       };
     }
     if (liquidity.status === 'WATCH' || state.cashVariance < 0 || state.dispatchDelayMinutes > 60) {
       return {
         label: state.banglaMode ? '▲ পর্যবেক্ষণ' : '▲ WATCH',
-        color: 'text-amber-800 bg-amber-50 border-amber-200',
-        icon: <AlertTriangle size={12} className="text-amber-600" />,
+        color: 'text-amber-400 bg-amber-950/40 border-amber-500/30',
+        icon: <AlertTriangle size={12} className="text-amber-400" />,
       };
     }
     return {
       label: state.banglaMode ? '● স্বাভাবিক' : '● HEALTHY',
-      color: 'text-emerald-800 bg-emerald-50 border-emerald-200',
-      icon: <ShieldCheck size={12} className="text-emerald-600" />,
+      color: 'text-emerald-400 bg-emerald-950/40 border-emerald-500/30',
+      icon: <ShieldCheck size={12} className="text-emerald-400" />,
     };
   };
 
@@ -103,37 +105,37 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
   const currentMode = modeLabels[state.operatingMode] || modeLabels.LIVE_OPS;
 
   return (
-    <header className="border-b border-[#e2e8f0] bg-white/95 backdrop-blur-md px-3 py-2 sm:px-5 sm:py-2.5 sticky top-[72px] z-20 shadow-2xs">
+    <header className="border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-md px-3 py-2 sm:px-5 sm:py-2.5 sticky top-[72px] z-20 shadow-xs transition-colors duration-200">
       <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-2 sm:gap-3">
         {/* Left: Brand + Operating Location + Operational Mode */}
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs tracking-wider">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--accent-soft)] border border-[var(--border)] text-[var(--accent-bright)] font-mono font-bold text-xs tracking-wider">
               dM
             </span>
             <div className="flex flex-col">
-              <span className="text-xs font-bold tracking-tight text-slate-900 uppercase font-mono">
+              <span className="text-xs font-bold tracking-tight text-[var(--foreground)] uppercase font-mono">
                 distroMesh
               </span>
-              <span className="text-[10px] text-slate-500 font-mono hidden xs:inline">
+              <span className="text-[10px] text-[var(--foreground-muted)] font-mono hidden xs:inline">
                 CONTROL BOARD
               </span>
             </div>
           </div>
 
-          <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+          <div className="h-4 w-px bg-[var(--border)] hidden sm:block" />
 
           {/* Business & Location Context */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <span className="text-[11px] font-mono text-slate-700 font-semibold tracking-wide uppercase truncate max-w-[110px] sm:max-w-none">
+            <span className="text-[11px] font-mono text-[var(--foreground)] font-semibold tracking-wide uppercase truncate max-w-[110px] sm:max-w-none">
               {location}
             </span>
-            <span className="text-slate-400 font-mono hidden sm:inline">•</span>
+            <span className="text-[var(--foreground-subtle)] font-mono hidden sm:inline">•</span>
             {/* Operating Mode Badge */}
-            <div className="hidden sm:flex items-center gap-1.5 rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-mono font-medium text-slate-700">
+            <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] px-2 py-0.5 text-[10px] font-mono font-medium text-[var(--foreground)]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>{state.banglaMode ? currentMode.bn : currentMode.en}</span>
-              <span className="text-[9px] text-slate-400 hidden md:inline">({currentMode.phase})</span>
+              <span className="text-[9px] text-[var(--foreground-muted)] hidden md:inline">({currentMode.phase})</span>
             </div>
           </div>
         </div>
@@ -141,7 +143,7 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
         {/* Right: Health Badge + Desktop Controls + Mobile Controls Toggle Button */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Overall Business Health Status Badge */}
-          <div className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-mono font-bold ${health.color}`}>
+          <div className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-mono font-bold ${health.color}`}>
             {health.icon}
             <span>{health.label}</span>
           </div>
@@ -150,22 +152,22 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
           <div className="hidden lg:flex items-center gap-2.5">
             {/* Live Telemetry Clock */}
             <div className="flex flex-col text-right font-mono">
-              <span className="text-[11px] font-bold tracking-wider text-slate-900">
+              <span className="text-[11px] font-bold tracking-wider text-[var(--foreground)] dm-tabular">
                 {currentTime || '12:00:00'}
               </span>
-              <span className="text-[9px] text-slate-500 tracking-wider">
+              <span className="text-[9px] text-[var(--foreground-muted)] tracking-wider">
                 {currentDate || '07 OCT 2026'}
               </span>
             </div>
 
-            <div className="h-4 w-px bg-slate-200" />
+            <div className="h-4 w-px bg-[var(--border)]" />
 
             {/* Role Perspective Selector */}
             <div className="relative">
               <select
                 value={state.currentRole}
                 onChange={(e) => setUserRole(e.target.value as UserRole)}
-                className="rounded-lg border border-[#cbd5e1] bg-white px-2.5 py-1 text-[11px] font-mono text-slate-800 shadow-2xs focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[11px] font-mono text-[var(--foreground)] shadow-2xs focus:outline-none focus:border-[var(--accent)]"
                 title="Select perspective"
               >
                 <option value="Owner">{state.banglaMode ? 'মালিক / CEO' : 'Owner / CEO'}</option>
@@ -176,13 +178,13 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
             </div>
 
             {/* Viewport Tier Selector */}
-            <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-[10px] font-mono">
+            <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] p-0.5 text-[10px] font-mono">
               <button
                 onClick={() => setWarRoomTier('desktop')}
                 className={`flex items-center gap-1 px-2 py-0.5 rounded transition ${
                   state.warRoomTier === 'desktop'
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-[var(--surface-elevated)] text-[var(--foreground)] font-bold shadow-2xs'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
                 }`}
                 title="Desktop balanced density"
               >
@@ -193,8 +195,8 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
                 onClick={() => setWarRoomTier('ipad')}
                 className={`flex items-center gap-1 px-2 py-0.5 rounded transition ${
                   state.warRoomTier === 'ipad'
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-[var(--surface-elevated)] text-[var(--foreground)] font-bold shadow-2xs'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
                 }`}
                 title="Touch tablet mode"
               >
@@ -206,7 +208,7 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
                 className={`flex items-center gap-1 px-2 py-0.5 rounded transition ${
                   state.warRoomTier === 'wall'
                     ? 'bg-emerald-600 text-white font-bold shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
                 }`}
                 title="55-65 inch Wall 4K Display Mode"
               >
@@ -218,27 +220,37 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
             {/* Bilingual Toggle (EN / BN) */}
             <button
               onClick={toggleBanglaMode}
-              className={`rounded-lg border px-2.5 py-1 text-[11px] font-mono transition shadow-2xs ${
+              className={`rounded-lg border px-2.5 py-1 text-[11px] font-mono transition shadow-2xs active:scale-95 ${
                 state.banglaMode
-                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800 font-bold'
-                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                  ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--foreground)] font-bold'
+                  : 'border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
               }`}
               title="Toggle English / Bangla numerals and text"
             >
               {state.banglaMode ? 'বাংলা' : 'EN'}
             </button>
 
+            {/* Theme Toggle (Dark / Light) */}
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition active:scale-95 shadow-2xs"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={13} className="text-amber-400" /> : <Moon size={13} className="text-slate-600" />}
+            </button>
+
             {/* Wake Lock */}
             <button
               onClick={toggleWakeLock}
-              className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-mono transition shadow-2xs ${
+              className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-mono transition shadow-2xs active:scale-95 ${
                 state.wakeLockActive
-                  ? 'border-amber-300 bg-amber-50 text-amber-800 font-bold'
-                  : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
+                  ? 'border-amber-400/50 bg-amber-500/10 text-amber-400 font-bold'
+                  : 'border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
               }`}
               title="Keep screen awake during depot operations"
             >
-              <Zap size={11} className={state.wakeLockActive ? 'text-amber-600' : 'text-slate-400'} />
+              <Zap size={11} className={state.wakeLockActive ? 'text-amber-400' : 'text-[var(--foreground-muted)]'} />
               <span className="hidden xl:inline">{state.wakeLockActive ? 'WakeLock ON' : 'WakeLock'}</span>
             </button>
 
@@ -246,10 +258,10 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
             {onOpenSimulation && (
               <button
                 onClick={onOpenSimulation}
-                className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 px-2.5 py-1 text-[11px] font-mono font-medium text-slate-700 transition shadow-2xs"
+                className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] px-2.5 py-1 text-[11px] font-mono font-medium text-[var(--foreground)] transition shadow-2xs active:scale-95"
                 title="Open stress testing & scenario simulator"
               >
-                <Sliders size={11} className="text-emerald-600" />
+                <Sliders size={11} className="text-emerald-500" />
                 <span>{state.banglaMode ? 'সিমুলেশন' : 'Simulate'}</span>
               </button>
             )}
@@ -258,11 +270,11 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
           {/* Mobile Controls Accordion Button (visible on mobile / < lg) */}
           <button
             onClick={() => setMobileControlsOpen(!mobileControlsOpen)}
-            className="lg:hidden flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-mono font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+            className="lg:hidden flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[11px] font-mono font-semibold text-[var(--foreground)] shadow-2xs hover:bg-[var(--surface-hover)] transition"
             aria-expanded={mobileControlsOpen}
             aria-label="Toggle executive controls tray"
           >
-            <SlidersHorizontal size={12} className="text-emerald-700" />
+            <SlidersHorizontal size={12} className="text-emerald-500" />
             <span>Controls</span>
             <ChevronDown size={11} className={`transition-transform duration-200 ${mobileControlsOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -271,19 +283,19 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
 
       {/* Mobile Collapsible Controls Tray */}
       {mobileControlsOpen && (
-        <div className="lg:hidden mt-2 pt-2.5 border-t border-slate-200 flex flex-wrap items-center gap-2 font-mono text-[11px] bg-slate-50/90 p-2.5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="lg:hidden mt-2 pt-2.5 border-t border-[var(--border)] flex flex-wrap items-center gap-2 font-mono text-[11px] bg-[var(--surface-inset)] p-2.5 rounded-xl border border-[var(--border)] shadow-xs">
           {/* Operating Mode Pill */}
-          <div className="flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2 py-1 text-[10px] text-slate-700">
+          <div className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-2 py-1 text-[10px] text-[var(--foreground)]">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-bold">{state.banglaMode ? currentMode.bn : currentMode.en}</span>
-            <span className="text-[9px] text-slate-400">({currentMode.phase})</span>
+            <span className="text-[9px] text-[var(--foreground-muted)]">({currentMode.phase})</span>
           </div>
 
           {/* Role Perspective Selector */}
           <select
             value={state.currentRole}
             onChange={(e) => setUserRole(e.target.value as UserRole)}
-            className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-[11px] text-slate-800 shadow-2xs"
+            className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-2 py-1 text-[11px] text-[var(--foreground)] shadow-2xs"
           >
             <option value="Owner">{state.banglaMode ? 'মালিক / CEO' : 'Owner / CEO'}</option>
             <option value="Manager">{state.banglaMode ? 'অপারেশন ম্যানেজার' : 'Ops Manager'}</option>
@@ -292,22 +304,22 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
           </select>
 
           {/* Viewport Tier Selector */}
-          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 text-[10px]">
+          <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-0.5 text-[10px]">
             <button
               onClick={() => setWarRoomTier('desktop')}
-              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'desktop' ? 'bg-slate-200 text-slate-900 font-bold' : 'text-slate-500'}`}
+              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'desktop' ? 'bg-[var(--accent-soft)] text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}
             >
               Deck
             </button>
             <button
               onClick={() => setWarRoomTier('ipad')}
-              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'ipad' ? 'bg-slate-200 text-slate-900 font-bold' : 'text-slate-500'}`}
+              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'ipad' ? 'bg-[var(--accent-soft)] text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}
             >
               Touch
             </button>
             <button
               onClick={() => setWarRoomTier('wall')}
-              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'wall' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-500'}`}
+              className={`px-2 py-0.5 rounded transition ${state.warRoomTier === 'wall' ? 'bg-emerald-600 text-white font-bold' : 'text-[var(--foreground-muted)]'}`}
             >
               Wall 4K
             </button>
@@ -317,21 +329,30 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
           <button
             onClick={toggleBanglaMode}
             className={`rounded-lg border px-2 py-1 text-[11px] font-bold shadow-2xs ${
-              state.banglaMode ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-700'
+              state.banglaMode ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--foreground)]' : 'border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground-muted)]'
             }`}
           >
             {state.banglaMode ? 'বাংলা' : 'EN'}
+          </button>
+
+          {/* Theme Toggle in Mobile Tray */}
+          <button
+            onClick={toggleTheme}
+            className="p-1 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground)] shadow-2xs"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun size={13} className="text-amber-400" /> : <Moon size={13} className="text-slate-600" />}
           </button>
 
           {/* Wake Lock */}
           <button
             onClick={toggleWakeLock}
             className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] shadow-2xs ${
-              state.wakeLockActive ? 'border-amber-300 bg-amber-50 text-amber-800 font-bold' : 'border-slate-200 bg-white text-slate-600'
+              state.wakeLockActive ? 'border-amber-400/50 bg-amber-500/10 text-amber-400 font-bold' : 'border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground-muted)]'
             }`}
           >
-            <Zap size={11} className={state.wakeLockActive ? 'text-amber-600' : 'text-slate-400'} />
-            <span>{state.wakeLockActive ? 'WakeLock ON' : 'WakeLock'}</span>
+            <Zap size={11} className={state.wakeLockActive ? 'text-amber-400' : 'text-[var(--foreground-muted)]'} />
+            <span>{state.wakeLockActive ? 'WakeLock' : 'WakeLock'}</span>
           </button>
 
           {/* Simulation Drawer Action */}
@@ -341,15 +362,15 @@ export const ExecutiveHeader: React.FC<ExecutiveHeaderProps> = ({
                 setMobileControlsOpen(false);
                 onOpenSimulation();
               }}
-              className="flex items-center gap-1 rounded-lg border border-slate-300 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800 shadow-2xs transition"
+              className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--accent-soft)] hover:bg-[var(--accent-bright)] px-2.5 py-1 text-[11px] font-bold text-[var(--foreground)] shadow-2xs transition"
             >
-              <Sliders size={11} className="text-emerald-700" />
+              <Sliders size={11} className="text-emerald-500" />
               <span>{state.banglaMode ? 'সিমুলেশন' : 'Simulate'}</span>
             </button>
           )}
 
           {/* Live Telemetry Clock */}
-          <div className="ml-auto text-right text-[10px] text-slate-500">
+          <div className="ml-auto text-right text-[10px] text-[var(--foreground-muted)] dm-tabular">
             <span>{currentTime}</span> • <span>{currentDate}</span>
           </div>
         </div>

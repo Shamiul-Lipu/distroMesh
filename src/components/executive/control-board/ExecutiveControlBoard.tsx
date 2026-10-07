@@ -62,7 +62,7 @@ export const ExecutiveControlBoard: React.FC<ExecutiveControlBoardProps> = ({
   };
 
   return (
-    <div className={`min-h-screen bg-[#0b0f19] text-[#f3f4f6] selection:bg-emerald-500/20 selection:text-emerald-300 font-sans ${
+    <div className={`min-h-screen bg-[var(--background-deep)] text-[var(--foreground)] selection:bg-[var(--accent)]/20 selection:text-[var(--accent)] font-sans ${
       burnInSafe ? 'translate-x-0.5 translate-y-0.5' : ''
     }`}>
       {/* =========================================================================
@@ -82,16 +82,16 @@ export const ExecutiveControlBoard: React.FC<ExecutiveControlBoardProps> = ({
         {state.warRoomTier === 'wall' ? (
           <div className="space-y-4 font-mono animate-in fade-in duration-200">
             {/* Wall Mode Subheader */}
-            <div className="flex items-center justify-between border-b border-[#1f2937] pb-2 text-xs text-slate-400">
-              <span className="font-bold tracking-wider text-slate-300 uppercase flex items-center gap-2">
-                <Tv size={14} className="text-emerald-400" />
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 text-xs text-[var(--foreground-muted)]">
+              <span className="font-bold tracking-wider text-[var(--foreground)] uppercase flex items-center gap-2">
+                <Tv size={14} className="text-[var(--success)]" />
                 55–65&quot; Wall Display Mode · NOC Command Wall (Distance Scan 10–15 Ft)
               </span>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setBurnInSafe(!burnInSafe)}
                   className={`px-2 py-0.5 rounded text-[10px] border ${
-                    burnInSafe ? 'border-purple-500 bg-purple-500/20 text-purple-300 font-bold' : 'border-[#283548] text-slate-400'
+                    burnInSafe ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-bold' : 'border-[var(--border)] text-[var(--foreground-muted)]'
                   }`}
                 >
                   {burnInSafe ? 'Burn-In Drift Active' : 'Enable Burn-In Drift'}
@@ -103,144 +103,144 @@ export const ExecutiveControlBoard: React.FC<ExecutiveControlBoardProps> = ({
             {/* 7 High-Contrast Wall Tiles */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Tile 1: Liquid Cash */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">1. Liquid Cash</span>
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">1. Liquid Cash</span>
                     <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                      liquidity.status === 'SAFE' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                      liquidity.status === 'SAFE' ? 'bg-[var(--success-soft)] text-[var(--success)]' : 'bg-[var(--warning-soft)] text-[var(--warning)]'
                     }`}>
                       {liquidity.status}
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-white tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--foreground)] tracking-tight">
                     {formatBDT(state.bankCash + state.vaultCash, { mode: 'exact', bangla: state.banglaMode })}
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 space-y-1">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] space-y-1">
                   <div className="flex justify-between">
                     <span>Bank:</span>
-                    <strong className="text-slate-200">{formatBDT(state.bankCash)}</strong>
+                    <strong className="text-[var(--foreground)]">{formatBDT(state.bankCash)}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Vault (Counted):</span>
-                    <strong className="text-slate-200">{formatBDT(state.vaultCash)}</strong>
+                    <strong className="text-[var(--foreground)]">{formatBDT(state.vaultCash)}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Tile 2: Principal Auto-Debit */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">2. 48h Auto-Debit</span>
-                    <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded text-xs font-bold">
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">2. 48h Auto-Debit</span>
+                    <span className="bg-[var(--warning-soft)] text-[var(--warning)] px-2 py-0.5 rounded text-xs font-bold">
                       {state.obligationDueHours}h Left
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-amber-400 tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--warning)] tracking-tight">
                     {formatBDT(state.upcomingObligation, { mode: 'exact', bangla: state.banglaMode })}
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 flex justify-between">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] flex justify-between">
                   <span>Coverage:</span>
-                  <strong className="text-emerald-400 font-bold">{liquidity.coverage}× Combined</strong>
+                  <strong className="text-[var(--success)] font-bold">{liquidity.coverage}× Combined</strong>
                 </div>
               </div>
 
               {/* Tile 3: Dispatch Delay */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">3. Dispatch Delay</span>
-                    <span className="bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded text-xs font-bold">CRITICAL</span>
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">3. Dispatch Delay</span>
+                    <span className="bg-[var(--danger-soft)] text-[var(--danger)] px-2 py-0.5 rounded text-xs font-bold">CRITICAL</span>
                   </div>
-                  <div className="text-3xl font-bold text-rose-400 tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--danger)] tracking-tight">
                     +{state.dispatchDelayMinutes} Min
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 flex justify-between">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] flex justify-between">
                   <span>Fleet Runtime Lost:</span>
-                  <strong className="text-slate-200">{dispatch.vanMinutesLost} van-min</strong>
+                  <strong className="text-[var(--foreground)]">{dispatch.vanMinutesLost} van-min</strong>
                 </div>
               </div>
 
               {/* Tile 4: Till Variance */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">4. Till Variance</span>
-                    <span className="bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded text-xs font-bold">Van #3</span>
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">4. Till Variance</span>
+                    <span className="bg-[var(--danger-soft)] text-[var(--danger)] px-2 py-0.5 rounded text-xs font-bold">Van #3</span>
                   </div>
-                  <div className="text-3xl font-bold text-rose-400 tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--danger)] tracking-tight">
                     {formatVariance(state.cashVariance, state.banglaMode)}
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 flex justify-between">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] flex justify-between">
                   <span>Expected: {formatBDT(state.reconciliationExpected)}</span>
                   <span>Counted: {formatBDT(state.reconciliationCounted)}</span>
                 </div>
               </div>
 
               {/* Tile 5: Credit Share */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">5. Credit Share</span>
-                    <span className="text-slate-400 text-xs">Ceiling &le; 45%</span>
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">5. Credit Share</span>
+                    <span className="text-[var(--foreground-muted)] text-xs">Ceiling &le; 45%</span>
                   </div>
-                  <div className="text-3xl font-bold text-slate-200 tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--foreground)] tracking-tight">
                     {formatPercent((state.freshCredit / state.todaySales) * 100, 1, state.banglaMode)}
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 flex justify-between">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] flex justify-between">
                   <span>Cash: {formatBDT(popyTodaySnapshot.cashSales, { mode: 'summary' })}</span>
                   <span>Credit: {formatBDT(state.freshCredit, { mode: 'summary' })}</span>
                 </div>
               </div>
 
               {/* Tile 6: Overdue > 30 Days */}
-              <div className="rounded-xl border border-[#1f2937] bg-[#111827] p-5 flex flex-col justify-between shadow-xl">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-slate-400">6. Overdue &gt;30d</span>
-                    <span className="text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded text-xs font-bold">
+                    <span className="text-xs font-bold uppercase text-[var(--foreground-muted)]">6. Overdue &gt;30d</span>
+                    <span className="text-[var(--warning)] bg-[var(--warning-soft)] px-2 py-0.5 rounded text-xs font-bold">
                       {receivables.overdue30PlusPercent}%
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-slate-200 tracking-tight">
+                  <div className="text-3xl font-bold text-[var(--foreground)] tracking-tight">
                     {formatBDT(receivables.totalOverdue30Plus, { mode: 'summary', bangla: state.banglaMode })}
                   </div>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#1f2937] text-xs text-slate-400 flex justify-between">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--foreground-muted)] flex justify-between">
                   <span>Total Receivables:</span>
-                  <strong className="text-slate-200">{formatBDT(state.workingCapital.receivables, { mode: 'summary' })}</strong>
+                  <strong className="text-[var(--foreground)]">{formatBDT(state.workingCapital.receivables, { mode: 'summary' })}</strong>
                 </div>
               </div>
 
               {/* Tile 7: Top Critical Operational Exception (Double Column) */}
-              <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-5 flex flex-col justify-between shadow-2xs lg:col-span-2">
+              <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--surface-elevated)] p-5 flex flex-col justify-between shadow-md lg:col-span-2">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase text-rose-800 flex items-center gap-1.5">
+                    <span className="text-xs font-bold uppercase text-[var(--danger)] flex items-center gap-1.5">
                       <AlertOctagon size={14} /> 7. Active Critical Exception
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--danger-soft)] text-[var(--danger)] border border-[var(--danger)]/20">
                       HIGH URGENCY
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-[var(--foreground)]">
                     Morning Dispatch Delay · 165 Min Departure Stall
                   </h3>
-                  <p className="mt-1 text-xs text-slate-600 leading-relaxed font-sans">
+                  <p className="mt-1 text-xs text-[var(--foreground-muted)] leading-relaxed font-sans">
                     Morning departure stall delayed 12 delivery vans in depot yard for 165 minutes. ৳4,950 idle crew cost incurred across 700 retail drops.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-rose-200 flex items-center justify-between text-xs">
-                  <span className="text-rose-700 font-semibold">Avoidable Friction: ৳7,438/day</span>
+                <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs">
+                  <span className="text-[var(--danger)] font-semibold">Avoidable Friction: ৳7,438/day</span>
                   <button
                     onClick={() => setActiveDrawerType('INCIDENT')}
-                    className="px-3.5 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-lg shadow-2xs transition"
+                    className="px-3.5 py-1.5 bg-[var(--danger)] hover:opacity-90 text-white font-bold rounded-lg shadow-sm transition"
                   >
                     Inspect Dispatch Loss
                   </button>

@@ -41,7 +41,10 @@ import {
   Wallet,
   X,
   Monitor,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import { useExecutive } from '../../context/ExecutiveContext';
 import { formatBDT } from '../../utils/formatters';
 import { getBusinessRoute, isBusinessRouteName, sectionIdsByRouteName } from '../../utils/businessRoutes';
@@ -127,6 +130,7 @@ const compactCurrency = (amount: number) => {
 };
 
 export const ExecutiveShell: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const {
@@ -803,28 +807,28 @@ export const ExecutiveShell: React.FC = () => {
               title={collapsed && !isMobile ? label : undefined}
               className={`accounting-focus group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-medium transition-all ${
                 selected
-                  ? 'bg-emerald-50/90 font-semibold text-emerald-900 border border-emerald-200/80 shadow-2xs'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent)] border border-[var(--accent)]/30 shadow-2xs'
+                  : 'text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'
               }`}
             >
               <Icon
                 size={16}
                 strokeWidth={selected ? 2.2 : 1.8}
-                className={`shrink-0 transition-colors ${selected ? 'text-emerald-700' : 'text-slate-500 group-hover:text-slate-800'}`}
+                className={`shrink-0 transition-colors ${selected ? 'text-[var(--accent)]' : 'text-[var(--foreground-muted)] group-hover:text-[var(--foreground)]'}`}
               />
               {(!collapsed || isMobile) && (
                 <>
                   <span className="flex-1 truncate">{label}</span>
                   {isLive && (
-                    <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-bold font-mono text-emerald-700 border border-emerald-500/20">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="inline-flex items-center gap-1 rounded bg-[var(--success-soft)] px-1.5 py-0.5 text-[9px] font-bold font-mono text-[var(--success)] border border-[var(--success)]/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)] animate-pulse" />
                       LIVE
                     </span>
                   )}
                   {badge !== undefined && badge !== null && (
                     <span
                       className={`ml-auto rounded-md px-1.5 py-0.5 text-[10px] tabular-nums font-bold ${
-                        badgeColor ?? 'bg-slate-100 border border-slate-200 text-slate-700'
+                        badgeColor ?? 'bg-[var(--surface-inset)] border border-[var(--border)] text-[var(--foreground-muted)]'
                       }`}
                     >
                       {badge}
@@ -845,9 +849,9 @@ export const ExecutiveShell: React.FC = () => {
     const currentBusinessInitial = isPortfolioView ? 'P' : (activeBusiness?.name.charAt(0) ?? 'B');
 
     return (
-      <aside className={`accounting-sidebar flex h-full flex-col overflow-y-auto bg-white text-slate-800 border-r border-[#e2e8f0] ${isCollapsed ? 'w-[76px]' : 'w-[252px]'} ${isMobile ? 'w-[280px]' : ''} transition-[width] duration-200`}>
+      <aside className={`accounting-sidebar flex h-full flex-col overflow-y-auto bg-[var(--surface-elevated)] text-[var(--foreground)] border-r border-[var(--border)] ${isCollapsed ? 'w-[76px]' : 'w-[252px]'} ${isMobile ? 'w-[280px]' : ''} transition-[width] duration-200`}>
         {/* Top Brand Logo */}
-        <div className="flex h-[76px] items-center gap-3 border-b border-[#e2e8f0] px-5">
+        <div className="flex h-[76px] items-center gap-3 border-b border-[var(--border)] px-5">
           <Link
             href="/"
             aria-label="distroMesh home"
@@ -855,18 +859,18 @@ export const ExecutiveShell: React.FC = () => {
             onClick={() => setMobileNavOpen(false)}
             className="accounting-focus flex min-w-0 flex-1 items-center gap-3 rounded-lg"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-950/20">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-white shadow-md">
               <Building2 size={19} strokeWidth={2} />
             </span>
             {!isCollapsed && (
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold tracking-wide text-slate-900">distroMesh</span>
-                <span className="mt-0.5 block text-[10px] font-medium tracking-wide text-emerald-700">Executive Workspace</span>
+                <span className="block truncate text-sm font-semibold tracking-wide text-[var(--foreground)]">distroMesh</span>
+                <span className="mt-0.5 block text-[10px] font-medium tracking-wide text-[var(--accent)]">Executive Workspace</span>
               </span>
             )}
           </Link>
           {isMobile && (
-            <button onClick={() => setMobileNavOpen(false)} aria-label="Close navigation" className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">
+            <button onClick={() => setMobileNavOpen(false)} aria-label="Close navigation" className="accounting-focus rounded-lg p-2 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]">
               <X size={18} />
             </button>
           )}
@@ -881,9 +885,9 @@ export const ExecutiveShell: React.FC = () => {
               scroll={false}
               onClick={() => { prepareBusinessSelection('all'); setMobileNavOpen(false); }}
               title={`Switch Business: ${currentBusinessName}`}
-              className="flex h-10 w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+              className="flex h-10 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] text-[var(--foreground)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition"
             >
-              <BriefcaseBusiness size={17} className="text-emerald-700" />
+              <BriefcaseBusiness size={17} className="text-[var(--accent)]" />
             </Link>
           ) : (
             <div className="relative">
@@ -891,36 +895,32 @@ export const ExecutiveShell: React.FC = () => {
                 onClick={() => setBusinessNavExpanded((prev) => !prev)}
                 aria-expanded={businessNavExpanded}
                 aria-label="Toggle business selector"
-                className="w-full text-left rounded-xl border border-slate-200/90 bg-slate-50/80 p-2.5 shadow-2xs hover:bg-slate-100/80 transition"
+                className="w-full text-left rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-2.5 shadow-2xs hover:bg-[var(--surface-hover)] transition"
               >
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--foreground-muted)] font-mono">
                     {isPortfolioView ? 'Scope' : 'Active Business'}
                   </span>
-                  <span className="text-[10px] font-semibold text-emerald-700 flex items-center gap-0.5">
+                  <span className="text-[10px] font-semibold text-[var(--accent)] flex items-center gap-0.5">
                     {businessNavExpanded ? 'Close' : 'Switch'} <ChevronDown size={11} className={`transition-transform duration-200 ${businessNavExpanded ? 'rotate-180' : ''}`} />
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold font-mono border ${
-                    isPortfolioView 
-                      ? 'bg-purple-100 text-purple-800 border-purple-200' 
-                      : 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                  }`}>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold font-mono border bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent)]/30">
                     {currentBusinessInitial}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-bold text-slate-900 leading-tight">
+                    <p className="truncate text-xs font-bold text-[var(--foreground)] leading-tight">
                       {currentBusinessName}
                     </p>
-                    <p className="truncate text-[10px] text-slate-500 mt-0.5">
+                    <p className="truncate text-[10px] text-[var(--foreground-muted)] mt-0.5">
                       {isPortfolioView ? 'Cross-business portfolio' : (activeBusiness?.industry ?? 'Distribution')}
                     </p>
                   </div>
                 </div>
               </button>
               {businessNavExpanded && (
-                <div className="mt-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg space-y-0.5 animate-in fade-in duration-150">
+                <div className="mt-1 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-1.5 shadow-lg space-y-0.5 animate-in fade-in duration-150">
                   <Link
                     href="/businesses"
                     scroll={false}
@@ -930,13 +930,13 @@ export const ExecutiveShell: React.FC = () => {
                       setMobileNavOpen(false);
                     }}
                     className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] transition ${
-                      isPortfolioView ? 'bg-purple-50 font-bold text-purple-900' : 'font-semibold text-emerald-800 hover:bg-emerald-50'
+                      isPortfolioView ? 'bg-[var(--accent-soft)] font-bold text-[var(--accent)]' : 'font-semibold text-[var(--foreground)] hover:bg-[var(--surface-hover)]'
                     }`}
                   >
-                    <BriefcaseBusiness size={14} className={isPortfolioView ? 'text-purple-700' : 'text-emerald-600'} />
+                    <BriefcaseBusiness size={14} className="text-[var(--accent)]" />
                     <span>All businesses portfolio ({businesses.length})</span>
                   </Link>
-                  <div className="my-1 border-t border-slate-100" />
+                  <div className="my-1 border-t border-[var(--border)]" />
                   {businesses.map((business) => {
                     const selected = business.id === activeBusinessId;
                     return (
@@ -950,12 +950,12 @@ export const ExecutiveShell: React.FC = () => {
                           setMobileNavOpen(false);
                         }}
                         className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] transition ${
-                          selected ? 'bg-emerald-50 font-bold text-emerald-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                          selected ? 'bg-[var(--accent-soft)] font-bold text-[var(--accent)]' : 'text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'
                         }`}
                       >
-                        <span className={`h-1.5 w-1.5 rounded-full ${selected ? 'bg-emerald-600' : 'bg-slate-300'}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${selected ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`} />
                         <span className="truncate flex-1">{business.name}</span>
-                        {selected && <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100/70 px-1 py-0.2 rounded font-mono">ACTIVE</span>}
+                        {selected && <span className="text-[9px] font-bold text-[var(--accent)] bg-[var(--accent-soft)] px-1 py-0.2 rounded font-mono">ACTIVE</span>}
                       </Link>
                     );
                   })}
@@ -968,7 +968,7 @@ export const ExecutiveShell: React.FC = () => {
           {isPortfolioView ? (
             <div className="space-y-3">
               {!isCollapsed && (
-                <p className="px-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 font-mono">
+                <p className="px-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-muted)] font-mono">
                   Connected Businesses
                 </p>
               )}
@@ -983,13 +983,13 @@ export const ExecutiveShell: React.FC = () => {
                       setMobileNavOpen(false);
                     }}
                     title={isCollapsed ? business.name : undefined}
-                    className="accounting-focus group flex min-h-10 w-full items-center gap-2.5 rounded-xl px-2.5 text-left text-[12px] text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                    className="accounting-focus group flex min-h-10 w-full items-center gap-2.5 rounded-xl px-2.5 text-left text-[12px] text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] transition-colors"
                   >
-                    <Building2 size={15} className="text-slate-400 group-hover:text-emerald-600 shrink-0" />
+                    <Building2 size={15} className="text-[var(--foreground-muted)] group-hover:text-[var(--accent)] shrink-0" />
                     {!isCollapsed && (
                       <>
                         <span className="min-w-0 flex-1 truncate font-medium">{business.name}</span>
-                        <ChevronRight size={13} className="text-slate-400 group-hover:text-slate-700 shrink-0" />
+                        <ChevronRight size={13} className="text-[var(--foreground-muted)] group-hover:text-[var(--foreground)] shrink-0" />
                       </>
                     )}
                   </Link>
@@ -1027,7 +1027,7 @@ export const ExecutiveShell: React.FC = () => {
                   label: 'Alerts & tasks',
                   icon: FileCheck2,
                   badge: activeAlerts.length > 0 ? activeAlerts.length : null,
-                  badgeColor: activeAlerts.length > 0 ? 'bg-rose-100 border border-rose-200 text-rose-700' : undefined,
+                  badgeColor: activeAlerts.length > 0 ? 'bg-[var(--danger-soft)] border border-[var(--danger)]/30 text-[var(--danger)]' : undefined,
                 },
                 { id: 'ai-assistant', label: 'Help & Copilot', icon: Sparkles },
               ], isMobile)}
@@ -1036,14 +1036,14 @@ export const ExecutiveShell: React.FC = () => {
 
           {/* Today's Focus Card (When not in portfolio and not collapsed) */}
           {!isPortfolioView && !isCollapsed && (
-            <section aria-label="Business focus" className="rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3 shadow-2xs">
+            <section aria-label="Business focus" className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-3 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-800 font-mono">Today&apos;s Focus</span>
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] font-mono">Today&apos;s Focus</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
               </div>
-              <p className="mt-1.5 text-[11px] font-bold text-slate-900 leading-tight">{businessFocus.title}</p>
-              <p className="mt-1 text-[10px] leading-relaxed text-slate-600 line-clamp-2">{businessFocus.detail}</p>
-              <div className="mt-2.5 flex items-center gap-3 pt-1 border-t border-emerald-200/50">
+              <p className="mt-1.5 text-[11px] font-bold text-[var(--foreground)] leading-tight">{businessFocus.title}</p>
+              <p className="mt-1 text-[10px] leading-relaxed text-[var(--foreground-muted)] line-clamp-2">{businessFocus.detail}</p>
+              <div className="mt-2.5 flex items-center gap-3 pt-1 border-t border-[var(--accent)]/20">
                 <Link
                   href={getBusinessRoute(activeBusinessId, businessFocus.section)}
                   scroll={false}
@@ -1051,7 +1051,7 @@ export const ExecutiveShell: React.FC = () => {
                     prepareSectionNavigation(businessFocus.section);
                     setMobileNavOpen(false);
                   }}
-                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 hover:text-emerald-950"
+                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-bold text-[var(--accent)] hover:opacity-80"
                 >
                   Review <ArrowRight size={10} />
                 </Link>
@@ -1062,7 +1062,7 @@ export const ExecutiveShell: React.FC = () => {
                     prepareSectionNavigation('ai-assistant');
                     setMobileNavOpen(false);
                   }}
-                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 hover:text-slate-800"
+                  className="accounting-focus inline-flex items-center gap-1 text-[10px] font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
                 >
                   Ask AI <ArrowRight size={10} />
                 </Link>
@@ -1072,22 +1072,22 @@ export const ExecutiveShell: React.FC = () => {
         </div>
 
         {/* Bottom Footer Actions */}
-        <div className="mt-auto px-3 pb-4 pt-2 border-t border-slate-100">
+        <div className="mt-auto px-3 pb-4 pt-2 border-t border-[var(--border)]">
           {!isCollapsed && (
-            <div className="mb-2 px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-700">
-                <ShieldCheck size={13} className="text-emerald-600" />
+            <div className="mb-2 px-2.5 py-2 rounded-xl bg-[var(--surface-inset)] border border-[var(--border)]">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--foreground)]">
+                <ShieldCheck size={13} className="text-[var(--success)]" />
                 <span>Demo Workspace</span>
               </div>
-              <p className="mt-0.5 text-[9px] text-slate-500 leading-tight">Local illustrative ledger data</p>
+              <p className="mt-0.5 text-[9px] text-[var(--foreground-muted)] leading-tight">Local illustrative ledger data</p>
             </div>
           )}
           <button
             onClick={() => openDrawer('SIMULATION')}
             title={isCollapsed ? 'Simulation & Controls' : undefined}
-            className="accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="accounting-focus flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[12px] font-medium text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
           >
-            <Settings2 size={16} className="shrink-0 text-slate-500" />
+            <Settings2 size={16} className="shrink-0 text-[var(--foreground-muted)]" />
             {!isCollapsed && <span>Simulation controls</span>}
           </button>
         </div>
@@ -1099,31 +1099,31 @@ export const ExecutiveShell: React.FC = () => {
     <tr
       key={row.id}
       onClick={() => row.routeId && openDrawer('ROUTE_DETAIL', row.routeId)}
-      className={`border-b border-[#edf1ef] last:border-0 ${row.routeId ? 'cursor-pointer hover:bg-[#f8faf9]' : ''}`}
+      className={`border-b border-[var(--border)] last:border-0 ${row.routeId ? 'cursor-pointer hover:bg-[var(--surface-hover)]' : ''}`}
     >
-      <td className="whitespace-nowrap px-5 py-3.5 text-[12px] text-[#74807c]">{row.date}</td>
+      <td className="whitespace-nowrap px-5 py-3.5 text-[12px] text-[var(--foreground-muted)]">{row.date}</td>
       <td className="min-w-[220px] px-5 py-3.5">
-        <div className="text-[13px] font-semibold text-[#25312c]">{row.description}</div>
-        <div className="mt-0.5 text-[11px] text-[#83908b]">{row.party}</div>
+        <div className="text-[13px] font-semibold text-[var(--foreground)]">{row.description}</div>
+        <div className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">{row.party}</div>
       </td>
       <td className="whitespace-nowrap px-5 py-3.5">
-        <span className={`rounded-md px-2 py-1 text-[11px] font-medium ${row.referenceOnly ? 'bg-[#f4f1fb] text-[#75669e]' : 'bg-[#f1f5f3] text-[#65726c]'}`}>
+        <span className={`rounded-md px-2 py-1 text-[11px] font-medium ${row.referenceOnly ? 'bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent)]/30' : 'bg-[var(--surface-inset)] text-[var(--foreground-muted)] border border-[var(--border)]'}`}>
           {row.referenceOnly ? `Reference · ${businesses.find((business) => business.id === row.referenceSourceBusinessId)?.name ?? 'Source'}` : row.category}
         </span>
       </td>
-      <td className="whitespace-nowrap px-5 py-3.5 text-[12px] text-[#65726c]">{row.method}</td>
-      <td className={`whitespace-nowrap px-5 py-3.5 text-right text-[13px] font-semibold tabular-nums ${row.amount < 0 ? 'text-[#b74750]' : 'text-[#23312b]'}`}>
+      <td className="whitespace-nowrap px-5 py-3.5 text-[12px] text-[var(--foreground-muted)]">{row.method}</td>
+      <td className={`whitespace-nowrap px-5 py-3.5 text-right text-[13px] font-semibold tabular-nums ${row.amount < 0 ? 'text-[var(--danger)]' : 'text-[var(--foreground)]'}`}>
         {row.referenceOnly ? '—' : `${row.amount < 0 ? '−' : '+'}${compactCurrency(Math.abs(row.amount))}`}
       </td>
       <td className="whitespace-nowrap px-5 py-3.5 text-right">
         {row.referenceOnly ? (
-          <span className="inline-flex rounded-full bg-[#f4f1fb] px-2.5 py-1 text-[10px] font-semibold text-[#75669e]">Reference only</span>
+          <span className="inline-flex rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-[10px] font-semibold text-[var(--accent)] border border-[var(--accent)]/20">Reference only</span>
         ) : <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-          row.status === 'Paid' ? 'bg-[#eaf5ef] text-[#117354]'
-            : row.status === 'Overdue' ? 'bg-[#fbeded] text-[#ac424b]'
-              : 'bg-[#fff5e7] text-[#9a6819]'
+          row.status === 'Paid' ? 'bg-[var(--success-soft)] text-[var(--success)] border border-[var(--success)]/20'
+            : row.status === 'Overdue' ? 'bg-[var(--danger-soft)] text-[var(--danger)] border border-[var(--danger)]/20'
+              : 'bg-[var(--warning-soft)] text-[var(--warning)] border border-[var(--warning)]/20'
         }`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${row.status === 'Paid' ? 'bg-[#16865f]' : row.status === 'Overdue' ? 'bg-[#c8525c]' : 'bg-[#d89b32]'}`} />
+          <span className={`h-1.5 w-1.5 rounded-full ${row.status === 'Paid' ? 'bg-[var(--success)]' : row.status === 'Overdue' ? 'bg-[var(--danger)]' : 'bg-[var(--warning)]'}`} />
           {row.status}
         </span>}
       </td>
@@ -1139,12 +1139,12 @@ export const ExecutiveShell: React.FC = () => {
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9f5f0] text-[#087e63]">
             <Building2 size={22} />
           </span>
-          <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#358367]">Workspace unavailable</p>
-          <h1 className="mt-2 text-[26px] font-semibold tracking-[-0.04em] text-[#23332c]">This business could not be found.</h1>
-          <p className="mx-auto mt-3 max-w-sm text-[13px] leading-6 text-[#718078]">
+          <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">Workspace unavailable</p>
+          <h1 className="mt-2 text-[26px] font-semibold tracking-[-0.04em] text-[var(--foreground)]">This business could not be found.</h1>
+          <p className="mx-auto mt-3 max-w-sm text-[13px] leading-6 text-[var(--foreground-muted)]">
             It may have been added in another browser session. Demo workspaces are local to the current session.
           </p>
-          <Link href="/businesses" className="accounting-focus mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-[#087e63] px-4 text-[12px] font-semibold text-white hover:bg-[#086d56]">
+          <Link href="/businesses" className="accounting-focus mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-[var(--accent)] px-4 text-[12px] font-semibold text-white hover:bg-[var(--accent-hover)]">
             Return to all businesses <ArrowRight size={15} />
           </Link>
         </section>
@@ -1153,14 +1153,14 @@ export const ExecutiveShell: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="min-h-screen">
-        <div className={`accounting-sidebar fixed inset-y-0 left-0 z-40 hidden md:block border-r border-[#e2e8f0] bg-white ${collapsed ? 'w-[76px]' : 'w-[252px]'}`}>
+        <div className={`accounting-sidebar fixed inset-y-0 left-0 z-40 hidden md:block border-r border-[var(--border)] bg-[var(--surface-elevated)] ${collapsed ? 'w-[76px]' : 'w-[252px]'}`}>
           {renderSidebar()}
           <button
             onClick={() => setCollapsed((value) => !value)}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="accounting-focus absolute left-[238px] top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition-all hover:bg-slate-50 hover:text-slate-900 md:flex"
+            className="accounting-focus absolute left-[238px] top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground-muted)] shadow-md transition-all hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] md:flex"
             style={{ left: collapsed ? 62 : 238 }}
           >
             {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
@@ -1169,18 +1169,18 @@ export const ExecutiveShell: React.FC = () => {
 
         {mobileNavOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <button className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs" onClick={() => setMobileNavOpen(false)} aria-label="Close navigation overlay" />
+            <button className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={() => setMobileNavOpen(false)} aria-label="Close navigation overlay" />
             <div className="absolute inset-y-0 left-0 shadow-2xl">{renderSidebar(true)}</div>
           </div>
         )}
 
         <div className={`min-w-0 transition-[margin] duration-200 ${collapsed ? 'md:ml-[76px]' : 'md:ml-[252px]'}`}>
-          <header className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white/95 text-slate-800 backdrop-blur-xl shadow-xs">
+          <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface-elevated)]/90 text-[var(--foreground)] backdrop-blur-xl shadow-xs">
             <div className="flex h-[72px] items-center gap-3 px-4 sm:px-6 lg:px-8">
               <button
                 onClick={() => setMobileNavOpen(true)}
                 aria-label="Open navigation"
-                className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 md:hidden"
+                className="accounting-focus rounded-lg p-2 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] md:hidden"
               >
                 <Menu size={20} />
               </button>
@@ -1190,12 +1190,12 @@ export const ExecutiveShell: React.FC = () => {
                   window.setTimeout(() => mobileSearchRef.current?.focus(), 0);
                 }}
                 aria-label="Search the ledger"
-                className="accounting-focus rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 sm:hidden"
+                className="accounting-focus rounded-lg p-2 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] sm:hidden"
               >
                 <Search size={18} />
               </button>
               <div className="relative hidden min-w-0 flex-1 sm:block sm:max-w-[440px]">
-                <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]" />
                 <input
                   ref={searchRef}
                   value={globalSearch}
@@ -1206,9 +1206,9 @@ export const ExecutiveShell: React.FC = () => {
                   onFocus={openSearchSection}
                   placeholder="Search transactions, invoices, accounts..."
                   aria-label="Search the ledger"
-                  className="accounting-focus h-10 w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] pl-10 pr-16 text-[13px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+                  className="accounting-focus h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] pl-10 pr-16 text-[13px] text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:bg-[var(--surface-elevated)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                 />
-                <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-[10px] text-slate-500">
+                <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--surface)] px-1.5 py-1 text-[10px] text-[var(--foreground-muted)] font-mono">
                   <Command size={11} /> K
                 </span>
               </div>
@@ -1221,14 +1221,14 @@ export const ExecutiveShell: React.FC = () => {
                   })}
                   aria-expanded={companyMenuOpen}
                   aria-label="Choose a business"
-                  className="accounting-focus flex items-center gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-slate-100 text-slate-800 sm:px-3"
+                  className="accounting-focus flex items-center gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-[var(--surface-hover)] text-[var(--foreground)] sm:px-3"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200"><Building2 size={16} /></span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent)]/30"><Building2 size={16} /></span>
                   <span className="hidden min-w-0 sm:block">
-                    <span className="block max-w-[180px] truncate text-[12px] font-semibold text-slate-900">{isPortfolioView ? 'All businesses' : activeBusiness?.name ?? 'Business workspace'}</span>
-                    <span className="block text-[10px] text-slate-500">{isPortfolioView ? `${businesses.length} in portfolio` : activeBusiness?.location ?? 'Select a business'}</span>
+                    <span className="block max-w-[180px] truncate text-[12px] font-semibold text-[var(--foreground)]">{isPortfolioView ? 'All businesses' : activeBusiness?.name ?? 'Business workspace'}</span>
+                    <span className="block text-[10px] text-[var(--foreground-muted)]">{isPortfolioView ? `${businesses.length} in portfolio` : activeBusiness?.location ?? 'Select a business'}</span>
                   </span>
-                  <ChevronDown size={14} className="hidden text-slate-400 sm:block" />
+                  <ChevronDown size={14} className="hidden text-[var(--foreground-muted)] sm:block" />
                 </button>
                 {companyMenuOpen && (
                   <>
@@ -1238,38 +1238,38 @@ export const ExecutiveShell: React.FC = () => {
                       className="fixed inset-0 z-40 bg-transparent cursor-default"
                       onClick={() => setCompanyMenuOpen(false)}
                     />
-                    <div className="absolute right-0 top-12 z-50 w-[min(320px,calc(100vw-24px))] rounded-2xl border border-[#e2e8f0] bg-white p-2 shadow-xl text-slate-800">
-                      <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Business Portfolio</p>
-                      <button onClick={() => { setCompanyMenuOpen(false); selectBusiness('all'); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold transition ${isPortfolioView ? 'bg-emerald-50 text-emerald-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
-                        <BriefcaseBusiness size={15} className="text-emerald-700" /> All businesses
-                        {isPortfolioView && <Check size={14} className="ml-auto text-emerald-700" />}
+                    <div className="absolute right-0 top-12 z-50 w-[min(320px,calc(100vw-24px))] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-2 shadow-xl text-[var(--foreground)]">
+                      <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--foreground-muted)]">Business Portfolio</p>
+                      <button onClick={() => { setCompanyMenuOpen(false); selectBusiness('all'); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold transition ${isPortfolioView ? 'bg-[var(--accent-soft)] text-[var(--accent)]' : 'text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'}`}>
+                        <BriefcaseBusiness size={15} className="text-[var(--accent)]" /> All businesses
+                        {isPortfolioView && <Check size={14} className="ml-auto text-[var(--accent)]" />}
                       </button>
-                      <p className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Open a business</p>
+                      <p className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-[var(--foreground-muted)]">Open a business</p>
                       <div className="relative px-2 pb-2">
-                        <Search size={14} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <Search size={14} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]" />
                         <input
                           value={businessSearch}
                           onChange={(event) => setBusinessSearch(event.target.value)}
                           aria-label="Search businesses"
                           placeholder="Find a business"
-                          className="accounting-focus h-9 w-full rounded-lg border border-slate-200 bg-[#f8fafc] pl-8 pr-3 text-[11px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-600"
+                          className="accounting-focus h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] pl-8 pr-3 text-[11px] text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:bg-[var(--surface-elevated)] focus:border-[var(--accent)]"
                         />
                       </div>
                       <div className="max-h-56 space-y-1 overflow-y-auto">
                         {businesses
                           .filter((business) => `${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase()))
                           .map((business) => (
-                          <button key={business.id} onClick={() => { setCompanyMenuOpen(false); selectBusiness(business.id); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] transition ${activeBusinessId === business.id ? 'bg-emerald-50 font-semibold text-emerald-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}>
-                            <Building2 size={15} className="shrink-0 text-slate-500" />
+                          <button key={business.id} onClick={() => { setCompanyMenuOpen(false); selectBusiness(business.id); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[12px] transition ${activeBusinessId === business.id ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent)]' : 'text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]'}`}>
+                            <Building2 size={15} className="shrink-0 text-[var(--foreground-muted)]" />
                             <span className="min-w-0 flex-1 truncate">{business.name}</span>
-                            {activeBusinessId === business.id && <Check size={14} className="shrink-0 text-emerald-700" />}
+                            {activeBusinessId === business.id && <Check size={14} className="shrink-0 text-[var(--accent)]" />}
                           </button>
                         ))}
                         {businesses.every((business) => !`${business.name} ${business.industry} ${business.location}`.toLowerCase().includes(businessSearch.trim().toLowerCase())) && (
-                          <p className="px-3 py-3 text-[10px] text-slate-500">No matching businesses.</p>
+                          <p className="px-3 py-3 text-[10px] text-[var(--foreground-muted)]">No matching businesses.</p>
                         )}
                       </div>
-                      <button onClick={() => { setCompanyMenuOpen(false); setBusinessModalMode('standalone'); setBusinessOnboardingOpen(true); }} className="mt-2 flex w-full items-center gap-2 rounded-xl border-t border-slate-200 px-3 py-3 text-left text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50">
+                      <button onClick={() => { setCompanyMenuOpen(false); setBusinessModalMode('standalone'); setBusinessOnboardingOpen(true); }} className="mt-2 flex w-full items-center gap-2 rounded-xl border-t border-[var(--border)] px-3 py-3 text-left text-[11px] font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)]">
                         <Plus size={15} /> Add a business
                       </button>
                     </div>
@@ -1277,12 +1277,22 @@ export const ExecutiveShell: React.FC = () => {
                 )}
               </div>
 
+              {/* Theme Toggle (Dark / Light) */}
+              <button
+                onClick={toggleTheme}
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                className="accounting-focus rounded-xl p-2.5 text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
+              >
+                {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-slate-600" />}
+              </button>
+
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen((value) => !value)}
                   aria-label={`Notifications, ${activeAlerts.length} active`}
                   aria-expanded={notificationsOpen}
-                  className="accounting-focus relative rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  className="accounting-focus relative rounded-xl p-2.5 text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
                 >
                   <Bell size={18} />
                   {activeAlerts.length > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-rose-500" />}
@@ -1295,16 +1305,16 @@ export const ExecutiveShell: React.FC = () => {
                       className="fixed inset-0 z-40 bg-transparent cursor-default"
                       onClick={() => setNotificationsOpen(false)}
                     />
-                    <div className="absolute right-0 top-12 z-50 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-[#e2e8f0] bg-white p-3 shadow-xl text-slate-800">
-                      <div className="flex items-center justify-between px-2 pb-2 border-b border-slate-200">
-                        <p className="text-[13px] font-bold text-slate-900 uppercase tracking-wider font-mono">Notifications</p>
-                        <span className="rounded bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-700">{activeAlerts.length} open</span>
+                    <div className="absolute right-0 top-12 z-50 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-3 shadow-xl text-[var(--foreground)]">
+                      <div className="flex items-center justify-between px-2 pb-2 border-b border-[var(--border)]">
+                        <p className="text-[13px] font-bold text-[var(--foreground)] uppercase tracking-wider font-mono">Notifications</p>
+                        <span className="rounded bg-[var(--danger-soft)] border border-[var(--danger)]/30 px-2 py-0.5 text-[10px] font-bold text-[var(--danger)]">{activeAlerts.length} open</span>
                       </div>
-                      {activeAlerts.length === 0 ? <p className="p-3 text-[12px] text-slate-500">You’re all caught up.</p> : activeAlerts.slice(0, 4).map((alert) => (
-                        <button key={alert.id} onClick={() => { setNotificationsOpen(false); getAlertAction(alert); }} className="flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left hover:bg-slate-50 transition">
+                      {activeAlerts.length === 0 ? <p className="p-3 text-[12px] text-[var(--foreground-muted)]">You’re all caught up.</p> : activeAlerts.slice(0, 4).map((alert) => (
+                        <button key={alert.id} onClick={() => { setNotificationsOpen(false); getAlertAction(alert); }} className="flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left hover:bg-[var(--surface-hover)] transition">
                           <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-[#ef4444]' : alert.severity === 'WARNING' ? 'bg-[#f59e0b]' : 'bg-[#3b82f6]'}`} />
-                          <span className="min-w-0"><span className="block text-[12px] font-bold text-slate-900">{alert.title}</span><span className="mt-0.5 block text-[10px] text-slate-500">{alert.timestamp} · Open details</span></span>
-                          <ChevronRight size={15} className="mt-1 shrink-0 text-slate-400" />
+                          <span className="min-w-0"><span className="block text-[12px] font-bold text-[var(--foreground)]">{alert.title}</span><span className="mt-0.5 block text-[10px] text-[var(--foreground-muted)]">{alert.timestamp} · Open details</span></span>
+                          <ChevronRight size={15} className="mt-1 shrink-0 text-[var(--foreground-muted)]" />
                         </button>
                       ))}
                     </div>
@@ -1317,11 +1327,11 @@ export const ExecutiveShell: React.FC = () => {
                   onClick={() => setProfileMenuOpen((value) => !value)}
                   aria-label="Open user profile menu"
                   aria-expanded={profileMenuOpen}
-                  className="accounting-focus flex items-center gap-2 rounded-xl p-1.5 hover:bg-slate-100"
+                  className="accounting-focus flex items-center gap-2 rounded-xl p-1.5 hover:bg-[var(--surface-hover)]"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 border border-emerald-300 text-[11px] font-bold text-emerald-800 font-mono">AR</span>
-                  <span className="hidden text-left lg:block"><span className="block text-[11px] font-bold text-slate-900">Owner</span><span className="block text-[10px] text-slate-500">distroMesh HQ</span></span>
-                  <ChevronDown size={13} className="hidden text-slate-400 lg:block" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-soft)] border border-[var(--accent)]/30 text-[11px] font-bold text-[var(--accent)] font-mono">AR</span>
+                  <span className="hidden text-left lg:block"><span className="block text-[11px] font-bold text-[var(--foreground)]">Owner</span><span className="block text-[10px] text-[var(--foreground-muted)]">distroMesh HQ</span></span>
+                  <ChevronDown size={13} className="hidden text-[var(--foreground-muted)] lg:block" />
                 </button>
                 {profileMenuOpen && (
                   <>
@@ -1331,10 +1341,10 @@ export const ExecutiveShell: React.FC = () => {
                       className="fixed inset-0 z-40 bg-transparent cursor-default"
                       onClick={() => setProfileMenuOpen(false)}
                     />
-                    <div className="absolute right-0 top-12 z-50 w-48 rounded-2xl border border-[#e2e8f0] bg-white p-2 shadow-xl text-slate-800">
-                      <p className="px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider font-mono">Account settings</p>
-                      <button onClick={() => { setProfileMenuOpen(false); showToast('Profile settings are not configured in this demo'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-100 hover:text-slate-900">Profile &amp; preferences</button>
-                      <button onClick={() => { setProfileMenuOpen(false); showToast('You are viewing the local demo workspace'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-100 hover:text-slate-900">Workspace security</button>
+                    <div className="absolute right-0 top-12 z-50 w-48 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-2 shadow-xl text-[var(--foreground)]">
+                      <p className="px-3 py-2 text-[11px] font-bold text-[var(--foreground-muted)] uppercase tracking-wider font-mono">Account settings</p>
+                      <button onClick={() => { setProfileMenuOpen(false); showToast('Profile settings are not configured in this demo'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-[var(--foreground)] hover:bg-[var(--surface-hover)]">Profile &amp; preferences</button>
+                      <button onClick={() => { setProfileMenuOpen(false); showToast('You are viewing the local demo workspace'); }} className="w-full rounded-lg px-3 py-2 text-left text-[12px] text-[var(--foreground)] hover:bg-[var(--surface-hover)]">Workspace security</button>
                     </div>
                   </>
                 )}
@@ -1343,7 +1353,7 @@ export const ExecutiveShell: React.FC = () => {
             {mobileSearchOpen && (
               <div className="px-4 pb-3 sm:hidden">
                 <div className="relative">
-                  <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#84908b]" />
+                  <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]" />
                   <input
                     ref={mobileSearchRef}
                     value={globalSearch}
@@ -1354,9 +1364,9 @@ export const ExecutiveShell: React.FC = () => {
                     onFocus={openSearchSection}
                     placeholder="Search transactions, invoices..."
                     aria-label="Search the ledger"
-                    className="accounting-focus h-10 w-full rounded-xl border border-[#e8eeeb] bg-[#f8faf9] pl-9 pr-10 text-[13px] text-[#24322c] placeholder:text-[#9aa59f]"
+                    className="accounting-focus h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] pl-9 pr-10 text-[13px] text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:bg-[var(--surface-elevated)] focus:border-[var(--accent)]"
                   />
-                  <button onClick={() => { setMobileSearchOpen(false); setGlobalSearch(''); setTransactionSearch(''); }} aria-label="Close search" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-[#87938d] hover:bg-[#ebf0ed]"><X size={15} /></button>
+                  <button onClick={() => { setMobileSearchOpen(false); setGlobalSearch(''); setTransactionSearch(''); }} aria-label="Close search" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]"><X size={15} /></button>
                 </div>
               </div>
             )}
@@ -1414,109 +1424,109 @@ export const ExecutiveShell: React.FC = () => {
               />
             ) : (
             <>
-            <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <div className="mb-2 flex items-center gap-2 text-[11px] font-medium text-[#7e8c85]">
-                  <span>Workspace</span><ChevronRight size={12} /><span className="text-[#3f5148]">Overview</span>
-                  <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-[#eaf5ef] px-2 py-0.5 text-[10px] font-semibold text-[#26765a]"><span className="h-1.5 w-1.5 rounded-full bg-[#29926a]" />Demo data</span>
+                <div className="mb-2 flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-muted)]">
+                  <span>Workspace</span><ChevronRight size={12} /><span className="text-[var(--foreground)]">Overview</span>
+                  <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />Demo data</span>
                 </div>
-                <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[#1f2d26] sm:text-[29px]">{activeBusiness?.name ?? 'Distribution executive dashboard'}</h1>
-                <p className="mt-1 text-[13px] text-[#74817b]">{activeBusiness?.industry ?? 'Consumer goods distribution'} · {activeBusiness?.location ?? 'Sherpur & Bogura, Bangladesh'}.</p>
+                <h1 className="text-[25px] font-semibold tracking-[-0.035em] text-[var(--foreground)] sm:text-[29px]">{activeBusiness?.name ?? 'Distribution executive dashboard'}</h1>
+                <p className="mt-1 text-[13px] text-[var(--foreground-muted)]">{activeBusiness?.industry ?? 'Consumer goods distribution'} · {activeBusiness?.location ?? 'Sherpur & Bogura, Bangladesh'}.</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  <span className="rounded-full border border-[#e4ebe7] bg-white px-2.5 py-1 text-[9px] font-medium text-[#65736b]">Unilever · Pureit</span>
-                  <span className="rounded-full border border-[#e4ebe7] bg-white px-2.5 py-1 text-[9px] font-medium text-[#65736b]">Sherpur · Bogura depots</span>
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">Unilever · Pureit</span>
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-1 text-[9px] font-medium text-[var(--foreground-muted)]">Sherpur · Bogura depots</span>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={getBusinessRoute(activeBusinessId, 'war-room')}
-                  className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3 text-[11px] font-semibold text-emerald-800 hover:bg-emerald-100"
+                  className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-3 text-[11px] font-semibold text-[var(--accent)] hover:bg-[var(--accent)]/20"
                 >
                   <Monitor size={14} /> War Room
                 </Link>
-                <button onClick={() => openQuickAction('expense')} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[#d8e8df] bg-white px-3 text-[11px] font-semibold text-[#087e63] hover:bg-[#f5faf7]">
+                <button onClick={() => openQuickAction('expense')} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] px-3 text-[11px] font-semibold text-[var(--foreground)] hover:bg-[var(--surface-hover)]">
                   <Plus size={14} /> Add expense
                 </button>
-                <button onClick={() => openQuickAction('invoice')} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-[#087e63] px-3.5 text-[12px] font-semibold text-white shadow-sm shadow-emerald-900/15 transition hover:bg-[#086d56]">
+                <button onClick={() => openQuickAction('invoice')} className="accounting-focus inline-flex h-9 items-center gap-2 rounded-xl bg-[var(--accent)] px-3.5 text-[12px] font-semibold text-white shadow-sm transition hover:bg-[var(--accent-hover)]">
                   <Plus size={16} /> Create invoice
                 </button>
               </div>
             </div>
 
             <div className="flex flex-col gap-4">
-            <section aria-label="Portfolio filters" className="glass-card order-1 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
+            <section aria-label="Portfolio filters" className="order-1 flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-[13px] font-semibold text-[#2c3a33]">Narrow this view</h2>
-                <p className="mt-1 text-[11px] text-[#7a8781]">Show results for a specific brand or location.</p>
+                <h2 className="text-[13px] font-semibold text-[var(--foreground)]">Narrow this view</h2>
+                <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Show results for a specific brand or location.</p>
               </div>
               <div className="flex flex-wrap items-end gap-2">
-                <label className="text-[10px] font-medium text-[#68766f]">
+                <label className="text-[10px] font-medium text-[var(--foreground-muted)]">
                   Brand
                   <select
                     value={principalFilter}
                     onChange={(event) => setPrincipalFilter(event.target.value as PrincipalFilter)}
-                    className="accounting-focus mt-1 block h-9 min-w-36 rounded-lg border border-[#e1e8e4] bg-white px-3 text-[12px] text-[#34423b]"
+                    className="accounting-focus mt-1 block h-9 min-w-36 rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] text-[var(--foreground)]"
                   >
                     {principalOptions.map((option) => <option key={option}>{option}</option>)}
                   </select>
                 </label>
-                <label className="text-[10px] font-medium text-[#68766f]">
+                <label className="text-[10px] font-medium text-[var(--foreground-muted)]">
                   Location
                   <select
                     value={depotFilter}
                     onChange={(event) => setDepotFilter(event.target.value as DepotFilter)}
-                    className="accounting-focus mt-1 block h-9 min-w-32 rounded-lg border border-[#e1e8e4] bg-white px-3 text-[12px] text-[#34423b]"
+                    className="accounting-focus mt-1 block h-9 min-w-32 rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] text-[var(--foreground)]"
                   >
                     {depotOptions.map((option) => <option key={option}>{option}</option>)}
                   </select>
                 </label>
-                <span className="mb-2 rounded-full bg-[#eaf5ef] px-2.5 py-1 text-[10px] font-semibold text-[#26765a]">
+                <span className="mb-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-2.5 py-1 text-[10px] font-semibold text-[var(--accent)]">
                   Illustrative BDT data
                 </span>
               </div>
             </section>
 
-            <section id="related-businesses" aria-label="Related businesses" className="glass-card order-3 scroll-mt-24 rounded-2xl p-4 sm:p-5">
+            <section id="related-businesses" aria-label="Related businesses" className="order-3 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <BriefcaseBusiness size={15} className="text-[#087e63]" />
-                      <h2 className="text-[14px] font-semibold text-[#2c3a33]">Connected businesses</h2>
-                      <span className="rounded-full bg-[#eef5f1] px-2 py-0.5 text-[10px] font-semibold text-[#4c7560]">{activeRelatedBusinesses.length + 1} businesses</span>
+                      <BriefcaseBusiness size={15} className="text-[var(--accent)]" />
+                      <h2 className="text-[14px] font-semibold text-[var(--foreground)]">Connected businesses</h2>
+                      <span className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]">{activeRelatedBusinesses.length + 1} businesses</span>
                     </div>
-                    <p className="mt-1 text-[11px] text-[#7a8781]">These businesses are linked to {activeBusiness?.name}. Their money and records stay separate.</p>
+                    <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">These businesses are linked to {activeBusiness?.name}. Their money and records stay separate.</p>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    <button onClick={() => { setBusinessModalMode('related'); setBusinessOnboardingOpen(true); }} className="accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#087e63] px-3 text-[10px] font-semibold text-white hover:bg-[#086d56]"><Plus size={13} /> Add a connected business</button>
+                    <button onClick={() => { setBusinessModalMode('related'); setBusinessOnboardingOpen(true); }} className="accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 text-[10px] font-semibold text-white hover:bg-[var(--accent-hover)]"><Plus size={13} /> Add a connected business</button>
                     {businesses.some((candidate) => candidate.id !== activeBusinessId && !activeRelatedBusinesses.some((item) => item.business.id === candidate.id)) && (
-                      <button onClick={() => { setBusinessModalMode('link'); setBusinessOnboardingOpen(true); }} className="accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#dfe8e3] bg-white px-3 text-[10px] font-semibold text-[#53615a] hover:bg-[#f5f8f6]"><Share2 size={13} /> Connect existing</button>
+                      <button onClick={() => { setBusinessModalMode('link'); setBusinessOnboardingOpen(true); }} className="accounting-focus inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-[10px] font-semibold text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"><Share2 size={13} /> Connect existing</button>
                     )}
                   </div>
                 </div>
-                {activeRelatedBusinesses.length === 0 && <p className="mt-3 rounded-xl border border-dashed border-[#dfe8e3] bg-[#fbfdfc] p-4 text-[11px] text-[#77857e]">No connected businesses yet. Add a new business or connect one already in your list.</p>}
+                {activeRelatedBusinesses.length === 0 && <p className="mt-3 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-inset)] p-4 text-[11px] text-[var(--foreground-muted)]">No connected businesses yet. Add a new business or connect one already in your list.</p>}
                 <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
                   {[activeBusiness, ...activeRelatedBusinesses.map((item) => item.business)].filter((business): business is BusinessProfile => Boolean(business)).map((business) => {
                     const metrics = businessMetrics[business.id];
                     const relationship = activeRelatedBusinesses.find((item) => item.business.id === business.id)?.relationship;
                     return (
-                      <button key={business.id} onClick={() => selectBusiness(business.id)} className={`accounting-focus rounded-xl border p-3 text-left transition hover:border-[#bdd8c8] hover:bg-[#fbfdfc] ${business.id === activeBusinessId ? 'border-[#bcd9c8] bg-[#f6faf7]' : 'border-[#e8eeeb] bg-white'}`}>
+                      <button key={business.id} onClick={() => selectBusiness(business.id)} className={`accounting-focus rounded-xl border p-3 text-left transition hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)] ${business.id === activeBusinessId ? 'border-[var(--accent)]/40 bg-[var(--accent-soft)]/20' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <p className="truncate text-[11px] font-semibold text-[#34433b]">{business.name}</p>
-                            <p className="mt-0.5 truncate text-[9px] text-[#87938d]">{business.industry} · {business.location}</p>
-                            {relationship?.relationshipType && <span className="mt-1 inline-flex rounded-full bg-[#eef5f1] px-2 py-0.5 text-[9px] font-medium text-[#587362]">{relationship.parentBusinessId === activeBusinessId ? relationship.relationshipType : `Main business · ${relationship.relationshipType}`}</span>}
+                            <p className="truncate text-[11px] font-semibold text-[var(--foreground)]">{business.name}</p>
+                            <p className="mt-0.5 truncate text-[9px] text-[var(--foreground-muted)]">{business.industry} · {business.location}</p>
+                            {relationship?.relationshipType && <span className="mt-1 inline-flex rounded-full border border-[var(--border)] bg-[var(--surface-inset)] px-2 py-0.5 text-[9px] font-medium text-[var(--foreground-muted)]">{relationship.parentBusinessId === activeBusinessId ? relationship.relationshipType : `Main business · ${relationship.relationshipType}`}</span>}
                           </div>
                           {business.id === activeBusinessId
-                            ? <span className="rounded-full bg-[#eaf5ef] px-2 py-0.5 text-[8px] font-semibold text-[#26765a]">CURRENT</span>
-                            : <ArrowRight size={13} className="shrink-0 text-[#87938d]" />}
+                            ? <span className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-2 py-0.5 text-[8px] font-semibold text-[var(--accent)]">CURRENT</span>
+                            : <ArrowRight size={13} className="shrink-0 text-[var(--foreground-muted)]" />}
                         </div>
-                        <div className="mt-2 grid grid-cols-3 gap-2 border-t border-[#edf1ef] pt-2">
-                          <span><span className="block text-[8px] text-[#87938d]">Cash</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#34433b]">{metrics?.availableCash == null ? 'Not available' : compactCurrency(metrics.availableCash)}</span></span>
-                          <span><span className="block text-[8px] text-[#87938d]">Monthly revenue</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#34433b]">{metrics?.monthlyRevenue == null ? 'Not available' : compactCurrency(metrics.monthlyRevenue)}</span></span>
-                          <span><span className="block text-[8px] text-[#87938d]">Invoices due</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#34433b]">{metrics?.receivables == null ? 'Not available' : compactCurrency(metrics.receivables)}</span></span>
-                          <span><span className="block text-[8px] text-[#87938d]">Net profit</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#087e63]">{metrics?.monthlyNetProfit == null ? 'Not available' : compactCurrency(metrics.monthlyNetProfit)}</span></span>
-                          <span><span className="block text-[8px] text-[#87938d]">Customers</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#34433b]">{(metrics?.customerCount ?? business.customerCount)?.toLocaleString('en-BD') ?? 'Not available'}</span></span>
-                          <span><span className="block text-[8px] text-[#87938d]">Team</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[#34433b]">{metrics?.employeeCount ?? business.employeeCount ?? 'Not available'}</span></span>
+                        <div className="mt-2 grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-2">
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Cash</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--foreground)]">{metrics?.availableCash == null ? 'Not available' : compactCurrency(metrics.availableCash)}</span></span>
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Monthly revenue</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--foreground)]">{metrics?.monthlyRevenue == null ? 'Not available' : compactCurrency(metrics.monthlyRevenue)}</span></span>
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Invoices due</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--foreground)]">{metrics?.receivables == null ? 'Not available' : compactCurrency(metrics.receivables)}</span></span>
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Net profit</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--success)]">{metrics?.monthlyNetProfit == null ? 'Not available' : compactCurrency(metrics.monthlyNetProfit)}</span></span>
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Customers</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--foreground)]">{(metrics?.customerCount ?? business.customerCount)?.toLocaleString('en-BD') ?? 'Not available'}</span></span>
+                          <span><span className="block text-[8px] text-[var(--foreground-muted)]">Team</span><span className="mt-0.5 block text-[10px] font-semibold tabular-nums text-[var(--foreground)]">{metrics?.employeeCount ?? business.employeeCount ?? 'Not available'}</span></span>
                         </div>
                       </button>
                     );
@@ -1525,46 +1535,46 @@ export const ExecutiveShell: React.FC = () => {
             </section>
 
             <section aria-label="Key financial metrics" className="order-2 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <article className="glass-card rounded-2xl p-4 sm:p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:p-5">
                 <div className="flex items-start justify-between">
-                  <div><p className="text-[12px] font-medium text-[#68766f]">Available cash</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#223129] tabular-nums">{compactCurrency(liquidCash)}</p></div>
-                  <span className="rounded-xl bg-[#eaf5ef] p-2.5 text-[#138061]"><Wallet size={18} /></span>
+                  <div><p className="text-[12px] font-medium text-[var(--foreground-muted)]">Available cash</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[var(--foreground)] tabular-nums">{compactCurrency(liquidCash)}</p></div>
+                  <span className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-2.5 text-[var(--accent)]"><Wallet size={18} /></span>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-[#edf1ef] pt-3">
-                  <span className="flex items-center gap-1 text-[11px] text-[#76837d]"><ArrowDownLeft size={13} className="text-[#138061]" /> Bank {compactCurrency(portfolio.bankCash)} + cash on hand {compactCurrency(portfolio.vaultCash)}</span>
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                  <span className="flex items-center gap-1 text-[11px] text-[var(--foreground-muted)]"><ArrowDownLeft size={13} className="text-[var(--success)]" /> Bank {compactCurrency(portfolio.bankCash)} + cash on hand {compactCurrency(portfolio.vaultCash)}</span>
                 </div>
               </article>
-              <article className="glass-card rounded-2xl p-4 sm:p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:p-5">
                 <div className="flex items-start justify-between">
-                  <div><p className="text-[12px] font-medium text-[#68766f]">Monthly net profit</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#087e63] tabular-nums">{compactCurrency(portfolio.monthlyNetProfit)}</p></div>
-                  <span className="rounded-xl bg-[#eaf5ef] p-2.5 text-[#138061]"><Activity size={18} /></span>
+                  <div><p className="text-[12px] font-medium text-[var(--foreground-muted)]">Monthly net profit</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[var(--success)] tabular-nums">{compactCurrency(portfolio.monthlyNetProfit)}</p></div>
+                  <span className="rounded-xl border border-[var(--success)]/30 bg-[var(--success-soft)] p-2.5 text-[var(--success)]"><Activity size={18} /></span>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-[#edf1ef] pt-3">
-                  <span className="text-[11px] text-[#76837d]">After example interest and tax</span>
-                  <span className="text-[11px] font-semibold text-[#087e63]">{formatPortfolioMargin(portfolio.monthlyNetProfit)} margin</span>
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                  <span className="text-[11px] text-[var(--foreground-muted)]">After example interest and tax</span>
+                  <span className="text-[11px] font-semibold text-[var(--success)]">{formatPortfolioMargin(portfolio.monthlyNetProfit)} margin</span>
                 </div>
               </article>
-              <article className="glass-card rounded-2xl p-4 sm:p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:p-5">
                 <div className="flex items-start justify-between">
-                  <div><p className="text-[12px] font-medium text-[#68766f]">Customer invoices due</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#223129] tabular-nums">{compactCurrency(portfolio.receivables)}</p></div>
-                  <span className="rounded-xl bg-[#eef2fb] p-2.5 text-[#6477bd]"><ArrowDownRight size={18} /></span>
+                  <div><p className="text-[12px] font-medium text-[var(--foreground-muted)]">Customer invoices due</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[var(--foreground)] tabular-nums">{compactCurrency(portfolio.receivables)}</p></div>
+                  <span className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-2.5 text-[var(--accent)]"><ArrowDownRight size={18} /></span>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-[#edf1ef] pt-3">
-                  <span className="text-[11px] text-[#76837d]">Illustrative customer balances</span>
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                  <span className="text-[11px] text-[var(--foreground-muted)]">Illustrative customer balances</span>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => goTo('invoicing')} className="text-[11px] font-semibold text-[#087e63] hover:underline">View invoices <ArrowRight size={12} className="ml-0.5 inline" /></button>
+                    <button onClick={() => goTo('invoicing')} className="text-[11px] font-semibold text-[var(--accent)] hover:underline">View invoices <ArrowRight size={12} className="ml-0.5 inline" /></button>
                   </div>
                 </div>
               </article>
-              <article className="glass-card rounded-2xl p-4 sm:p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4 shadow-xs sm:p-5">
                 <div className="flex items-start justify-between">
-                  <div><p className="text-[12px] font-medium text-[#68766f]">Supplier payment due</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#b54c54] tabular-nums">{compactCurrency(portfolio.upcomingObligation)}</p></div>
-                  <span className="rounded-xl bg-[#fbefef] p-2.5 text-[#b54c54]"><ArrowUpRight size={18} /></span>
+                  <div><p className="text-[12px] font-medium text-[var(--foreground-muted)]">Supplier payment due</p><p className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[var(--danger)] tabular-nums">{compactCurrency(portfolio.upcomingObligation)}</p></div>
+                  <span className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] p-2.5 text-[var(--danger)]"><ArrowUpRight size={18} /></span>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-[#edf1ef] pt-3">
-                  <span className="text-[11px] text-[#76837d]">{principalFilter === 'Pureit (Durables)' ? 'No payment in demo scope' : `Principal · due in ${state.obligationDueHours}h`}</span>
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                  <span className="text-[11px] text-[var(--foreground-muted)]">{principalFilter === 'Pureit (Durables)' ? 'No payment in demo scope' : `Principal · due in ${state.obligationDueHours}h`}</span>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[#087e63] hover:underline">Review</button>
+                    <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[var(--accent)] hover:underline">Review</button>
                   </div>
                 </div>
               </article>
@@ -1578,13 +1588,13 @@ export const ExecutiveShell: React.FC = () => {
             />
 
             <section aria-label="Monthly financial summary" className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
-              <article className="glass-card rounded-2xl p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-[15px] font-semibold text-[#25332c]">Monthly income &amp; expenses</h2>
-                    <p className="mt-1 text-[11px] text-[#7a8781]">Example figures · BDT</p>
+                    <h2 className="text-[15px] font-semibold text-[var(--foreground)]">Monthly income &amp; expenses</h2>
+                    <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Example figures · BDT</p>
                   </div>
-                  <span className="rounded-lg bg-[#eef5f1] px-2.5 py-1 text-[10px] font-semibold text-[#31745b]">26 working days</span>
+                  <span className="rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-semibold text-[var(--foreground-muted)]">26 working days</span>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-[12px] sm:grid-cols-3">
                   {[
@@ -1598,37 +1608,37 @@ export const ExecutiveShell: React.FC = () => {
                     { label: 'Income tax', amount: -portfolio.monthlyTax },
                     { label: 'Net profit', amount: portfolio.monthlyNetProfit, emphasis: true },
                   ].map((item) => (
-                    <div key={item.label} className={`flex items-center justify-between gap-2 border-b border-[#edf1ef] pb-2 ${item.emphasis ? 'font-semibold text-[#33433b]' : 'text-[#718078]'}`}>
+                    <div key={item.label} className={`flex items-center justify-between gap-2 border-b border-[var(--border)] pb-2 ${item.emphasis ? 'font-semibold text-[var(--foreground)]' : 'text-[var(--foreground-muted)]'}`}>
                       <span>{item.label}</span>
-                      <span className={`whitespace-nowrap tabular-nums ${item.amount < 0 ? 'text-[#9c6265]' : ''}`}>{formatBDT(item.amount)}</span>
+                      <span className={`whitespace-nowrap tabular-nums ${item.amount < 0 ? 'text-[var(--danger)]' : ''}`}>{formatBDT(item.amount)}</span>
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[10px] text-[#7b8982]">
-                  <span>Gross profit margin <strong className="text-[#53635a]">{formatPortfolioMargin(portfolio.monthlyGrossProfit)}</strong></span>
-                  <span>Operating profit margin <strong className="text-[#53635a]">{formatPortfolioMargin(portfolio.monthlyEbit)}</strong></span>
-                  <span>Net margin <strong className="text-[#53635a]">{formatPortfolioMargin(portfolio.monthlyNetProfit)}</strong></span>
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[10px] text-[var(--foreground-muted)]">
+                  <span>Gross profit margin <strong className="text-[var(--foreground)]">{formatPortfolioMargin(portfolio.monthlyGrossProfit)}</strong></span>
+                  <span>Operating profit margin <strong className="text-[var(--foreground)]">{formatPortfolioMargin(portfolio.monthlyEbit)}</strong></span>
+                  <span>Net margin <strong className="text-[var(--foreground)]">{formatPortfolioMargin(portfolio.monthlyNetProfit)}</strong></span>
                 </div>
-                <p className="mt-3 text-[10px] leading-relaxed text-[#87938d]">
+                <p className="mt-3 text-[10px] leading-relaxed text-[var(--foreground-muted)]">
                   Amounts are examples and can be filtered by brand or location. Sales are counted when delivered; collected cash is shown separately.
                 </p>
               </article>
 
-              <article className="glass-card rounded-2xl p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-[15px] font-semibold text-[#25332c]">Cash, stock &amp; supplier payments</h2>
-                    <p className="mt-1 text-[11px] text-[#7a8781]">Cash you can use is different from money tied up in stock or unpaid bills.</p>
+                    <h2 className="text-[15px] font-semibold text-[var(--foreground)]">Cash, stock &amp; supplier payments</h2>
+                    <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Cash you can use is different from money tied up in stock or unpaid bills.</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button onClick={() => openDrawer('WORKING_CAPITAL')} className="text-[11px] font-semibold text-[#087e63] hover:underline">Operating working capital <ArrowRight size={12} className="ml-1 inline" /></button>
-                    <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[#087e63] hover:underline">View cash position <ArrowRight size={12} className="ml-1 inline" /></button>
+                    <button onClick={() => openDrawer('WORKING_CAPITAL')} className="text-[11px] font-semibold text-[var(--accent)] hover:underline">Operating working capital <ArrowRight size={12} className="ml-1 inline" /></button>
+                    <button onClick={() => openDrawer('OBLIGATION')} className="text-[11px] font-semibold text-[var(--accent)] hover:underline">View cash position <ArrowRight size={12} className="ml-1 inline" /></button>
                   </div>
                 </div>
                 <details className="group mt-4">
-                  <summary className="accounting-focus flex cursor-pointer list-none items-center justify-between rounded-lg bg-[#f7faf8] px-3 py-2.5 text-[11px] font-semibold text-[#53635a] marker:hidden hover:bg-[#f0f6f2]">
+                  <summary className="accounting-focus flex cursor-pointer list-none items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] px-3 py-2.5 text-[11px] font-semibold text-[var(--foreground)] marker:hidden hover:bg-[var(--surface-hover)]">
                     Show stock and payment details
-                    <ChevronDown size={15} className="text-[#819087] transition-transform group-open:rotate-180" />
+                    <ChevronDown size={15} className="text-[var(--foreground-muted)] transition-transform group-open:rotate-180" />
                   </summary>
                   <div className="mt-4">
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -1639,13 +1649,13 @@ export const ExecutiveShell: React.FC = () => {
                         { label: 'Money tied up in daily operations', value: portfolio.receivables + portfolio.averageInventory - portfolio.payables },
                         { label: 'Customer bills, stock & discounts', value: portfolio.receivables + portfolio.averageInventory + portfolio.unclaimedSchemes },
                       ].map((item) => (
-                        <div key={item.label} className="rounded-xl bg-[#f7faf8] p-3">
-                          <p className="text-[10px] leading-snug text-[#7b8982]">{item.label}</p>
-                          <p className="mt-1 text-[14px] font-semibold tabular-nums text-[#35443c]">{compactCurrency(item.value)}</p>
+                        <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                          <p className="text-[10px] leading-snug text-[var(--foreground-muted)]">{item.label}</p>
+                          <p className="mt-1 text-[14px] font-semibold tabular-nums text-[var(--foreground)]">{compactCurrency(item.value)}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 grid grid-cols-4 gap-2 rounded-xl border border-[#e8eeeb] p-3 text-center">
+                    <div className="mt-3 grid grid-cols-4 gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-center">
                       {[
                         { label: 'Customer payment time', value: portfolio.dso },
                         { label: 'Time stock is held', value: portfolio.dio },
@@ -1653,22 +1663,22 @@ export const ExecutiveShell: React.FC = () => {
                         { label: 'Cash cycle', value: portfolio.cashConversionCycle },
                       ].map((item) => (
                         <div key={item.label}>
-                          <p className="text-[10px] text-[#819087]">{item.label}</p>
-                          <p className="mt-1 text-[14px] font-semibold tabular-nums text-[#34433b]">{item.value.toFixed(1)} days</p>
+                          <p className="text-[10px] text-[var(--foreground-muted)]">{item.label}</p>
+                          <p className="mt-1 text-[14px] font-semibold tabular-nums text-[var(--foreground)]">{item.value.toFixed(1)} days</p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 rounded-xl bg-[#f7faf8] p-3">
+                    <div className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-3">
                       <div className="flex items-center justify-between gap-3 text-[11px]">
-                        <span className="text-[#6e7c74]">Bank balance after supplier payment</span>
-                        <strong className="tabular-nums text-[#34433b]">{formatBDT(portfolio.bankCash - portfolio.upcomingObligation)}</strong>
-                        <span className={`rounded-full px-2 py-0.5 text-[9px] font-semibold ${portfolio.bankCash >= portfolio.upcomingObligation ? 'bg-[#eaf5ef] text-[#26765a]' : 'bg-[#fbefef] text-[#a74850]'}`}>
+                        <span className="text-[var(--foreground-muted)]">Bank balance after supplier payment</span>
+                        <strong className="tabular-nums text-[var(--foreground)]">{formatBDT(portfolio.bankCash - portfolio.upcomingObligation)}</strong>
+                        <span className={`rounded-full border px-2 py-0.5 text-[9px] font-semibold ${portfolio.bankCash >= portfolio.upcomingObligation ? 'border-[var(--success)]/30 bg-[var(--success-soft)] text-[var(--success)]' : 'border-[var(--danger)]/30 bg-[var(--danger-soft)] text-[var(--danger)]'}`}>
                           {portfolio.bankCash >= portfolio.upcomingObligation ? 'Covered' : 'Shortfall'}
                         </span>
                       </div>
                       <div className="mt-2 flex items-center justify-between gap-3 text-[11px]">
-                        <span className="text-[#6e7c74]">Cash after payment, including cash on hand</span>
-                        <strong className="tabular-nums text-[#087e63]">{formatBDT(liquidCash - portfolio.upcomingObligation)}</strong>
+                        <span className="text-[var(--foreground-muted)]">Cash after payment, including cash on hand</span>
+                        <strong className="tabular-nums text-[var(--success)]">{formatBDT(liquidCash - portfolio.upcomingObligation)}</strong>
                       </div>
                     </div>
                   </div>
@@ -1676,40 +1686,39 @@ export const ExecutiveShell: React.FC = () => {
               </article>
             </section>
 
-            <section aria-label="Today’s business activity" className="glass-card mt-4 rounded-2xl p-5">
+            <section aria-label="Today’s business activity" className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-[15px] font-semibold text-[#25332c]">Today’s business activity</h2>
-                  <p className="mt-1 text-[11px] text-[#7a8781]">Delivered sales, cash vs. credit, dispatch, returns, and till control.</p>
+                  <h2 className="text-[15px] font-semibold text-[var(--foreground)]">Today’s business activity</h2>
+                  <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Delivered sales, cash vs. credit, dispatch, returns, and till control.</p>
                 </div>
-                <span className="rounded-full bg-[#f4f6f5] px-2.5 py-1 text-[10px] font-medium text-[#6f7d76]">Daily demo snapshot · BDT</span>
+                <span className="rounded-full border border-[var(--border)] bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-medium text-[var(--foreground-muted)]">Daily demo snapshot · BDT</span>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
                 {[
-                  { label: 'Delivered sales', value: compactCurrency(portfolio.dailyDeliveredSales), tone: 'text-[#34433b]' },
-                  { label: 'Cash sales', value: compactCurrency(portfolio.dailyCashSales), tone: 'text-[#087e63]' },
-                  { label: 'New credit sales', value: compactCurrency(portfolio.dailyFreshCredit), tone: 'text-[#9a6819]' },
-                  { label: 'Past-due invoices collected', value: compactCurrency(portfolio.dailyOldDuesCollected), tone: 'text-[#087e63]' },
-                  { label: 'Net cash added', value: compactCurrency(portfolio.dailyNetCashAdded), tone: 'text-[#087e63]' },
-                  { label: 'Expected cash on hand', value: compactCurrency(portfolio.expectedTillCash), tone: 'text-[#34433b]' },
-                  { label: 'Counted cash on hand', value: compactCurrency(portfolio.countedTillCash), tone: 'text-[#34433b]' },
-                  { label: 'Cash difference', value: formatBDT(portfolio.cashVariance), tone: portfolio.cashVariance < 0 ? 'text-[#b74750]' : 'text-[#087e63]' },
+                  { label: 'Delivered sales', value: compactCurrency(portfolio.dailyDeliveredSales), tone: 'text-[var(--foreground)]' },
+                  { label: 'Cash sales', value: compactCurrency(portfolio.dailyCashSales), tone: 'text-[var(--success)]' },
+                  { label: 'New credit sales', value: compactCurrency(portfolio.dailyFreshCredit), tone: 'text-[var(--warning)]' },
+                  { label: 'Past-due invoices collected', value: compactCurrency(portfolio.dailyOldDuesCollected), tone: 'text-[var(--success)]' },
+                  { label: 'Net cash added', value: compactCurrency(portfolio.dailyNetCashAdded), tone: 'text-[var(--success)]' },
+                  { label: 'Expected cash on hand', value: compactCurrency(portfolio.expectedTillCash), tone: 'text-[var(--foreground)]' },
+                  { label: 'Counted cash on hand', value: compactCurrency(portfolio.countedTillCash), tone: 'text-[var(--foreground)]' },
+                  { label: 'Cash difference', value: formatBDT(portfolio.cashVariance), tone: portfolio.cashVariance < 0 ? 'text-[var(--danger)]' : 'text-[var(--success)]' },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-[#e8eeeb] bg-white p-3">
-                    <p className="text-[10px] text-[#7b8982]">{item.label}</p>
+                  <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
+                    <p className="text-[10px] text-[var(--foreground-muted)]">{item.label}</p>
                     <p className={`mt-1 text-[16px] font-semibold tabular-nums ${item.tone}`}>{item.value}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-3 grid grid-cols-1 gap-3 text-[11px] sm:grid-cols-3">
-                <div className="rounded-xl bg-[#f7faf8] p-3">
-                  <span className="text-[#76837d]">Credit share of delivered sales</span>
-                  <strong className="ml-2 text-[#34433b]">{portfolio.dailyDeliveredSales ? (portfolio.dailyFreshCredit / portfolio.dailyDeliveredSales * 100).toFixed(1) : '0.0'}%</strong>
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-3">
+                  <span className="text-[var(--foreground-muted)]">Credit share of delivered sales</span>
+                  <strong className="ml-2 text-[var(--foreground)]">{portfolio.dailyDeliveredSales ? (portfolio.dailyFreshCredit / portfolio.dailyDeliveredSales * 100).toFixed(1) : '0.0'}%</strong>
                 </div>
-                <p className="mt-3 text-[10px] text-[#87938d]">Dispatch and return incident metrics are shared company-wide; amounts are not split across depots in this demo.</p>
-                <div className="rounded-xl bg-[#fff8ed] p-3">
-                  <span className="text-[#8a704c]">Dispatch</span>
-                  <strong className="ml-2 text-[#7e612e]">
+                <div className="rounded-xl border border-[var(--warning)]/30 bg-[var(--warning-soft)] p-3">
+                  <span className="text-[var(--warning)] font-medium">Dispatch</span>
+                  <strong className="ml-2 text-[var(--warning)]">
                     {state.hardwareReplaced
                       ? 'Printer replacement simulated · monitor next dispatch'
                       : state.dispatchDelayMinutes === 0
@@ -1720,29 +1729,29 @@ export const ExecutiveShell: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => openDrawer('INCIDENT')}
-                  className="accounting-focus rounded-xl bg-[#fbf1f1] p-3 text-left transition hover:bg-[#f8e8e8]"
+                  className="accounting-focus rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] p-3 text-left transition hover:bg-[var(--danger-soft)]/80"
                 >
-                  <span className="text-[#91696b]">Returns incident (faint print)</span>
-                  <strong className="ml-2 block text-[#9c555a]">60 units (2.5 ctn) · {formatBDT(2488)} loss today</strong>
-                  <p className="mt-1 text-[10px] text-[#987779]">Printer {formatBDT(3000)} · payback 2.8 days (tap for formula &amp; fix)</p>
+                  <span className="text-[var(--danger)] font-medium">Returns incident (faint print)</span>
+                  <strong className="ml-2 block text-[var(--danger)]">60 units (2.5 ctn) · {formatBDT(2488)} loss today</strong>
+                  <p className="mt-1 text-[10px] text-[var(--danger)]/80">Printer {formatBDT(3000)} · payback 2.8 days (tap for formula &amp; fix)</p>
                 </button>
               </div>
-              <p className="mt-3 text-[10px] text-[#87938d]">
+              <p className="mt-3 text-[10px] text-[var(--foreground-muted)]">
                 Daily cash added = cash sales + old dues collected − cash expenses. This is a cash measure, not daily profit.
               </p>
             </section>
 
-            <section aria-label="Route cash and sales" className="glass-card mt-4 overflow-hidden rounded-2xl">
+            <section aria-label="Route cash and sales" className="mt-4 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-3 p-5">
                 <div>
-                  <h2 className="text-[15px] font-semibold text-[#25332c]">Route cash &amp; sales</h2>
-                  <p className="mt-1 text-[11px] text-[#7a8781]">Cash handed in, credit sales, and expected cash by delivery route.</p>
+                  <h2 className="text-[15px] font-semibold text-[var(--foreground)]">Route cash &amp; sales</h2>
+                  <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Cash handed in, credit sales, and expected cash by delivery route.</p>
                 </div>
-                <span className="rounded-full bg-[#f4f6f5] px-2.5 py-1 text-[10px] font-medium text-[#6f7d76]">{scopedRoutes.length} routes · filtered to selected scope</span>
+                <span className="rounded-full border border-[var(--border)] bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-medium text-[var(--foreground-muted)]">{scopedRoutes.length} routes · filtered to selected scope</span>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[780px] border-t border-[#edf1ef] text-left text-[11px]">
-                  <thead className="bg-[#f8faf9] text-[10px] font-semibold uppercase tracking-wide text-[#84918a]">
+                <table className="w-full min-w-[780px] border-t border-[var(--border)] text-left text-[11px]">
+                  <thead className="bg-[var(--surface-inset)] text-[10px] font-semibold uppercase tracking-wide text-[var(--foreground-muted)]">
                     <tr>
                       <th className="px-5 py-3">Route / sales rep</th>
                       <th className="px-3 py-3">Depot</th>
@@ -1753,27 +1762,27 @@ export const ExecutiveShell: React.FC = () => {
                       <th className="px-5 py-3 text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#edf1ef]">
+                  <tbody className="divide-y divide-[var(--border)]">
                     {scopedRoutes.map((route) => (
-                      <tr key={route.id} className="bg-white transition hover:bg-[#fafcfb]">
+                      <tr key={route.id} className="bg-[var(--surface-elevated)] transition hover:bg-[var(--surface-hover)]">
                         <td className="px-5 py-3">
                           <button onClick={() => openDrawer('ROUTE_DETAIL', route.id)} className="accounting-focus rounded text-left">
-                            <span className="block font-semibold text-[#34433b]">{route.vanNumber} · {route.routeName}</span>
-                            <span className="mt-0.5 block text-[10px] text-[#89958f]">JSR: {route.jsrName} · SR: {route.srName}</span>
+                            <span className="block font-semibold text-[var(--foreground)]">{route.vanNumber} · {route.routeName}</span>
+                            <span className="mt-0.5 block text-[10px] text-[var(--foreground-muted)]">JSR: {route.jsrName} · SR: {route.srName}</span>
                           </button>
                         </td>
-                        <td className="px-3 py-3 text-[#68766f]">{route.depot}</td>
-                        <td className="px-3 py-3 text-right font-medium tabular-nums text-[#34433b]">{formatBDT(route.collected)}</td>
-                        <td className="px-3 py-3 text-right tabular-nums text-[#68766f]">{formatBDT(route.credit)}</td>
-                        <td className="px-3 py-3 text-right tabular-nums text-[#68766f]">{formatBDT(route.expected)}</td>
-                        <td className={`px-3 py-3 text-right font-semibold tabular-nums ${route.variance < 0 ? 'text-[#b74750]' : route.variance > 0 ? 'text-[#087e63]' : 'text-[#87938d]'}`}>
+                        <td className="px-3 py-3 text-[var(--foreground-muted)]">{route.depot}</td>
+                        <td className="px-3 py-3 text-right font-medium tabular-nums text-[var(--foreground)]">{formatBDT(route.collected)}</td>
+                        <td className="px-3 py-3 text-right tabular-nums text-[var(--foreground-muted)]">{formatBDT(route.credit)}</td>
+                        <td className="px-3 py-3 text-right tabular-nums text-[var(--foreground-muted)]">{formatBDT(route.expected)}</td>
+                        <td className={`px-3 py-3 text-right font-semibold tabular-nums ${route.variance < 0 ? 'text-[var(--danger)]' : route.variance > 0 ? 'text-[var(--success)]' : 'text-[var(--foreground-muted)]'}`}>
                           {route.variance > 0 ? '+' : ''}{formatBDT(route.variance)}
                         </td>
                         <td className="px-5 py-3 text-right">
-                          <span className={`inline-flex rounded-full px-2 py-1 text-[9px] font-semibold ${
-                            route.status === 'ACTION' ? 'bg-[#fbefef] text-[#a74850]'
-                              : route.status === 'REVIEW' ? 'bg-[#fff6e8] text-[#9a6819]'
-                                : 'bg-[#eaf5ef] text-[#26765a]'
+                          <span className={`inline-flex rounded-full border px-2 py-1 text-[9px] font-semibold ${
+                            route.status === 'ACTION' ? 'border-[var(--danger)]/30 bg-[var(--danger-soft)] text-[var(--danger)]'
+                              : route.status === 'REVIEW' ? 'border-[var(--warning)]/30 bg-[var(--warning-soft)] text-[var(--warning)]'
+                                : 'border-[var(--success)]/30 bg-[var(--success-soft)] text-[var(--success)]'
                           }`}>
                             {route.status === 'ACTION' ? 'Action required' : route.status === 'REVIEW' ? 'Needs review' : 'On track'}
                           </span>
@@ -1781,7 +1790,7 @@ export const ExecutiveShell: React.FC = () => {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="border-t border-[#e7edea] bg-[#f8faf9] font-semibold text-[#435149]">
+                  <tfoot className="border-t border-[var(--border)] bg-[var(--surface-inset)] font-semibold text-[var(--foreground)]">
                     <tr>
                       <td className="px-5 py-3" colSpan={2}>Scope total</td>
                       <td className="px-3 py-3 text-right tabular-nums">{formatBDT(scopedRoutes.reduce((total, route) => total + route.collected, 0))}</td>
@@ -1796,16 +1805,16 @@ export const ExecutiveShell: React.FC = () => {
             </section>
 
             {activeBusiness?.id === 'unilever-distribution' && (
-              <section aria-labelledby="daily-actions-heading" className="glass-card mt-4 rounded-2xl p-5">
+              <section aria-labelledby="daily-actions-heading" className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
                 <div className="mb-4">
-                  <h2 id="daily-actions-heading" className="text-[15px] font-semibold text-[#25332c]">Daily business actions</h2>
-                  <p className="mt-1 text-[11px] text-[#7a8781]">Manage customer credit, prepare a cash deposit, or finish today’s close.</p>
+                  <h2 id="daily-actions-heading" className="text-[15px] font-semibold text-[var(--foreground)]">Daily business actions</h2>
+                  <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Manage customer credit, prepare a cash deposit, or finish today’s close.</p>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-3">
                   <button
                     onClick={() => openModal('CREDIT_LOCK')}
                     disabled={state.creditLockActive}
-                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#087e63] px-3 text-[11px] font-semibold text-white transition hover:bg-[#086d56] disabled:cursor-default disabled:bg-[#eaf5ef] disabled:text-[#26765a]"
+                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-[11px] font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:cursor-default disabled:border disabled:border-[var(--accent)]/30 disabled:bg-[var(--accent-soft)] disabled:text-[var(--accent)]"
                   >
                     <ShieldCheck size={15} />
                     {state.creditLockActive ? 'Credit paused' : 'Pause customer credit'}
@@ -1813,7 +1822,7 @@ export const ExecutiveShell: React.FC = () => {
                   <button
                     onClick={() => openModal('BANK_DEPOSIT')}
                     disabled={state.depositPrepared}
-                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#e1e8e4] bg-white px-3 text-[11px] font-semibold text-[#53615a] transition hover:bg-[#f4f8f5] disabled:cursor-default disabled:bg-[#f3f8f5] disabled:text-[#718078]"
+                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 text-[11px] font-semibold text-[var(--foreground)] transition hover:bg-[var(--surface-hover)] disabled:cursor-default disabled:bg-[var(--surface-inset)] disabled:text-[var(--foreground-muted)]"
                   >
                     <Download size={15} />
                     {state.depositPrepared ? 'Deposit prepared' : 'Prepare bank deposit'}
@@ -1821,7 +1830,7 @@ export const ExecutiveShell: React.FC = () => {
                   <button
                     onClick={() => openModal('DAY_END_CLOSE')}
                     disabled={state.dayClosed}
-                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#e1e8e4] bg-white px-3 text-[11px] font-semibold text-[#53615a] transition hover:bg-[#f4f8f5] disabled:cursor-default disabled:bg-[#f3f8f5] disabled:text-[#718078]"
+                    className="accounting-focus flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 text-[11px] font-semibold text-[var(--foreground)] transition hover:bg-[var(--surface-hover)] disabled:cursor-default disabled:bg-[var(--surface-inset)] disabled:text-[var(--foreground-muted)]"
                   >
                     <Check size={15} />
                     {state.dayClosed ? 'Day closed' : 'Review and close day'}
@@ -1831,11 +1840,11 @@ export const ExecutiveShell: React.FC = () => {
             )}
 
             <section className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(310px,0.85fr)]">
-              <article id="reports" className="glass-card scroll-mt-24 rounded-2xl p-5 sm:p-6">
+              <article id="reports" className="scroll-mt-24 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 sm:p-6 shadow-xs">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="flex items-center gap-2"><h2 className="text-[15px] font-semibold text-[#25332c]">Cash position &amp; today’s activity</h2><span className="rounded-md bg-[#f2f5f3] px-2 py-1 text-[10px] font-medium text-[#84908a]">SAMPLE DATA</span></div>
-                    <p className="mt-1 text-[11px] text-[#7a8781]">A current snapshot from the selected business scope, not a dated cash-flow forecast.</p>
+                    <div className="flex items-center gap-2"><h2 className="text-[15px] font-semibold text-[var(--foreground)]">Cash position &amp; today’s activity</h2><span className="rounded-md border border-[var(--border)] bg-[var(--surface-inset)] px-2 py-1 text-[10px] font-medium text-[var(--foreground-muted)]">SAMPLE DATA</span></div>
+                    <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">A current snapshot from the selected business scope, not a dated cash-flow forecast.</p>
                   </div>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -1844,34 +1853,34 @@ export const ExecutiveShell: React.FC = () => {
                     { label: 'Collections today', value: formatBDT(collectedToday), detail: 'Recorded route collections' },
                     { label: 'Supplier payment due', value: formatBDT(portfolio.upcomingObligation), detail: portfolio.upcomingObligation > 0 ? `Due in ${state.obligationDueHours} hours` : 'None in selected sample scope' },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-xl border border-[#e8eeeb] bg-white p-3.5">
-                      <p className="text-[10px] font-medium text-[#7b8982]">{item.label}</p>
-                      <p className="mt-1.5 text-[17px] font-semibold tabular-nums text-[#34433b]">{item.value}</p>
-                      <p className="mt-1 text-[10px] text-[#87938d]">{item.detail}</p>
+                    <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5">
+                      <p className="text-[10px] font-medium text-[var(--foreground-muted)]">{item.label}</p>
+                      <p className="mt-1.5 text-[17px] font-semibold tabular-nums text-[var(--foreground)]">{item.value}</p>
+                      <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">{item.detail}</p>
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#edf1ef] pt-3 text-[11px]">
-                  <span className={dueSoon ? 'font-medium text-[#9a6819]' : 'text-[#818e87]'}>
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] pt-3 text-[11px]">
+                  <span className={dueSoon ? 'font-medium text-[var(--warning)]' : 'text-[var(--foreground-muted)]'}>
                     {dueSoon ? `${dueSoon} route ${dueSoon === 1 ? 'settlement needs' : 'settlements need'} review.` : 'No route exceptions in the current sample scope.'}
                   </span>
-                  <button onClick={() => openDrawer(dueSoon ? 'RECONCILIATION' : 'OBLIGATION')} className="font-semibold text-[#087e63] hover:underline">
+                  <button onClick={() => openDrawer(dueSoon ? 'RECONCILIATION' : 'OBLIGATION')} className="font-semibold text-[var(--accent)] hover:underline">
                     {dueSoon ? 'Review route cash' : 'Review payment details'} <ArrowRight size={12} className="ml-1 inline" />
                   </button>
                 </div>
               </article>
 
-              <article className="glass-card flex scroll-mt-24 flex-col rounded-2xl p-5 sm:p-6">
+              <article className="flex scroll-mt-24 flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 sm:p-6 shadow-xs">
                 <div className="flex items-center justify-between">
-                  <div><h2 className="text-[15px] font-semibold text-[#25332c]">Quick actions</h2><p className="mt-1 text-[11px] text-[#7a8781]">Common tasks, one click away</p></div>
-                  <span className="rounded-xl bg-[#eaf5ef] p-2 text-[#087e63]"><FilePlus2 size={17} /></span>
+                  <div><h2 className="text-[15px] font-semibold text-[var(--foreground)]">Quick actions</h2><p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Common tasks, one click away</p></div>
+                  <span className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-2 text-[var(--accent)]"><FilePlus2 size={17} /></span>
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-2.5">
-                  <button onClick={() => openDrawer('RECONCILIATION')} className="accounting-focus flex min-h-[74px] items-center gap-3 rounded-xl border border-[#e6ece9] bg-white p-3 text-left transition hover:border-[#e8d5ad] hover:bg-[#fffdfa]">
-                    <span className="rounded-lg bg-[#fbf4e7] p-2 text-[#ad7b2c]"><FileCheck2 size={17} /></span><span><span className="block text-[12px] font-semibold text-[#34423b]">Review route cash</span><span className="mt-1 block text-[10px] text-[#89958f]">{dueSoon ? `${dueSoon} item needs review` : 'Compare cash handed in'}</span></span>
+                  <button onClick={() => openDrawer('RECONCILIATION')} className="accounting-focus flex min-h-[74px] items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left transition hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)]">
+                    <span className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning-soft)] p-2 text-[var(--warning)]"><FileCheck2 size={17} /></span><span><span className="block text-[12px] font-semibold text-[var(--foreground)]">Review route cash</span><span className="mt-1 block text-[10px] text-[var(--foreground-muted)]">{dueSoon ? `${dueSoon} item needs review` : 'Compare cash handed in'}</span></span>
                   </button>
-                  <label className="accounting-focus flex min-h-[74px] cursor-pointer items-center gap-3 rounded-xl border border-[#e6ece9] bg-white p-3 text-left transition hover:border-[#b9d8ca] hover:bg-[#f8fbf9]">
-                    <span className="rounded-lg bg-[#eef2fb] p-2 text-[#6678b4]"><Upload size={17} /></span><span><span className="block text-[12px] font-semibold text-[#34423b]">Select a receipt</span><span className="mt-1 block text-[10px] text-[#89958f]">PDF or image</span></span>
+                  <label className="accounting-focus flex min-h-[74px] cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left transition hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)]">
+                    <span className="rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-2 text-[var(--accent)]"><Upload size={17} /></span><span><span className="block text-[12px] font-semibold text-[var(--foreground)]">Select a receipt</span><span className="mt-1 block text-[10px] text-[var(--foreground-muted)]">PDF or image</span></span>
                     <input
                       type="file"
                       accept="image/*,.pdf"
@@ -1884,22 +1893,22 @@ export const ExecutiveShell: React.FC = () => {
                     />
                   </label>
                 </div>
-                <div className="mt-auto flex items-center gap-2 border-t border-[#edf1ef] pt-4 text-[11px] text-[#7b8882]">
-                  <Command size={13} /><span>Shortcuts</span><kbd className="rounded border border-[#e3eae6] bg-[#f7f9f8] px-1.5 py-0.5 text-[10px]">⌘ K</kbd><span>search</span><kbd className="rounded border border-[#e3eae6] bg-[#f7f9f8] px-1.5 py-0.5 text-[10px]">⌘ I</kbd><span>invoice</span>
+                <div className="mt-auto flex items-center gap-2 border-t border-[var(--border)] pt-4 text-[11px] text-[var(--foreground-muted)]">
+                  <Command size={13} /><span>Shortcuts</span><kbd className="rounded border border-[var(--border)] bg-[var(--surface-inset)] px-1.5 py-0.5 text-[10px] text-[var(--foreground-muted)]">⌘ K</kbd><span>search</span><kbd className="rounded border border-[var(--border)] bg-[var(--surface-inset)] px-1.5 py-0.5 text-[10px] text-[var(--foreground-muted)]">⌘ I</kbd><span>invoice</span>
                 </div>
               </article>
             </section>
 
             <section className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(310px,0.85fr)]">
-              <article id="general-ledger" className="glass-card min-w-0 scroll-mt-24 overflow-hidden rounded-2xl">
-                <div className="flex flex-col justify-between gap-3 border-b border-[#edf1ef] px-5 py-4 sm:flex-row sm:items-center">
-                  <div><h2 className="text-[15px] font-semibold text-[#25332c]">Recent transactions</h2><p className="mt-1 text-[11px] text-[#7a8781]">Sample route activity and supplier payments</p></div>
+              <article id="general-ledger" className="min-w-0 scroll-mt-24 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xs">
+                <div className="flex flex-col justify-between gap-3 border-b border-[var(--border)] px-5 py-4 sm:flex-row sm:items-center">
+                  <div><h2 className="text-[15px] font-semibold text-[var(--foreground)]">Recent transactions</h2><p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Sample route activity and supplier payments</p></div>
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="relative">
-                      <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8d9993]" />
-                      <input value={transactionSearch} onChange={(event) => setTransactionSearch(event.target.value)} aria-label="Filter transactions" placeholder="Filter" className="accounting-focus h-8 w-[130px] rounded-lg border border-[#e5ebe8] bg-white pl-8 pr-2 text-[11px] placeholder:text-[#a1aca6]" />
+                      <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]" />
+                      <input value={transactionSearch} onChange={(event) => setTransactionSearch(event.target.value)} aria-label="Filter transactions" placeholder="Filter" className="accounting-focus h-8 w-[130px] rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] pl-8 pr-2 text-[11px] text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]" />
                     </div>
-                    <div className="flex rounded-lg bg-[#f2f5f3] p-0.5">
+                    <div className="flex rounded-lg border border-[var(--border)] bg-[var(--surface-inset)] p-0.5">
                       {(['All', 'Invoicing', 'Expenses'] as TransactionFilter[]).map((filter) => (
                         <button
                           key={filter}
@@ -1910,7 +1919,7 @@ export const ExecutiveShell: React.FC = () => {
                             if (pathname !== nextPath) router.push(nextPath, { scroll: false });
                           }}
                           aria-pressed={transactionFilter === filter}
-                          className={`accounting-focus rounded-md px-2 py-1.5 text-[10px] font-medium ${transactionFilter === filter ? 'bg-white text-[#34423b] shadow-sm' : 'text-[#7e8b84] hover:text-[#435149]'}`}
+                          className={`accounting-focus rounded-md px-2 py-1.5 text-[10px] font-medium transition ${transactionFilter === filter ? 'border border-[var(--border)] bg-[var(--surface-elevated)] font-semibold text-[var(--foreground)] shadow-xs' : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'}`}
                         >
                           {filter === 'Invoicing' ? 'Invoices' : filter}
                         </button>
@@ -1926,7 +1935,7 @@ export const ExecutiveShell: React.FC = () => {
                       }}
                       aria-label="Reset transaction filters"
                       title="Reset transaction filters"
-                      className="accounting-focus rounded-lg p-2 text-[#76837d] hover:bg-[#f2f5f3]"
+                      className="accounting-focus rounded-lg p-2 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
                     >
                       <Filter size={15} />
                     </button>
@@ -1934,20 +1943,20 @@ export const ExecutiveShell: React.FC = () => {
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[770px] border-collapse text-left">
-                    <thead><tr className="bg-[#fafcfb] text-[10px] font-semibold uppercase tracking-[0.09em] text-[#85918b]">
+                    <thead><tr className="bg-[var(--surface-inset)] text-[10px] font-semibold uppercase tracking-[0.09em] text-[var(--foreground-muted)]">
                       <th className="px-5 py-3 font-medium">Date</th><th className="px-5 py-3 font-medium">Description</th><th className="px-5 py-3 font-medium">Category</th><th className="px-5 py-3 font-medium">Payment method</th><th className="px-5 py-3 text-right font-medium">Amount</th><th className="px-5 py-3 text-right font-medium">Status</th>
                     </tr></thead>
                     <tbody>{renderTransactionRows(showAllTransactions ? filteredRows : filteredRows.slice(0, 8))}</tbody>
                   </table>
-                  {filteredRows.length === 0 && <div className="px-5 py-12 text-center text-[12px] text-[#87938d]">No transactions match those filters.</div>}
+                  {filteredRows.length === 0 && <div className="px-5 py-12 text-center text-[12px] text-[var(--foreground-muted)]">No transactions match those filters.</div>}
                 </div>
-                <div className="flex items-center justify-between border-t border-[#edf1ef] px-5 py-3 text-[11px] text-[#87938d]">
-                  <span>Showing {showAllTransactions ? filteredRows.length : Math.min(filteredRows.length, 8)} of {filteredRows.length} entries <span className="text-[#adb7b1]">· Sample data</span></span>
+                <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-[11px] text-[var(--foreground-muted)]">
+                  <span>Showing {showAllTransactions ? filteredRows.length : Math.min(filteredRows.length, 8)} of {filteredRows.length} entries <span className="text-[var(--foreground-muted)]/60">· Sample data</span></span>
                   {filteredRows.length > 8 && (
                     <button
                       onClick={() => setShowAllTransactions((showAll) => !showAll)}
                       aria-expanded={showAllTransactions}
-                      className="font-semibold text-[#087e63] hover:underline"
+                      className="font-semibold text-[var(--accent)] hover:underline"
                     >
                       {showAllTransactions ? 'Show recent only' : 'View all activity'} <ArrowRight size={12} className="ml-1 inline" />
                     </button>
@@ -1956,48 +1965,48 @@ export const ExecutiveShell: React.FC = () => {
               </article>
 
               <aside className="flex scroll-mt-24 flex-col gap-4">
-                <article id="ai-assistant" className={`glass-card rounded-2xl p-5 transition-shadow ${aiOpen ? 'ring-1 ring-[#9acdb6]' : ''}`}>
+                <article id="ai-assistant" className={`rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs transition-shadow ${aiOpen ? 'ring-1 ring-[var(--accent)]' : ''}`}>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2.5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf5ef] text-[#087e63]"><Sparkles size={18} /></span>
-                      <div><h2 className="text-[14px] font-semibold text-[#25332c]">Ask about your business</h2><p className="mt-0.5 text-[10px] text-[#85918b]">Answers from sample data</p></div>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] text-[var(--accent)]"><Sparkles size={18} /></span>
+                      <div><h2 className="text-[14px] font-semibold text-[var(--foreground)]">Ask about your business</h2><p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">Answers from sample data</p></div>
                     </div>
-                    <button onClick={() => setAiOpen((value) => !value)} aria-label={aiOpen ? 'Collapse AI assistant' : 'Expand AI assistant'} className="accounting-focus rounded-lg p-1.5 text-[#819087] hover:bg-[#f1f5f3]"><MoreHorizontal size={18} /></button>
+                    <button onClick={() => setAiOpen((value) => !value)} aria-label={aiOpen ? 'Collapse AI assistant' : 'Expand AI assistant'} className="accounting-focus rounded-lg p-1.5 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]"><MoreHorizontal size={18} /></button>
                   </div>
-                  <p className="mt-4 text-[12px] leading-relaxed text-[#63716a]">Get a quick answer from the financial information currently in your workspace.</p>
+                  <p className="mt-4 text-[12px] leading-relaxed text-[var(--foreground-muted)]">Get a quick answer from the financial information currently in your workspace.</p>
                   <div className="mt-3 space-y-1.5">
                     {['What is my available cash?', 'Show pending invoices', 'What supplier payments are due?'].map((question) => (
-                      <button key={question} onClick={() => { setAiOpen(true); runAssistantQuery(question); }} className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-[11px] text-[#53635a] transition hover:bg-[#f2f7f4] hover:text-[#087e63]">
-                        <span>{question}</span><ArrowRight size={13} className="shrink-0 text-[#9aa69f]" />
+                      <button key={question} onClick={() => { setAiOpen(true); runAssistantQuery(question); }} className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-[11px] text-[var(--foreground-muted)] transition hover:bg-[var(--surface-hover)] hover:text-[var(--accent)]">
+                        <span>{question}</span><ArrowRight size={13} className="shrink-0 text-[var(--foreground-muted)]" />
                       </button>
                     ))}
                   </div>
                   {aiResponse && (
-                    <div aria-live="polite" className="mt-3 rounded-xl border border-[#e3eee7] bg-[#f6faf7] p-3 text-[11px] leading-relaxed text-[#52635a]">
-                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-[#087e63]">Answer from demo data</span>{aiResponse}
+                    <div aria-live="polite" className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-3 text-[11px] leading-relaxed text-[var(--foreground)]">
+                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)]">Answer from demo data</span>{aiResponse}
                     </div>
                   )}
-                  <form onSubmit={(event) => { event.preventDefault(); runAssistantQuery(); }} className="mt-4 flex items-center gap-2 rounded-xl border border-[#e4ebe7] bg-white p-1.5 pl-3 focus-within:border-[#a6cdb8]">
-                    <MessageSquareText size={15} className="shrink-0 text-[#8e9a94]" />
-                    <input value={aiQuery} onChange={(event) => setAiQuery(event.target.value)} onFocus={() => setAiOpen(true)} aria-label="Ask a question about your books" placeholder="Ask about your finances..." className="accounting-focus min-w-0 flex-1 border-0 bg-transparent py-1.5 text-[11px] text-[#3d4a44] outline-none placeholder:text-[#a4aea8]" />
-                    <button type="submit" aria-label="Send question" className="accounting-focus flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#087e63] text-white hover:bg-[#086d56]"><Send size={13} /></button>
+                  <form onSubmit={(event) => { event.preventDefault(); runAssistantQuery(); }} className="mt-4 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-1.5 pl-3 focus-within:border-[var(--accent)]">
+                    <MessageSquareText size={15} className="shrink-0 text-[var(--foreground-muted)]" />
+                    <input value={aiQuery} onChange={(event) => setAiQuery(event.target.value)} onFocus={() => setAiOpen(true)} aria-label="Ask a question about your books" placeholder="Ask about your finances..." className="accounting-focus min-w-0 flex-1 border-0 bg-transparent py-1.5 text-[11px] text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)]" />
+                    <button type="submit" aria-label="Send question" className="accounting-focus flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]"><Send size={13} /></button>
                   </form>
-                  <p className="mt-2 text-[10px] leading-relaxed text-[#9aa59f]">AI answers are limited to demo data and may not include invoice due dates.</p>
+                  <p className="mt-2 text-[10px] leading-relaxed text-[var(--foreground-muted)]">AI answers are limited to demo data and may not include invoice due dates.</p>
                 </article>
 
-                <article id="bank-reconciliation" className="glass-card scroll-mt-24 rounded-2xl p-5">
+                <article id="bank-reconciliation" className="scroll-mt-24 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <div><h2 className="text-[14px] font-semibold text-[#25332c]">Needs attention</h2><p className="mt-1 text-[10px] text-[#85918b]">{activeAlerts.length} open items</p></div>
-                    <span className="rounded-xl bg-[#fbefef] p-2 text-[#b54c54]"><CircleHelp size={16} /></span>
+                    <div><h2 className="text-[14px] font-semibold text-[var(--foreground)]">Needs attention</h2><p className="mt-1 text-[10px] text-[var(--foreground-muted)]">{activeAlerts.length} open items</p></div>
+                    <span className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] p-2 text-[var(--danger)]"><CircleHelp size={16} /></span>
                   </div>
                   {activeAlerts.length ? activeAlerts.slice(0, 2).map((alert) => (
-                    <button key={alert.id} onClick={() => getAlertAction(alert)} className="mt-3 flex w-full items-start gap-2.5 rounded-xl border border-[#edf0ed] bg-white p-3 text-left hover:border-[#d6e3db] hover:bg-[#fafcfb]">
-                      <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-[#c84d57]' : alert.severity === 'WARNING' ? 'bg-[#d59a2d]' : 'bg-[#4d8bc1]'}`} />
-                      <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-semibold text-[#3b4942]">{alert.title}</span><span className="mt-1 block text-[10px] text-[#86928c]">{alert.timestamp} · Review details</span></span>
-                      <ChevronRight size={14} className="mt-1 shrink-0 text-[#9aa69f]" />
+                    <button key={alert.id} onClick={() => getAlertAction(alert)} className="mt-3 flex w-full items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left transition hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)]">
+                      <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-[#ef4444]' : alert.severity === 'WARNING' ? 'bg-[#f59e0b]' : 'bg-[#3b82f6]'}`} />
+                      <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-semibold text-[var(--foreground)]">{alert.title}</span><span className="mt-1 block text-[10px] text-[var(--foreground-muted)]">{alert.timestamp} · Review details</span></span>
+                      <ChevronRight size={14} className="mt-1 shrink-0 text-[var(--foreground-muted)]" />
                     </button>
-                  )) : <div className="mt-4 rounded-xl bg-[#f3f8f5] p-3 text-[11px] text-[#61756a]">No open items. Your demo ledger is up to date.</div>}
-                  <button onClick={() => openDrawer('RECONCILIATION')} className="mt-3 w-full rounded-xl border border-[#e4ebe7] px-3 py-2 text-[11px] font-semibold text-[#087e63] transition hover:bg-[#f4f8f5]">Open bank reconciliation</button>
+                  )) : <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-3 text-[11px] text-[var(--foreground-muted)]">No open items. Your demo ledger is up to date.</div>}
+                  <button onClick={() => openDrawer('RECONCILIATION')} className="mt-3 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-[11px] font-semibold text-[var(--accent)] transition hover:bg-[var(--accent-soft)]">Open bank reconciliation</button>
                 </article>
               </aside>
             </section>
@@ -2022,45 +2031,45 @@ export const ExecutiveShell: React.FC = () => {
       />
 
       {quickAction && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#12221d]/40 p-4 backdrop-blur-[3px]" onMouseDown={(event) => { if (event.target === event.currentTarget) setQuickAction(null); }}>
-          <form onSubmit={saveQuickAction} className="w-full max-w-[420px] rounded-2xl border border-[#e2e9e5] bg-white p-5 shadow-[0_24px_80px_rgba(22,44,34,0.2)]">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs" onMouseDown={(event) => { if (event.target === event.currentTarget) setQuickAction(null); }}>
+          <form onSubmit={saveQuickAction} className="w-full max-w-[420px] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-5 text-[var(--foreground)] shadow-2xl">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <span className="rounded-xl bg-[#eaf5ef] p-2.5 text-[#087e63]">{quickAction === 'invoice' ? <FileText size={18} /> : <CreditCard size={18} />}</span>
-                <div><h2 className="text-[15px] font-semibold text-[#26352d]">{quickAction === 'invoice' ? 'Create invoice' : 'Add expense'}</h2><p className="mt-1 text-[11px] text-[#849089]">Add a record to this local demo ledger</p></div>
+                <span className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-2.5 text-[var(--accent)]">{quickAction === 'invoice' ? <FileText size={18} /> : <CreditCard size={18} />}</span>
+                <div><h2 className="text-[15px] font-semibold text-[var(--foreground)]">{quickAction === 'invoice' ? 'Create invoice' : 'Add expense'}</h2><p className="mt-1 text-[11px] text-[var(--foreground-muted)]">Add a record to this local demo ledger</p></div>
               </div>
-              <button type="button" onClick={() => setQuickAction(null)} aria-label="Close dialog" className="accounting-focus rounded-lg p-1.5 text-[#89958f] hover:bg-[#f3f6f4]"><X size={18} /></button>
+              <button type="button" onClick={() => setQuickAction(null)} aria-label="Close dialog" className="accounting-focus rounded-lg p-1.5 text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]"><X size={18} /></button>
             </div>
-            <label className="mt-5 block text-[11px] font-medium text-[#55635b]">
+            <label className="mt-5 block text-[11px] font-medium text-[var(--foreground-muted)]">
               Description
-              <input required autoFocus value={formDescription} onChange={(event) => setFormDescription(event.target.value)} placeholder={quickAction === 'invoice' ? 'e.g. Retailer order' : 'e.g. Delivery fuel'} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] placeholder:text-[#a2ada7]" />
+              <input required autoFocus value={formDescription} onChange={(event) => setFormDescription(event.target.value)} placeholder={quickAction === 'invoice' ? 'e.g. Retailer order' : 'e.g. Delivery fuel'} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]" />
             </label>
-            <label className="mt-4 block text-[11px] font-medium text-[#55635b]">
+            <label className="mt-4 block text-[11px] font-medium text-[var(--foreground-muted)]">
               Amount (BDT)
-              <input required min="1" step="0.01" type="number" value={formAmount} onChange={(event) => setFormAmount(event.target.value)} placeholder="0.00" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] px-3 text-[12px] tabular-nums placeholder:text-[#a2ada7]" />
+              <input required min="1" step="0.01" type="number" value={formAmount} onChange={(event) => setFormAmount(event.target.value)} placeholder="0.00" className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] tabular-nums text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]" />
             </label>
             {activeBusinessId === 'unilever-distribution' && (
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <label className="text-[11px] font-medium text-[#55635b]">
+              <label className="text-[11px] font-medium text-[var(--foreground-muted)]">
                 Principal
-                <select value={formPrincipal} onChange={(event) => setFormPrincipal(event.target.value as Exclude<PrincipalFilter, 'All principals'>)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+                <select value={formPrincipal} onChange={(event) => setFormPrincipal(event.target.value as Exclude<PrincipalFilter, 'All principals'>)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] text-[var(--foreground)]">
                   {principalOptions.filter((option) => option !== 'All principals').map((option) => <option key={option}>{option}</option>)}
                 </select>
               </label>
-              <label className="text-[11px] font-medium text-[#55635b]">
+              <label className="text-[11px] font-medium text-[var(--foreground-muted)]">
                 Depot
-                <select value={formDepot} onChange={(event) => setFormDepot(event.target.value as Exclude<DepotFilter, 'All depots'>)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[#e1e8e4] bg-white px-3 text-[12px]">
+                <select value={formDepot} onChange={(event) => setFormDepot(event.target.value as Exclude<DepotFilter, 'All depots'>)} className="accounting-focus mt-1.5 h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] px-3 text-[12px] text-[var(--foreground)]">
                   {depotOptions.filter((option) => option !== 'All depots').map((option) => <option key={option}>{option}</option>)}
                 </select>
               </label>
             </div>
             )}
-            <div className="mt-4 rounded-xl bg-[#f6f9f7] p-3 text-[10px] leading-relaxed text-[#7b8981]">
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-inset)] p-3 text-[10px] leading-relaxed text-[var(--foreground-muted)]">
               This entry is stored only in the current browser session. It will not be sent to accounting software or saved to a server.
             </div>
             <div className="mt-5 flex justify-end gap-2">
-              <button type="button" onClick={() => setQuickAction(null)} className="accounting-focus rounded-xl border border-[#e1e8e4] px-4 py-2 text-[12px] font-medium text-[#5e6b64] hover:bg-[#f7f9f8]">Cancel</button>
-              <button type="submit" className="accounting-focus rounded-xl bg-[#087e63] px-4 py-2 text-[12px] font-semibold text-white hover:bg-[#086d56]">{quickAction === 'invoice' ? 'Add invoice' : 'Save expense'}</button>
+              <button type="button" onClick={() => setQuickAction(null)} className="accounting-focus rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-[12px] font-medium text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]">Cancel</button>
+              <button type="submit" className="accounting-focus rounded-xl bg-[var(--accent)] px-4 py-2 text-[12px] font-semibold text-white hover:bg-[var(--accent-hover)]">{quickAction === 'invoice' ? 'Add invoice' : 'Save expense'}</button>
             </div>
           </form>
         </div>

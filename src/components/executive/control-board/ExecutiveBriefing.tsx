@@ -1,18 +1,15 @@
 'use client';
 
 import React from 'react';
-import { ArrowDown, AlertOctagon, CheckCircle2, Target } from 'lucide-react';
+import { ArrowDown, Target } from 'lucide-react';
 import { useExecutive } from '../../../context/ExecutiveContext';
-import { formatBDT } from '../../../utils/formatters';
 
 export const ExecutiveBriefing: React.FC = () => {
   const { state } = useExecutive();
 
-  // Dynamic context based on active state:
   const isCreditLocked = state.creditLockActive;
   const isDepositPrepared = state.depositPrepared;
   const isShortageResolved = state.varianceWaived || state.varianceDeducted;
-  const isHardwareReplaced = state.hardwareReplaced;
 
   const getContent = () => {
     if (state.banglaMode) {
@@ -48,56 +45,56 @@ export const ExecutiveBriefing: React.FC = () => {
   const briefing = getContent();
 
   return (
-    <div className="rounded-xl border border-[#e2e8f0] bg-white p-4 sm:p-5 flex flex-col justify-between shadow-sm text-slate-800">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 flex flex-col justify-between shadow-xs text-[var(--foreground)] backdrop-blur-md transition-colors duration-200">
+      <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <Target size={14} className="text-emerald-600" />
-          <h2 className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-800">
+          <Target size={14} className="text-emerald-500" />
+          <h2 className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--foreground)]">
             {state.banglaMode ? 'নির্বাহী ব্রিফিং' : 'EXECUTIVE BRIEFING'}
           </h2>
         </div>
-        <span className="text-[9px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+        <span className="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
           {state.banglaMode ? 'আজকের কৌশলগত সিদ্ধান্ত' : 'CEO ACTIONABLE SYNTHESIS'}
         </span>
       </div>
 
       <div className="mt-3.5 space-y-3 font-mono">
         {/* 1. WHAT'S HAPPENING */}
-        <div className="rounded-lg bg-slate-50 p-3 border border-slate-200">
-          <span className="text-[10px] font-bold tracking-wider text-slate-500 uppercase block mb-1">
+        <div className="rounded-xl bg-[var(--surface-elevated)] p-3 border border-[var(--border)] dm-interactive">
+          <span className="text-[10px] font-bold tracking-wider text-[var(--foreground-muted)] uppercase block mb-1">
             {state.banglaMode ? '১. বর্তমান পরিস্থিতি' : "WHAT'S HAPPENING"}
           </span>
-          <p className="text-xs text-slate-700 leading-relaxed font-sans">
+          <p className="text-xs text-[var(--foreground)] leading-relaxed font-sans">
             {briefing.happening}
           </p>
         </div>
 
         {/* Down Arrow separator */}
-        <div className="flex justify-center -my-1 text-slate-400">
+        <div className="flex justify-center -my-1 text-[var(--foreground-subtle)]">
           <ArrowDown size={14} />
         </div>
 
         {/* 2. WHY */}
-        <div className="rounded-lg bg-slate-50 p-3 border border-slate-200">
-          <span className="text-[10px] font-bold tracking-wider text-amber-800 uppercase block mb-1">
+        <div className="rounded-xl bg-[var(--surface-elevated)] p-3 border border-[var(--border)] dm-interactive">
+          <span className="text-[10px] font-bold tracking-wider text-amber-500 uppercase block mb-1">
             {state.banglaMode ? '২. মূল কারণ' : 'WHY'}
           </span>
-          <p className="text-xs text-slate-700 leading-relaxed font-sans">
+          <p className="text-xs text-[var(--foreground)] leading-relaxed font-sans">
             {briefing.why}
           </p>
         </div>
 
         {/* Down Arrow separator */}
-        <div className="flex justify-center -my-1 text-slate-400">
+        <div className="flex justify-center -my-1 text-[var(--foreground-subtle)]">
           <ArrowDown size={14} />
         </div>
 
         {/* 3. FOCUS NOW */}
-        <div className="rounded-lg bg-emerald-50/70 p-3 border border-emerald-200">
-          <span className="text-[10px] font-bold tracking-wider text-emerald-800 uppercase block mb-1">
+        <div className="rounded-xl bg-emerald-500/10 p-3 border border-emerald-500/20 dm-interactive">
+          <span className="text-[10px] font-bold tracking-wider text-emerald-400 uppercase block mb-1">
             {state.banglaMode ? '৩. এখনই করণীয়' : 'FOCUS NOW'}
           </span>
-          <p className="text-xs text-emerald-950 font-semibold leading-relaxed font-sans">
+          <p className="text-xs text-[var(--foreground)] font-semibold leading-relaxed font-sans">
             {briefing.focus}
           </p>
         </div>

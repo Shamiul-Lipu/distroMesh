@@ -4,14 +4,12 @@ import React, { useState } from 'react';
 import {
   Navigation,
   Search,
-  Filter,
   ChevronDown,
   ChevronRight,
   ExternalLink,
   ShieldCheck,
   AlertTriangle,
   AlertOctagon,
-  User,
   Store,
 } from 'lucide-react';
 import { useExecutive } from '../../../context/ExecutiveContext';
@@ -52,7 +50,7 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
   const getStatusBadge = (route: RouteData) => {
     if (route.status === 'ACTION') {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
           <AlertOctagon size={11} />
           <span>{state.banglaMode ? '■ ব্যতিক্রম' : '■ EXCEPTION'}</span>
         </span>
@@ -60,14 +58,14 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
     }
     if (route.status === 'REVIEW') {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
           <AlertTriangle size={11} />
           <span>{state.banglaMode ? '▲ পর্যবেক্ষণ' : '▲ WATCH'}</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
         <ShieldCheck size={11} />
         <span>{state.banglaMode ? '● সম্পন্ন' : '● OK'}</span>
       </span>
@@ -83,20 +81,20 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
   };
 
   return (
-    <div className="rounded-xl border border-[#e2e8f0] bg-white shadow-sm overflow-hidden font-mono text-slate-800">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xs overflow-hidden font-mono text-[var(--foreground)] backdrop-blur-md transition-colors duration-200">
       {/* Header with Search and Filter */}
-      <div className="p-4 sm:p-5 border-b border-[#e2e8f0] flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/60">
+      <div className="p-4 sm:p-5 border-b border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[var(--surface-inset)]">
         <div>
           <div className="flex items-center gap-2">
-            <Navigation size={14} className="text-emerald-700" />
-            <h2 className="text-[11px] font-bold uppercase tracking-wider text-slate-800">
+            <Navigation size={14} className="text-emerald-500" />
+            <h2 className="text-[11px] font-bold uppercase tracking-wider text-[var(--foreground)]">
               {state.banglaMode ? '১২টি রুটের সেটলমেন্ট ও আর্থিক জবাবদিহিতা' : '12-ROUTE SETTLEMENT & ACCOUNTABILITY MATRIX'}
             </h2>
-            <span className="text-[10px] text-slate-600 bg-slate-200/80 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] text-[var(--foreground-muted)] bg-[var(--surface-elevated)] px-2 py-0.5 rounded border border-[var(--border)] font-mono">
               {filteredRoutes.length} of 12 Beats
             </span>
           </div>
-          <p className="text-[10px] text-slate-500 font-sans mt-0.5">
+          <p className="text-[10px] text-[var(--foreground-muted)] font-sans mt-0.5">
             Click any route row to inspect underlying retail shop drops, invoice challans, and driver cash sheets.
           </p>
         </div>
@@ -104,26 +102,26 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
         {/* Search & Filter Controls */}
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--foreground-subtle)]" />
             <input
               type="text"
               placeholder={state.banglaMode ? 'রুট, ভ্যান, বা কর্মী খুঁজুন...' : 'Search beat, van, SR, JSR...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-44 sm:w-56 rounded border border-slate-300 bg-white pl-8 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/30"
+              className="h-8 w-44 sm:w-56 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] pl-8 pr-3 text-xs text-[var(--foreground)] placeholder:text-[var(--foreground-subtle)] focus:outline-none focus:border-[var(--accent)]"
             />
           </div>
 
           {/* Filter tabs */}
-          <div className="flex items-center rounded border border-slate-200 bg-slate-100 p-0.5 text-[10px]">
+          <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-0.5 text-[10px]">
             {(['ALL', 'EXCEPTION', 'WATCH', 'OK'] as const).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setStatusFilter(filter)}
                 className={`px-2 py-1 rounded transition ${
                   statusFilter === filter
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[var(--accent-soft)] text-[var(--foreground)] font-bold shadow-2xs'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
                 }`}
               >
                 {filter}
@@ -137,7 +135,7 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-[#e2e8f0] bg-slate-50 text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
+            <tr className="border-b border-[var(--border)] bg-[var(--surface-inset)] text-[10px] text-[var(--foreground-muted)] uppercase tracking-wider font-semibold">
               <th className="py-2.5 px-3">Beat / Van</th>
               <th className="py-2.5 px-3">Crew (JSR / SR)</th>
               <th className="py-2.5 px-3 text-right">Delivered (৳)</th>
@@ -148,7 +146,7 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
               <th className="py-2.5 px-2 text-center">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[var(--border)]">
             {filteredRoutes.map((route) => {
               const isExpanded = expandedRouteId === route.id;
               const hasShortage = route.variance !== 0;
@@ -157,11 +155,11 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
                 <React.Fragment key={route.id}>
                   <tr
                     onClick={() => handleRowClick(route)}
-                    className={`cursor-pointer transition hover:bg-slate-50 ${
+                    className={`cursor-pointer transition dm-interactive hover:bg-[var(--surface-hover)] ${
                       hasShortage && route.status === 'ACTION'
-                        ? 'bg-rose-50/40 hover:bg-rose-50/60'
+                        ? 'bg-rose-500/5'
                         : isExpanded
-                        ? 'bg-slate-50/80'
+                        ? 'bg-[var(--surface-inset)]'
                         : ''
                     }`}
                   >
@@ -173,15 +171,15 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
                             e.stopPropagation();
                             setExpandedRouteId((prev) => (prev === route.id ? null : route.id));
                           }}
-                          className="text-slate-400 hover:text-slate-600"
+                          className="text-[var(--foreground-subtle)] hover:text-[var(--foreground)]"
                         >
                           {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                         </button>
                         <div>
-                          <div className="font-bold text-slate-900">
+                          <div className="font-bold text-[var(--foreground)]">
                             {route.vanNumber} · {route.id.toUpperCase()}
                           </div>
-                          <div className="text-[10px] text-slate-500 font-sans">
+                          <div className="text-[10px] text-[var(--foreground-muted)] font-sans">
                             {route.routeName} ({route.depot})
                           </div>
                         </div>
@@ -190,33 +188,33 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
 
                     {/* Crew */}
                     <td className="py-3 px-3 text-[11px] font-sans">
-                      <div className="text-slate-800 font-medium">JSR: {route.jsrName}</div>
-                      <div className="text-[10px] text-slate-500">SR: {route.srName}</div>
+                      <div className="text-[var(--foreground)] font-medium">JSR: {route.jsrName}</div>
+                      <div className="text-[10px] text-[var(--foreground-muted)]">SR: {route.srName}</div>
                     </td>
 
                     {/* Delivered */}
-                    <td className="py-3 px-3 text-right font-bold text-slate-800 tabular-nums">
+                    <td className="py-3 px-3 text-right font-bold text-[var(--foreground)] dm-tabular">
                       {formatBDT(route.deliveredSales, { mode: 'exact', bangla: state.banglaMode })}
                     </td>
 
                     {/* Collected (Handed in) */}
-                    <td className="py-3 px-3 text-right font-bold text-emerald-700 tabular-nums">
+                    <td className="py-3 px-3 text-right font-bold text-emerald-500 dm-tabular">
                       {formatBDT(route.cashHandedIn, { mode: 'exact', bangla: state.banglaMode })}
                     </td>
 
                     {/* Credit Extended */}
-                    <td className="py-3 px-3 text-right font-bold text-amber-700 tabular-nums">
+                    <td className="py-3 px-3 text-right font-bold text-amber-500 dm-tabular">
                       {formatBDT(route.creditSales, { mode: 'exact', bangla: state.banglaMode })}
                     </td>
 
                     {/* Till Variance */}
-                    <td className="py-3 px-3 text-right tabular-nums">
+                    <td className="py-3 px-3 text-right dm-tabular">
                       <span className={`font-bold ${
                         route.variance < 0
-                          ? 'text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200'
+                          ? 'text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20'
                           : route.variance > 0
-                          ? 'text-emerald-700'
-                          : 'text-slate-500'
+                          ? 'text-emerald-400'
+                          : 'text-[var(--foreground-muted)]'
                       }`}>
                         {formatVariance(route.variance, state.banglaMode)}
                       </span>
@@ -234,7 +232,7 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
                           e.stopPropagation();
                           if (onSelectRoute) onSelectRoute(route.id);
                         }}
-                        className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-emerald-700 transition"
+                        className="p-1 rounded hover:bg-[var(--surface-hover)] text-[var(--foreground-subtle)] hover:text-emerald-500 transition"
                         title="Investigate Route Drawer"
                       >
                         <ExternalLink size={13} />
@@ -244,15 +242,15 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
 
                   {/* Expandable Retail Shop Drops Drilldown */}
                   {isExpanded && (
-                    <tr className="bg-slate-50/60 border-y border-slate-200">
+                    <tr className="bg-[var(--surface-inset)] border-y border-[var(--border)]">
                       <td colSpan={8} className="p-3 sm:p-4">
-                        <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-2xs">
+                        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] p-3 shadow-2xs">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                              <Store size={12} className="text-emerald-700" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                              <Store size={12} className="text-emerald-500" />
                               Retailer Invoices for {route.vanNumber} ({route.routeName})
                             </span>
-                            <span className="text-[10px] text-slate-500">
+                            <span className="text-[10px] text-[var(--foreground-muted)]">
                               {sampleShopDrops.length} drops logged · Average Drop: ৳1,333
                             </span>
                           </div>
@@ -261,25 +259,25 @@ export const RouteSettlementMatrix: React.FC<RouteSettlementMatrixProps> = ({
                             {sampleShopDrops.map((drop) => (
                               <div
                                 key={drop.billNumber}
-                                className="rounded bg-slate-50 p-2 border border-slate-200 flex flex-col justify-between"
+                                className="rounded-lg bg-[var(--surface)] p-2 border border-[var(--border)] flex flex-col justify-between dm-interactive"
                               >
                                 <div>
                                   <div className="flex items-center justify-between text-[10px]">
-                                    <span className="font-bold text-slate-800 truncate">{drop.retailerName}</span>
-                                    <span className="text-slate-400 font-mono">{drop.billNumber}</span>
+                                    <span className="font-bold text-[var(--foreground)] truncate">{drop.retailerName}</span>
+                                    <span className="text-[var(--foreground-subtle)] font-mono">{drop.billNumber}</span>
                                   </div>
-                                  <div className="text-[10px] text-slate-500 font-sans mt-0.5">{drop.marketPoint}</div>
+                                  <div className="text-[10px] text-[var(--foreground-muted)] font-sans mt-0.5">{drop.marketPoint}</div>
                                 </div>
-                                <div className="mt-2 pt-1 border-t border-slate-200 flex items-center justify-between text-[10px]">
-                                  <span className="text-emerald-700 font-semibold">Cash: {formatBDT(drop.cashPaid, { mode: 'summary' })}</span>
-                                  <span className="text-amber-700 font-semibold">Credit: {formatBDT(drop.creditGranted, { mode: 'summary' })}</span>
+                                <div className="mt-2 pt-1 border-t border-[var(--border)] flex items-center justify-between text-[10px]">
+                                  <span className="text-emerald-500 font-semibold dm-tabular">Cash: {formatBDT(drop.cashPaid, { mode: 'summary' })}</span>
+                                  <span className="text-amber-500 font-semibold dm-tabular">Credit: {formatBDT(drop.creditGranted, { mode: 'summary' })}</span>
                                 </div>
                               </div>
                             ))}
                           </div>
 
                           {route.statusReason && (
-                            <div className="mt-2 text-[10px] text-amber-900 bg-amber-50 px-2.5 py-1 rounded border border-amber-200 font-sans">
+                            <div className="mt-2 text-[10px] text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20 font-sans">
                               <strong>Audit Exception:</strong> {route.statusReason}
                             </div>
                           )}

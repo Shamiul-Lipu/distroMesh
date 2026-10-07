@@ -35,17 +35,17 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
   return (
     <div
       aria-label="Executive Decision & Action Dock"
-      className="sticky bottom-3 z-20 rounded-xl border border-[#cbd5e1] bg-white/95 backdrop-blur-md p-2.5 sm:p-3.5 lg:p-4 shadow-[0_4px_24px_rgba(15,23,42,0.08)] font-mono text-slate-800 transition-all"
+      className="sticky bottom-3 z-20 rounded-2xl border border-[var(--border)] bg-[var(--surface)] backdrop-blur-md p-2.5 sm:p-3.5 lg:p-4 shadow-lg font-mono text-[var(--foreground)] transition-all"
     >
       <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3">
         {/* Left Indicator */}
         <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-600 animate-ping" />
+          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
           <div className="flex flex-col">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-800">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
               {state.banglaMode ? 'নির্বাহী অ্যাকশন ডক' : 'EXECUTIVE ACTION DOCK'}
             </span>
-            <span className="text-[9px] text-slate-500 hidden sm:inline">
+            <span className="text-[9px] text-[var(--foreground-muted)] hidden sm:inline">
               High-confidence controls that mutate enterprise business state
             </span>
           </div>
@@ -55,7 +55,7 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
         <div className="lg:hidden flex items-center gap-2">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex items-center gap-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 text-xs font-bold shadow-xs transition"
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 text-xs font-bold shadow-xs transition active:scale-95"
             aria-expanded={mobileOpen}
             aria-label="Toggle executive action dock"
           >
@@ -69,10 +69,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
           {/* Action 1: ONE-TAP CREDIT LOCK */}
           <button
             onClick={onOpenCreditLockModal}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-xs active:scale-98 ${
               isCreditLocked
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 cursor-default'
-                : 'border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default'
+                : 'border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400'
             }`}
           >
             {isCreditLocked ? <Check size={13} /> : <Lock size={13} />}
@@ -86,10 +86,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
           {/* Action 2: PREPARE BANK DEPOSIT */}
           <button
             onClick={onOpenBankDepositModal}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-xs active:scale-98 ${
               isDepositPrepared
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 cursor-default'
-                : 'border border-amber-300 bg-amber-500 hover:bg-amber-600 text-slate-950'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default'
+                : 'border border-amber-500/30 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold'
             }`}
           >
             {isDepositPrepared ? <Check size={13} /> : <Building2 size={13} />}
@@ -103,10 +103,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
           {/* Action 3: AUTO-DEDUCT SHORTAGE */}
           <button
             onClick={onOpenShortageModal}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition shadow-2xs ${
+            className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-2xs active:scale-98 ${
               isShortageResolved
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 cursor-default'
-                : 'border border-slate-300 bg-white hover:bg-slate-50 text-slate-700'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default'
+                : 'border border-[var(--border)] bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--foreground)]'
             }`}
           >
             {isShortageResolved ? <Check size={13} /> : <MinusCircle size={13} />}
@@ -120,10 +120,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
           {/* Action 4: APPROVE DAY-END CLOSEOUT */}
           <button
             onClick={onOpenDayEndModal}
-            className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition shadow-xs active:scale-98 ${
               isDayClosed
-                ? 'border border-emerald-300 bg-emerald-100 text-emerald-800 cursor-default'
-                : 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                ? 'border border-emerald-500/30 bg-emerald-500/20 text-emerald-400 cursor-default'
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/20'
             }`}
           >
             <ShieldCheck size={14} />
@@ -138,17 +138,17 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
 
       {/* Mobile Actions Drawer (visible when mobileOpen is true on < lg) */}
       {mobileOpen && (
-        <div className="lg:hidden mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="lg:hidden mt-3 pt-3 border-t border-[var(--border)] grid grid-cols-1 sm:grid-cols-2 gap-2">
           {/* Action 1 */}
           <button
             onClick={() => {
               setMobileOpen(false);
               onOpenCreditLockModal();
             }}
-            className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-bold transition shadow-xs active:scale-98 ${
               isCreditLocked
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800'
-                : 'border border-rose-200 bg-rose-50 text-rose-700'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                : 'border border-rose-500/30 bg-rose-500/10 text-rose-400'
             }`}
           >
             {isCreditLocked ? <Check size={13} /> : <Lock size={13} />}
@@ -165,10 +165,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
               setMobileOpen(false);
               onOpenBankDepositModal();
             }}
-            className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-bold transition shadow-xs active:scale-98 ${
               isDepositPrepared
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800'
-                : 'border border-amber-300 bg-amber-500 text-slate-950'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                : 'border border-amber-500/30 bg-amber-500 text-slate-950'
             }`}
           >
             {isDepositPrepared ? <Check size={13} /> : <Building2 size={13} />}
@@ -185,10 +185,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
               setMobileOpen(false);
               onOpenShortageModal();
             }}
-            className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-xs font-bold transition shadow-2xs ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-bold transition shadow-2xs active:scale-98 ${
               isShortageResolved
-                ? 'border border-emerald-300 bg-emerald-50 text-emerald-800'
-                : 'border border-slate-300 bg-white text-slate-700'
+                ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                : 'border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--foreground)]'
             }`}
           >
             {isShortageResolved ? <Check size={13} /> : <MinusCircle size={13} />}
@@ -205,10 +205,10 @@ export const DecisionActionDock: React.FC<DecisionActionDockProps> = ({
               setMobileOpen(false);
               onOpenDayEndModal();
             }}
-            className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-xs font-bold transition shadow-xs ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-bold transition shadow-xs active:scale-98 ${
               isDayClosed
-                ? 'border border-emerald-300 bg-emerald-100 text-emerald-800'
-                : 'bg-emerald-700 text-white'
+                ? 'border border-emerald-500/30 bg-emerald-500/20 text-emerald-400'
+                : 'bg-emerald-600 text-white'
             }`}
           >
             <ShieldCheck size={14} />
