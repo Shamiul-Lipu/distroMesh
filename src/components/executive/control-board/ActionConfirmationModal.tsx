@@ -244,7 +244,7 @@ export const ActionConfirmationModal: React.FC<ActionConfirmationModalProps> = (
                   EXPECTED AUDIT EFFECT
                 </span>
                 <p className="text-xs leading-relaxed font-sans text-[var(--foreground)]">
-                  Freezes all 12 van route settlements, locks today's till reconciliation, updates receivables ledger, and posts immutable daily audit records for management reporting.
+                  Freezes all 12 van route settlements, locks today&apos;s till reconciliation, updates receivables ledger, and posts immutable daily audit records for management reporting.
                 </p>
               </div>
             </div>

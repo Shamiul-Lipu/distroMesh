@@ -1,36 +1,43 @@
 # distroMesh: Platform Overview
 
-## Executive Summary & Purpose
-
-**distroMesh** is an institutional-grade financial intelligence and operations command platform tailored for fast-moving consumer goods (FMCG) distribution houses, regional wholesalers, and multi-entity distribution conglomerates.
-
-In high-velocity FMCG distribution, distributors operate on razor-thin net margins (1.0%–2.0%), cycle crores of taka in working capital, handle complex daily cash sweeps across dozens of van routes, and navigate strict 48-hour auto-debit obligations from multinational principals (such as Unilever Bangladesh). 
-
-distroMesh bridges the gap between high-level executive portfolio governance and granular warehouse floor execution:
-1. **Portfolio Governance**: Aggregates disparate businesses (FMCG distributorships, flour mills, beverage logistics, agro-trade) into a unified executive platform while strictly isolating ledgers, balances, and legal entities.
-2. **Operations War Room**: Delivers a high-density, real-time command center (`/war-room`) featuring a 12-route van settlement ledger, invoice-level retail shop drill-downs, Net Operating Working Capital (NOWC) waterfalls, receivables ageing distribution, and hardware bottleneck economics.
-3. **Data Integrity & Reconciled Identities**: Enforces mathematical zero-leakage accounting across sales, cash collections, credit allocations, expense vouchers, and vault counts.
+> **Live Production Demo**: [https://distromesh.vercel.app](https://distromesh.vercel.app)  
+> **System Status**: Fully Operational Live Prototype on Vercel Serverless Edge  
+> **Current Engine**: Next.js 16.3.8 Turbopack · React 19 · TypeScript 5 · Tailwind CSS v4  
 
 ---
 
-## Flagship Implementation: M/S Popy Traders
+## 1. Executive Summary & Purpose
 
-The reference deployment represents **M/S Popy Traders**, an exclusive tier-1 Unilever distribution house operating across the **Sherpur & Bogura Hubs** in northern Bangladesh.
+**distroMesh** is an institutional-grade financial command and operations intelligence platform engineered specifically for fast-moving consumer goods (FMCG) distribution houses, regional wholesale distributors, and multi-entity commercial conglomerates in Bangladesh.
 
-### Reconciled Baseline Telemetry (Daily Cycle)
-- **Delivered Gross Sales**: ৳9,60,000 across 12 delivery beats, 6 distribution vans, 700 retail drops, and 7,997 physical cases/units (average drop size: ৳1,333).
+In FMCG distribution, distributors operate on tight net margins (1.0%–2.0%), cycle crores of taka in working capital each month, manage complex evening cash sweeps across dozens of delivery beats, and navigate non-negotiable 48-hour auto-debit sweeps from multinational principals (such as Unilever Bangladesh). A single uncollected invoice, an unauthorized credit extension, or an unaccounted till shortage directly destroys the distributor's net profit.
+
+distroMesh bridges the operational gap between high-level owner governance and daily warehouse floor execution:
+
+1. **Portfolio Governance**: Aggregates disparate commercial agencies (e.g., Unilever Distribution, Durables Logistics, Footwear Agencies, Edible Oil Depots, Wholesale Trade) into a unified executive view while strictly isolating bank accounts, ledgers, and legal entities.
+2. **Operations War Room**: Delivers a high-density, real-time command center (`/war-room`) featuring a 12-route van settlement ledger, invoice-level retail shop drill-downs, Net Operating Working Capital (NOWC) waterfalls, receivables ageing distribution, and hardware bottleneck economics.
+3. **Data Integrity & Reconciled Identities**: Enforces 10 mathematical non-negotiable accounting identities across gross sales, cash collections, credit allocations, expense vouchers, and vault counts.
+
+---
+
+## 2. Flagship Enterprise Reference: M/S Popy Traders
+
+The reference dataset represents **M/S Popy Traders**, an exclusive tier-1 Unilever distribution house operating across the **Sherpur and Bogura Hubs** in northern Bangladesh.
+
+### Reconciled Daily Baseline Telemetry
+- **Delivered Gross Sales**: ৳9,60,000 across 12 delivery beats, 6 delivery vans, 700 retail drops, and 7,997 physical case units (average drop size: ৳1,333).
 - **Settlement Composition**:
   - **Cash Sales Collected**: ৳5,80,000 (60.4% cash conversion).
-  - **Fresh Market Credit Extended**: ৳3,80,000 (39.6% credit share; within policy ceiling of $\le 45.0\%$).
+  - **Fresh Market Credit Extended**: ৳3,80,000 (39.58% credit share; within policy ceiling of $\le 45.0\%$).
   - **Old Market Dues Collected**: ৳2,80,000.
   - **Total Cash Handed In by JSRs**: ৳8,60,000 ($\text{Cash Sales } ৳5,80,000 + \text{Old Dues } ৳2,80,000$).
   - **Cash Expenses Incurred**: ৳14,400 (fuel, labor, toll vouchers).
   - **Opening Cash Float**: ৳50,000.
   - **Expected Cash in Till**: ৳8,95,600 ($\text{Float } ৳50,000 + \text{Handed In } ৳8,60,000 - \text{Expenses } ৳14,400$).
   - **Counted Vault Till**: ৳8,95,200.
-  - **Till Variance**: **−৳400** (audit exception flagged on Van #3 / Route 103 JSR Babul).
+  - **Till Variance**: **−৳400** (audit exception flagged on Van #3 / Route 103 JSR Babul Hossain).
 - **Liquidity & Working Capital**:
-  - **Total Liquid Cash**: ৳16,95,200 (Bank balance ৳8,00,000 at Islami Bank + Counted Vault Cash ৳8,95,200).
+  - **Total Liquid Cash**: ৳16,95,200 (Islami Bank balance ৳8,00,000 + Counted Vault Cash ৳8,95,200).
   - **Upcoming Principal Obligation**: ৳54,00,000 auto-debit due in 48 hours to Unilever Bangladesh.
   - **Trade Receivables**: ৳1,97,00,000 (overdue > 30 days: ৳35,50,685 / 18.0%).
   - **Warehouse Inventory**: ৳1,54,00,000 (closing stock valuation; 18.5 days of sales cover).
@@ -47,158 +54,121 @@ The reference deployment represents **M/S Popy Traders**, an exclusive tier-1 Un
 
 ---
 
-## Core Platform Capabilities
+## 3. Major Platform Capabilities
 
-### 1. Multi-Business Portfolio Mesh (`/businesses`)
-- **Portfolio-Wide Health Scan**: Consolidates multiple operating units (e.g., M/S Popy Traders, Haji & Sons Flour Mill, Bengal Beverage Ltd., Padma Agro Trade, North Bengal Logistics).
-- **Clear Demarcation of Missing Coverage**: Distinguishes true measured zeros from missing data streams.
-- **Side-by-Side Business Comparisons**: Benchmarks liquidity cushions, credit exposure ratios, delivery completion rates, and profit margins across entities without co-mingling financial ledgers.
-
-### 2. Operations War Room (`/businesses/{business}/war-room`)
-Modeled after Bloomberg Terminal and FactSet operations trading desks, the War Room provides an ultra-dense, institutional operations interface:
-- **Header Telemetry**: Real-time status indicators, Dhaka operating schedule context (`12:00–19:00 Delivery & Cash Settlement Phase`), tier switches, role toggles, and live system clocks.
-- **6-KPI Health Strip**:
-  - *Liquid Cash*: ৳16,95,200 with 2.17× obligation coverage ratio.
-  - *Principal Auto-Debit*: ৳54,00,000 with 48h timer and post-debit transit cash buffer.
-  - *Delivered Sales*: ৳9,60,000 with 700 retail drops and 7,997 units.
-  - *Credit Share*: 39.6% against a strict 45% ceiling.
-  - *Till Variance*: −৳400 exception badge linked to Van #3.
-  - *Dispatch Delay*: +165 minutes with 1,980 van-minutes lost and ৳4,950 idle crew cost.
+### 1. Operations War Room (`/businesses/{business}/war-room`)
+Modeled after institutional trading desks, the War Room provides an ultra-dense, real-time command surface:
+- **Executive Header**: Real-time status indicators, Dhaka operating schedule context (`12:00–19:00 Delivery & Cash Settlement Phase`), tier switches, role toggles, and live clocks.
+- **Liquidity Runway**: Real-time ratio of liquid cash versus upcoming supplier auto-debit sweeps, clearly separating physical depot vault cash from clearing bank balances.
 - **12-Route Settlement Ledger & Retail Shop Drilldown**:
   - Real-time search by route ID, market name, van number, SR, or JSR.
   - Status filters (`All`, `Flagged Exceptions`, `Settled`).
-  - Right-aligned tabular numerals (`font-mono tabular-nums`) with currency indicators in headers.
-  - Interactive row expansion: clicking any route opens a live audit table of sample retailer shop invoices (e.g., Haji & Sons Grocery, Janani Store, Bismillah Traders) displaying bill numbers, market points, cash paid, credit granted, and timestamps.
-- **Balance Sheet & Economic Waterfall (Right Column)**:
-  - *NOWC Waterfall*: Visual step breakdown of Receivables + Inventory + Claims − Payables = ৳1.37Cr.
-  - *Receivables Ageing*: 5-bracket segmented distribution bar (0–15d, 16–30d, 31–45d, 46–60d, 60+d) with top overdue retailer watch list.
-  - *Billing Hardware Bottleneck Economics*: Economic calculation of legacy Epson LQ-310 dot-matrix printer failures (+165 min dispatch delay, ৳41.46 loss/unit, ৳2,488 daily mispick loss, and **2.8-day payback period** for replacement equipment).
-  - *Section F FMCG KPIs*: Order strike rate (75.0%), lines per call (4.8 SKUs), delivery fill rate (96.5%), market return rate (1.2%), warehouse stock cover (18.5 days), break-even volume (90,741 units / 43.6%), and margin of safety (56.4%).
+  - Interactive row expansion: clicking any route opens a live audit table of retailer shop invoices (e.g., Haji & Sons Grocery, Janani Store, Bismillah Traders).
+  - Highlighted discrepancy on **Van #3 / Route 103 (−৳400 shortfall)**.
+- **Balance Sheet & Economic Waterfall**:
+  - *NOWC Waterfall*: Step breakdown of Receivables + Inventory + Claims − Payables = ৳1.37Cr.
+  - *Receivables Ageing*: 5-bracket segmented distribution bar with top overdue retailer watch list.
+  - *Billing Hardware Bottleneck Economics*: Calculation of legacy Epson LQ-310 dot-matrix printer failures (+165 min dispatch delay, ৳4,950 idle crew cost, ৳2,488 daily mispick loss, and **2.8-day payback period** for replacement equipment).
 
-### 3. Multi-Tier Viewports & Responsive Display Modes
-- **Deck Tier**: Standard high-density two-column workbench optimized for executive desktop and laptop screens.
-- **Field Tier**: Single-column high-contrast layout tuned for tablet devices used by warehouse dispatchers and field coordinators.
-- **Wall (4K) Tier**: 7-tile Bloomberg-grade command wall display designed for NOC and warehouse display boards, featuring burn-in pixel shift protection and high-visibility status badges.
+### 2. Multi-Business Portfolio Mesh (`/businesses`)
+- **Portfolio-Wide Health Scan**: Consolidates multiple operating units (M/S Popy Traders, Pureit Distribution, Sherpur Trade, Bogura Retail, Freshway Consumer).
+- **Side-by-Side Business Comparisons**: Benchmarks liquidity cushions, credit exposure ratios, delivery completion rates, and profit margins across entities without commingling financial ledgers.
+- **Business Onboarding Modal**: Configure new distribution contracts, bank buffers, and linked subsidiaries.
 
-### 4. Role-Based Perspectives & Action Dock
-- **Contextual Roles**:
-  - **Owner / CEO**: High-level working capital, bank deposit approvals, and credit ceiling enforcement.
-  - **Operations Manager**: Delivery beat tracking, dispatch delays, and printer hardware replacement.
-  - **Vault Cashier**: Cash counting, opening float balancing, and route till variance reconciliation.
-  - **Field Viewer**: Read-only tracking for audit teams and supervisors.
-- **State-Mutating Action Dock**:
+### 3. State-Mutating Action Dock & Investigation Drawers
+- **One-Touch Actions**:
   - `Pause Credit`: Lock market credit extensions for high-risk overdue retailers.
-  - `Prepare Bank Deposit`: Simulate moving counted vault cash into the Islami Bank operating account to cover the ৳54,00,000 auto-debit.
-  - `Open Shortage Case`: Initiate JSR salary deduction or CEO waiver for cash discrepancies.
+  - `Prepare Bank Deposit`: Simulate moving counted vault cash into the bank clearing account.
+  - `Resolve Exception`: Shortage case workflow for Van #3 with Waive, Deduct, or Escalate actions.
   - `Review and Close Day`: Finalize settlement ledger and generate end-of-day audit trail.
+- **6 Specialized Forensic Drawers**: Route Detail Drawer, Reconciliation Drawer, Incident Audit Drawer, Obligation Drawer, Working Capital Drawer, and Action Confirmation Modal.
 
-### 5. Localization & Dual-Language Architecture (EN / BN)
-- Instant bilingual toggle supporting English and native Bengali (বাংলা).
-- Automatic conversion of all numbers, currency values, dates, and metric scales into authentic Bengali numerals (`০, ১, ২, ৩, ৪, ৫, ৬, ৭, ৮, ৯`).
-- Culturally accurate FMCG terminology:
-  - **SR** (*Sales Representative / Order Booker*)
-  - **JSR** (*Junior Sales Representative / Delivery Man & Cash Collector*)
-  - **Beat / Route** (*দৈনিক বাজার ডেলিভারি রুট*)
-  - **Dues** (*পূর্বের বকেয়া আদায়*)
-  - **Float** (*শুরুর নগদ ব্যালেন্স*)
+### 4. Interactive Scenario Simulator
+- Sliding parameter panel enabling real-time stress testing of bank balance, vault cash, supplier obligations, market credit share, and dispatch delay with instantaneous reactive recalculations.
+
+### 5. Dual-Theme & Bilingual Architecture
+- Instant toggle between Institutional Dark Mode (`#050506`) and High-Contrast Light Mode (`#F7F8FA`).
+- Full bilingual toggle supporting English and native Bengali (বাংলা) with automatic conversion to Bengali numerals (`৳১৬,৯৫,২০০`).
 
 ---
 
-## Complete Route Reference
+## 4. Current System Architecture
 
-The distroMesh application features full App Router deep-linking across the following views:
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CLIENT / REVIEWER BROWSER                       │
+│  (Desktop Browser, Warehouse Tablet, or Depot Wall Display Monitor)   │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTPS (TLS 1.3)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                     VERCEL SERVERLESS EDGE NETWORK                     │
+│               Domain: https://distromesh.vercel.app                    │
+│                                                                        │
+│  ┌───────────────────────┐        ┌─────────────────────────────────┐  │
+│  │ Static Assets (CDN)   │        │ Next.js 16 Turbopack Serverless │  │
+│  │ CSS, JS, Media, Woff2 │        │ SSR / Dynamic Page Delivery     │  │
+│  └───────────────────────┘        └────────────────┬────────────────┘  │
+└────────────────────────────────────────────────────┼───────────────────┘
+                                                     │ Hydration
+                                                     ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│               REACT 19 CLIENT-SIDE APPLICATION RUNTIME                 │
+│                                                                        │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ ExecutiveContext State Store (In-Memory React Context)            │  │
+│  │ - Reactive Bank & Vault Cash     - 12 Van Beat Records           │  │
+│  │ - Upcoming Auto-Debit Obligations - Real-Time Till Audit State   │  │
+│  │ - Scenario Simulation Overrides   - Session Audit Trail          │  │
+│  └───────────────┬──────────────────────────────────┬───────────────┘  │
+│                  │                                  │                  │
+│                  ▼                                  ▼                  │
+│  ┌───────────────────────────────┐  ┌───────────────────────────────┐  │
+│  │ Derived Rules Engine          │  │ Formatting & i18n Engine      │  │
+│  │ - Liquidity Status (SAFE/CRIT)│  │ - Indian Comma Grouping       │  │
+│  │ - Dispatch Loss Calculation   │  │ - Bengali Numeral Converter   │  │
+│  │ - Mispick Cost Economics      │  │ - Taka Prefix Standardization │  │
+│  │ - Receivables Ageing Brackets │  │ - Exact vs Summary Formatters │  │
+│  └───────────────────────────────┘  └───────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
-| Route Path | View Name | Description |
+---
+
+## 5. Demonstrated vs Planned Capabilities
+
+| Capability | Current Demo Status | Production Target |
 | :--- | :--- | :--- |
-| `/` | Landing Page | Public brand overview, platform features, and live demo access. |
-| `/businesses` | Portfolio Management | Multi-business aggregated scan, entity metrics, and side-by-side comparison. |
-| `/businesses/{business}/overview` | Business Overview | Primary business dashboard, monthly revenue trend charts, and quick KPI tiles. |
-| `/businesses/{business}/war-room` | Financial War Room | Real-time operations command center, 12-route settlement matrix, NOWC, and hardware economics. |
-| `/businesses/{business}/sales-operations` | Sales & Operations | Detailed breakdown of volume, case drops, delivery routes, and field team performance. |
-| `/businesses/{business}/connected-businesses` | Supply Chain Relationships | Map of connected mills, suppliers, retail chains, and sister distribution hubs. |
-| `/businesses/{business}/transactions` | Ledger & Transactions | Filterable record of cash sweeps, bank deposits, expense vouchers, and customer receipts. |
-| `/businesses/{business}/invoices` | Retail Shop Invoices | Invoice register tracking delivery status, credit terms, and collection progress. |
-| `/businesses/{business}/expenses` | Expense Vouchers | Operating expense log categorized by fuel, van maintenance, labor, and warehouse overheads. |
-| `/businesses/{business}/cash-flow` | Liquidity & Cash Flow | Cash bridge visualization, bank account ledgers, and 48-hour obligation analysis. |
-| `/businesses/{business}/alerts` | Alert Center | Exception inbox for cash variances, delayed dispatches, credit limit breaches, and stockouts. |
-| `/businesses/{business}/ask` | Business Q&A Assistant | Context-aware distribution assistant responding to queries using live workspace metrics. |
+| **User Interface & War Room** | **Fully Demonstrated** | Same interface connected to live WebSocket push |
+| **Mathematical Identity Integrity** | **Fully Demonstrated (20 Tests Passed)** | Enforced at PostgreSQL transaction boundaries |
+| **Bilingual Toggle & Numerals** | **Fully Demonstrated** | Same implementation |
+| **Dual-Theme Design System** | **Fully Demonstrated** | Same implementation |
+| **Scenario Simulator** | **Fully Demonstrated** | Same implementation with server-side snapshotting |
+| **Forensic Drawers & Modals** | **Fully Demonstrated** | Same implementation with server-backed audit logs |
+| **Data Persistence** | **In-Memory Demo State (Resets on Refresh)** | PostgreSQL 16+ with Row-Level Security |
+| **Authentication & Permissions** | **Simulated Role Switcher in UI** | JWT with SMS OTP & Role-Based Access Control |
+| **External ERP Integration** | **Simulated FMCG Baseline Rules** | Unilever DMS / SAP EDI/SFTP Connector |
+| **Bank Auto-Sweep** | **Simulated 48h Timeline** | Host-to-Host Corporate Banking API |
+| **Hardware Printing Daemon** | **Calculated Economic ROI in UI** | `distromesh-printd` Go service on warehouse terminal |
 
 ---
 
-## Strict Mathematical Identities (Zero-Leakage Integrity)
+## 6. Live Verification & Testing
 
-distroMesh implements 10 non-negotiable accounting identities enforced across all calculations and verified via automated test suites:
+The live deployment at [https://distromesh.vercel.app](https://distromesh.vercel.app) has been verified across all core paths:
 
-$$\begin{aligned}
-\mathbf{Identity\ 1:} & \quad \text{Delivered Sales} = \text{Cash Sales} + \text{Credit Sales} \\
-& \quad \text{৳9,60,000} = \text{৳5,80,000} + \text{৳3,80,000} \\[6pt]
-\mathbf{Identity\ 2:} & \quad \text{Cash Handed In} = \text{Cash Sales} + \text{Old Dues Collected} \\
-& \quad \text{৳8,60,000} = \text{৳5,80,000} + \text{৳2,80,000} \\[6pt]
-\mathbf{Identity\ 3:} & \quad \text{Expected Till} = \text{Opening Float} + \text{Cash Handed In} - \text{Cash Expenses} \\
-& \quad \text{৳8,95,600} = \text{৳50,000} + \text{৳8,60,000} - \text{৳14,400} \\[6pt]
-\mathbf{Identity\ 4:} & \quad \text{Till Variance} = \text{Counted Till} - \text{Expected Till} = \sum_{r=1}^{12} \text{Route Variance}_r \\
-& \quad \mathbf{-৳400} = \text{৳8,95,200} - \text{৳8,95,600} \\[6pt]
-\mathbf{Identity\ 5:} & \quad \text{Credit Share} = \frac{\text{Credit Sales}}{\text{Delivered Sales}} = \frac{\text{৳3,80,000}}{\text{৳9,60,000}} = \mathbf{39.6\%} \quad (\le 45.0\%) \\[6pt]
-\mathbf{Identity\ 6:} & \quad \text{Bank Balance} \cap \text{Vault Cash} = \emptyset \quad (\text{Vault cash is not counted in bank until deposit is posted}) \\[6pt]
-\mathbf{Identity\ 7:} & \quad \text{Receivables}_{t} = \text{Receivables}_{t-1} + \text{Credit Extended} - \text{Dues Collected} \\[6pt]
-\mathbf{Identity\ 8:} & \quad \text{NOWC} = \text{Receivables} + \text{Inventory} + \text{Claims} - \text{Payables} \\
-& \quad \text{৳1,37,00,000} = \text{৳1,97,00,000} + \text{৳1,54,00,000} + \text{৳2,05,00,000} - \text{৳2,15,00,000} \\[6pt]
-\mathbf{Identity\ 9:} & \quad \text{Net Profit} = \text{Gross Profit} - \text{Operating Costs} - \text{Financing Costs} \\
-& \quad \text{৳3,72,500} = \text{৳10,50,000} - \text{৳6,00,000} - \text{৳77,500} \quad (\mathbf{1.49\%}\text{ margin}) \\[6pt]
-\mathbf{Identity\ 10:} & \quad \text{Monthly Invoices} = \text{Daily Invoices} \times 26 = 720 \times 26 = \mathbf{18,720\ invoices}
-\end{aligned}$$
+1. **Landing Page (`/`)**: Confirmed interactive hero cockpit, 5-zone product showcases, theme switch, and language switch.
+2. **War Room (`/businesses/unilever-distribution/war-room`)**: Verified Executive Header, Liquidity Runway, 12-route settlement matrix, Route 3 shortage highlight, and action dock modals.
+3. **Route Detail Drawer**: Verified line-item retailer challans for Van #3 (Babul Hossain).
+4. **Action Dock Modals**: Confirmed two-step confirmation dialogs for credit lock, bank deposit, and shortage cases.
+5. **Multi-Business Portfolio (`/businesses`)**: Confirmed rendering of all 5 business entities and onboarding modal.
+6. **Automated Test Suite**: 20 automated unit tests passing cleanly with zero failures (`npm.cmd test`).
+7. **Linter**: Zero ESLint errors across all components (`npm.cmd run lint`).
 
 ---
 
-## Number Formatting Standards
+## 7. Known Limitations
 
-All financial and operational data in distroMesh follows strict presentation guidelines:
-1. **Bangladeshi / South Asian Number Grouping**: Commas format as `X,XX,XX,XXX` (e.g., `৳16,95,200`, `৳54,00,000`, `৳1,37,00,000`).
-2. **Standardized Summary Notation**: Compact numbers utilize `L` (Lakh = $10^5$) and `Cr` (Crore = $10^7$) only. Western `K` or `M` abbreviations are strictly barred from high-level currency summaries.
-3. **Control Values**: Exact taka figures are displayed without rounding for all audit control values (variance, counted till, invoice totals).
-4. **Header-Scoped Currency**: Table column headers explicitly specify `(৳)` to eliminate repetitive currency clutter inside table cells.
-5. **Tabular Numerals**: Numeric data is rendered in fixed-width monospace fonts (`font-mono tabular-nums`) and right-aligned for instant vertical scanning.
-6. **Negative Control Signage**: Discrepancies and negative balances use the typographical minus sign `−৳` (e.g., `−৳400`).
-
----
-
-## Technical Stack & Quality Assurance
-
-- **Framework**: Next.js 16 (App Router) with Turbopack compiler.
-- **Frontend Core**: React 19, TypeScript (strict mode enabled with zero `any` types).
-- **Styling**: Tailwind CSS with custom institutional color palette, responsive breakpoints, and dark mode support.
-- **Analytics & Visualizations**: Recharts for revenue curves and liquidity bridges; Lucide React for iconography.
-- **Automated Verification**:
-  - `npm test`: Built-in Node test runner (`node --test`) executing 20 unit tests across mathematical identities, derived FMCG operational rules, and formatting modules (**100% pass rate**).
-  - `npm run lint`: ESLint with **0 errors and 0 warnings**.
-- **Production Backend Specification**: See [`BACKEND_REQUIREMENTS.md`](file:///d:/dfb/BACKEND_REQUIREMENTS.md) for full PostgreSQL DDL schemas, double-entry ledger contracts, REST/WebSocket APIs, edge printer daemon specifications, and Unilever ERP integration architecture.
-- **Non-Technical Operator's Manual**: See [`USER_GUIDE.md`](file:///d:/dfb/USER_GUIDE.md) for an everyday, plain-language operational manual designed for business owners, warehouse managers, cashiers, and field supervisors.
-
----
-
-## Local Execution Guide
-
-To run distroMesh locally:
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-Visit [http://localhost:3000](http://localhost:3000) or open the War Room directly at [http://localhost:3000/businesses/unilever-distribution/war-room](http://localhost:3000/businesses/unilever-distribution/war-room).
-
-To run validation checks:
-
-```bash
-# Run ESLint
-npm run lint
-
-# Run mathematical & integrity tests
-npm test
-
-# Build production bundle
-npm run build
-```
+- **Session-Scoped Persistence**: Data modifications, business onboarding, and shortage resolutions are held in client-side memory and do not persist across hard browser reloads.
+- **Simulated Roles**: User role selection does not require login credentials; it is intended for testing different operational perspectives.
+- **No Live Financial Accounts**: Bank balances and principal auto-debits reflect the authentic operational schedule of M/S Popy Traders, but are not connected to live banking webhooks.

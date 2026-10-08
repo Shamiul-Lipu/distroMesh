@@ -79,25 +79,19 @@ export const HeroCockpitPreview: React.FC<HeroCockpitPreviewProps> = ({
     if (!isInView) return;
 
     if (activeTab === 'liquidity') {
-      setLiquidityStaged(false);
       const stageTimer = setTimeout(() => setLiquidityStaged(true), 1400);
       return () => {
         clearTimeout(stageTimer);
         setLiquidityStaged(false);
       };
-    } else {
-      setLiquidityStaged(false);
     }
 
     if (activeTab === 'settlement') {
-      setSettlementResolved(false);
       const resolveTimer = setTimeout(() => setSettlementResolved(true), 1400);
       return () => {
         clearTimeout(resolveTimer);
         setSettlementResolved(false);
       };
-    } else {
-      setSettlementResolved(false);
     }
   }, [activeTab, isInView]);
 

@@ -79,8 +79,8 @@ export const WeeklyCollectionVsTarget: React.FC<WeeklyCollectionVsTargetProps> =
                 fontFamily: 'monospace',
                 color: '#F9FAFB',
               }}
-              formatter={(val: any, name: any) => [
-                `৳${val}K`,
+              formatter={(val: unknown, name: unknown) => [
+                `৳${String(val ?? '')}K`,
                 name === 'collectionTarget' ? 'Target' : 'Collected',
               ]}
               labelFormatter={(label) => `${label} · Collection`}

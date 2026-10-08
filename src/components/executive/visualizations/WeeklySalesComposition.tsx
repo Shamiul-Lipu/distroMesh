@@ -88,8 +88,8 @@ export const WeeklySalesComposition: React.FC<WeeklySalesCompositionProps> = ({
                 fontFamily: 'monospace',
                 color: '#F9FAFB',
               }}
-              formatter={(val: any, name: any) => [
-                `৳${val}K`,
+              formatter={(val: unknown, name: unknown) => [
+                `৳${String(val ?? '')}K`,
                 name === 'cashSales' ? 'Cash Sales' : 'Credit Sales',
               ]}
               labelFormatter={(label) => `${label} · Daily Trend`}

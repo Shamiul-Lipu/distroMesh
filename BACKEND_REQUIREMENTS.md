@@ -1,51 +1,156 @@
 # distroMesh: Backend Architecture & Implementation Specification
 
+> **Live Prototype Deployment**: [https://distromesh.vercel.app](https://distromesh.vercel.app)  
+> **Source Repository**: `Shamiul-Lipu/distroMesh`  
+> **Current Revision**: Next.js 16.3.8 Turbopack / React 19 / TypeScript 5 / Tailwind CSS v4  
+
+---
+
 ## 1. Executive Summary & Objective
 
-This document specifies the backend system requirements, architectural design, database schemas, API contracts, and integration protocols required to transition **distroMesh** from its current frontend demonstration mode into a mission-critical, production-grade financial command and operations system.
+**distroMesh** is an institutional-grade financial command and operations system tailored for fast-moving consumer goods (FMCG) distribution houses, regional wholesalers, and multi-entity distribution conglomerates operating in Bangladesh.
 
-The target environment is high-velocity Fast-Moving Consumer Goods (FMCG) distribution in Bangladesh, taking **M/S Popy Traders** (Unilever Distribution, Sherpur & Bogura Hubs) as the primary enterprise reference.
+The primary reference enterprise is **M/S Popy Traders**, an exclusive tier-1 Unilever distribution house operating across the **Sherpur and Bogura Hubs** in northern Bangladesh. FMCG distribution operates on tight margins (1.0%–2.0% net operating profit), high working capital turnover (৳2.50+ Crore monthly turnover), strict 48-hour principal auto-debit sweeps by multinational FMCGs, and intense physical cash handling across dozens of daily van delivery beats.
 
----
-
-## 2. Core Architectural Principles
-
-1. **Multi-Tenant Entity Isolation**:
-   - Strict logical data isolation across business entities (e.g., Unilever Distribution, Flour Mills, Beverage Logistics, Agro Trade) using PostgreSQL Row-Level Security (RLS) and tenant-scoped connection pooling.
-   - No co-mingling of bank balances, general ledgers, inventory lots, or retailer receivables across legal entities.
-
-2. **Immutable Double-Entry Financial Ledger**:
-   - Every financial transaction (cash sale, credit issuance, old dues collection, expense voucher, vault deposit, bank sweep) must generate balanced debit/credit journal entries.
-   - Zero hard deletion of financial records. Corrections must be handled via reversing journal entries.
-
-3. **Strict Mathematical Identity Verification at API Boundary**:
-   - The backend must validate the 10 Non-Negotiable Identities (documented in [`PLATFORM_OVERVIEW.md`](file:///d:/dfb/PLATFORM_OVERVIEW.md)) at database transaction boundaries before committing any route settlement or till session.
-
-4. **Offline-First Synchronization for Field Teams**:
-   - Sales Representatives (SRs) and Delivery/Cash Collectors (JSRs) operate in rural and suburban beats with intermittent cellular connectivity.
-   - Client-side SQLite/IndexedDB on mobile handhelds synchronizing via vector clocks / conflict-free replicated data types (CRDTs) with idempotency keys.
-
-5. **Sub-Second Live Telemetry for War Room**:
-   - Server-Sent Events (SSE) or WebSocket push for real-time updates to the War Room dashboard (`/war-room`) when delivery drops, cash sweeps, and printer queues change state.
+This specification documents both:
+1. **The Currently Built and Verified System**: A fully functional Next.js 16 App Router application deployed live to Vercel, featuring a comprehensive client-side state engine, mathematical derived rules engine, 10-identity integrity validation suite, interactive War Room command board, multi-business portfolio manager, and deep-dive forensic audit drawers.
+2. **The Target Production Backend Architecture**: The planned relational PostgreSQL schema with Row-Level Security (RLS), REST/WebSocket API contracts, distributed locks, edge hardware printing daemon, and external ERP/banking connectors required to transition the live prototype to a multi-server production deployment.
 
 ---
 
-## 3. Technology Stack Recommendation
+## 2. Implementation Status Matrix
 
-| Component | Technology | Rationale |
-| :--- | :--- | :--- |
-| **Primary Backend Runtime** | **Go (Golang)** or **Node.js (NestJS / TypeScript)** | High-concurrency route settlement processing, strict typing, and shared data contracts with the Next.js frontend. |
-| **Relational Database** | **PostgreSQL 16+** | Native support for Row-Level Security (RLS), JSONB, strict ACID guarantees, and declarative financial constraints. |
-| **Time-Series / Telemetry** | **TimescaleDB Extension** | Ultra-efficient aggregation of minute-by-minute van GPS pings, dispatch bottlenecks, and hourly sales run-rates. |
-| **In-Memory Cache & Locks**| **Redis 7+** | Distributed locks (`Redlock`) to prevent double-settlement of routes; caching of War Room KPI rollups. |
-| **Message Broker** | **RabbitMQ** or **Apache Kafka** | Asynchronous processing of invoice printing queues, audit logging, SMS/WhatsApp alerts, and principal ERP sync. |
-| **Edge Hardware Daemon** | **Go (Single Binary Daemon)** | Lightweight local warehouse service communicating over USB/Parallel with Epson LQ-310 dot-matrix printers. |
+To maintain total documentation integrity and treat the active codebase as the single source of truth, every component is classified below:
+
+| Subsystem / Component | Current State | Codebase Implementation | Verification / Notes |
+| :--- | :--- | :--- | :--- |
+| **Executive War Room (`/war-room`)** | **Implemented** | `src/components/war-room/WarRoomView.tsx`<br>`src/components/executive/control-board/` | 5 operational zones, live clock, 12-route settlement matrix, liquidity runway, action dock. |
+| **Multi-Business Portfolio (`/businesses`)** | **Implemented** | `src/components/executive/BusinessPortfolio.tsx` | 5 distinct commercial entities (Unilever, Pureit, Apex, Meghna, Square), comparative metrics, onboarding modal. |
+| **Derived Rules & Economics Engine** | **Implemented** | `src/utils/derivedRules.ts` | 6 business calculation rules: liquidity status, dispatch loss, route validation, mispick economics, receivables ageing, FMCG KPIs. |
+| **Bangladeshi Financial Numbering & Formatter** | **Implemented** | `src/utils/formatters.ts` | Indian numbering comma grouping (`৳ Lakh`, `৳ Crore`), negative prefixes (`−৳`), exact vs summary modes, Bengali numeral converter (`০–৯`). |
+| **Mathematical Identity Integrity Suite** | **Implemented** | `tests/dataIntegrity.test.ts` | 20 unit tests executing under Node.js native test runner validating 10 non-negotiable accounting identities. 100% pass rate. |
+| **Forensic Investigation Drawers** | **Implemented** | `src/components/executive/Drawers/` | 6 interactive drawers: Route Detail, Reconciliation, Incident Audit, Obligation, Working Capital, Action Confirmation. |
+| **Interactive Scenario Simulator** | **Implemented** | `src/components/executive/SimulationPanel.tsx` | Reactive sliders for Bank Cash, Vault Cash, Obligations, Fresh Credit, Delay Minutes, and Variance with live recalculation. |
+| **Dual-Theme Design System** | **Implemented** | `src/context/ThemeContext.tsx`<br>`src/app/globals.css` | Institutional dark mode (`#050506` / `#0B0F19`) and clean light mode (`#F7F8FA`) with persistence in `localStorage`. |
+| **Bilingual Localization (EN / BN)** | **Implemented** | `src/context/ExecutiveContext.tsx` | Instant toggle between English and authentic Bengali FMCG terminology and Bengali numerals across all views. |
+| **Display Viewport Tiers (Deck / Touch / Wall 4K)** | **Implemented** | `src/components/executive/control-board/` | Responsive viewports for Desktop, Field/Tablet, and 55–65" Wall Display with burn-in pixel shift protection. |
+| **Dynamic Workspace Routing** | **Implemented** | `src/app/(workspace)/businesses/[[...segments]]/page.tsx`<br>`src/utils/businessRoutes.ts` | Supports portfolio, War Room, Overview, Sales & Ops, Transactions, Invoices, Expenses, Cash Flow, Alerts, Copilot. |
+| **Live Production Deployment** | **Implemented** | Vercel Serverless Edge | Publicly accessible at `https://distromesh.vercel.app` with zero build or runtime errors. |
+| **In-Memory Seed Data & Portfolio Profiles** | **Partially Implemented** | `src/data/seedData.ts`<br>`src/data/businessEntitiesData.ts`<br>`src/data/fleetData.ts` | Realistic, mathematically reconciled FMCG operational data held in React state; resets on browser refresh. |
+| **Role-Based Perspectives** | **Partially Implemented** | `src/context/ExecutiveContext.tsx` | UI role switcher (Owner, Operations Manager, Vault Cashier, Field Viewer) modifying view permissions; no backend JWT auth. |
+| **Audit Log & Shortage Case Lifecycle** | **Partially Implemented** | `src/context/ExecutiveContext.tsx` | Session-scoped audit log and shortage case resolution (Waive / Deduct / Escalate); non-durable across page reloads. |
+| **Relational Database (PostgreSQL 16+ with RLS)** | **Planned / Specification** | Section 5 of this document | Comprehensive DDL designed; not yet provisioned in current deployment. |
+| **Server-Side REST / WebSocket API** | **Planned / Specification** | Section 6 of this document | Endpoint contracts documented; current prototype operates via client-side Next.js routing and React state. |
+| **Edge Hardware Daemon (`distromesh-printd`)** | **Planned / Specification** | Section 7 of this document | ESC/P 2 protocol and daemon architecture specified; economic calculation implemented in frontend. |
+| **Principal ERP Integration (Unilever DMS / 1View)** | **Planned / Specification** | Section 8 of this document | Data contracts defined; not connected to live external enterprise systems. |
+| **Banking & MFS Host-to-Host Integration** | **Planned / Specification** | Section 8 of this document | Islami Bank balance polling and bKash/Nagad dynamic QR code webhooks specified. |
 
 ---
 
-## 4. Database Schema (PostgreSQL DDL)
+## 3. Current Live Architecture & Runtime
 
-### 4.1 Multi-Tenant Governance & Organizations
+### 3.1 Topology & Infrastructure
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CLIENT / REVIEWER BROWSER                       │
+│  (Desktop Browser, Warehouse Tablet, or Depot Wall Display Monitor)   │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTPS (TLS 1.3)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                     VERCEL SERVERLESS EDGE NETWORK                     │
+│               Domain: https://distromesh.vercel.app                    │
+│                                                                        │
+│  ┌───────────────────────┐        ┌─────────────────────────────────┐  │
+│  │ Static Assets (CDN)   │        │ Next.js 16 Turbopack Serverless │  │
+│  │ CSS, JS, Media, Woff2 │        │ SSR / ISR Page Generation       │  │
+│  └───────────────────────┘        └────────────────┬────────────────┘  │
+└────────────────────────────────────────────────────┼───────────────────┘
+                                                     │ Hydration
+                                                     ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│               REACT 19 CLIENT-SIDE APPLICATION RUNTIME                 │
+│                                                                        │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ ExecutiveContext State Store (In-Memory React Context)            │  │
+│  │ - Reactive Bank & Vault Cash     - 12 Van Beat Records           │  │
+│  │ - Upcoming Auto-Debit Obligations - Real-Time Till Audit State   │  │
+│  │ - Scenario Simulation Overrides   - Session Audit Trail          │  │
+│  └───────────────┬──────────────────────────────────┬───────────────┘  │
+│                  │                                  │                  │
+│                  ▼                                  ▼                  │
+│  ┌───────────────────────────────┐  ┌───────────────────────────────┐  │
+│  │ Derived Rules Engine          │  │ Formatting & i18n Engine      │  │
+│  │ - Liquidity Status (SAFE/CRIT)│  │ - Indian Comma Grouping       │  │
+│  │ - Dispatch Loss Calculation   │  │ - Bengali Numeral Converter   │  │
+│  │ - Mispick Cost Economics      │  │ - Taka Prefix Standardization │  │
+│  │ - Receivables Ageing Brackets │  │ - Exact vs Summary Formatters │  │
+│  └───────────────────────────────┘  └───────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.2 Implemented Core Modules
+
+1. **Derived Rules Module (`src/utils/derivedRules.ts`)**:
+   - `deriveLiquidityStatus({ bankAfterDebit, vaultCash, next7DayObligations })`:
+     - Calculates combined liquid cash and coverage ratios.
+     - Returns `SAFE` (buffer $\ge$ ৳5,00,000), `WATCH` (buffer $\ge$ ৳1,00,000), or `CRITICAL` (deficit).
+   - `deriveDispatchMetrics({ targetTime, actualTime, delayMinutes, vansDispatched, crewDailyWage })`:
+     - Calculates van-minutes lost ($12 \times 165 = 1,980\text{ min}$) and idle labor cost ($\approx ৳4,950$).
+   - `deriveRouteStatus(route)`:
+     - Enforces that non-OK routes have explicit reason strings (e.g., till shortages, outside territory).
+   - `deriveMispickLoss()`:
+     - Calculates unit loss (৳41.46/unit) and daily mispick expense (৳2,488) with payback period (**2.8 operational days**).
+   - `deriveReceivablesAgeing()`:
+     - Categorizes trade receivables across 5 ageing buckets with $18.0\%$ overdue $>30$ days.
+
+2. **Formatting Module (`src/utils/formatters.ts`)**:
+   - Implements authentic Bangladeshi currency conventions.
+   - `formatBDT(amount, { mode: 'exact', bangla: boolean })`: Formats exact taka with commas at thousands, lakhs, and crores (`৳১৬,৯৫,২০০`).
+   - `formatBDT(amount, { mode: 'summary', bangla: boolean })`: Enforces summary format using only `L` (Lakh) and `Cr` (Crore). **Explicitly forbids Western `K` or `M` for financial balances.**
+   - Negative amounts formatted with standard minus prefix `−৳` rather than trailing symbols or parentheses.
+   - `toBanglaNumerals(str)`: Instant character mapping of ASCII digits `0–9` to Bengali glyphs `০–৯`.
+
+3. **Executive Context Store (`src/context/ExecutiveContext.tsx`)**:
+   - Central state coordinator providing reactive setters, drawer controls, modal dispatchers, simulation values, and toast notifications.
+   - Manages state mutations for:
+     - `confirmCreditLock`: Locks credit extensions across overdue beats.
+     - `confirmBankDeposit`: Simulates staging vault cash to the clearing bank account.
+     - `handleOpenShortageCase`: Manages investigation cases for route cash discrepancies.
+     - `waiveVariance` / `deductVariance`: Resolves cashier discrepancies.
+     - `confirmDayEndClose`: Finalizes the operational day.
+     - `replaceHardware`: Clears billing printer delay bottlenecks.
+
+4. **Theme Context Store (`src/context/ThemeContext.tsx`)**:
+   - Manages dark mode and light mode with persistent synchronization across browser tabs via `storage` event listeners.
+
+---
+
+## 4. The 10 Non-Negotiable Mathematical Accounting Identities
+
+The distroMesh operations model is governed by 10 mathematical identities that guarantee zero-leakage accounting. All 10 are strictly implemented in code and verified by automated unit tests in `tests/dataIntegrity.test.ts`.
+
+| ID | Accounting Identity Formulation | Commercial Significance | Test Verification |
+| :--- | :--- | :--- | :--- |
+| **1** | $\text{Delivered Sales} = \text{Cash Sales} + \text{Credit Sales}$ | Prevents unrecorded deliveries or off-the-books market credit. Valid per route and across the whole hub. | `Identity 1: Delivered sales = cash sales + credit sales` (PASSED) |
+| **2** | $\text{Cash Handed In} = \text{Cash Sales} + \text{Old Dues Collected}$ | Ensures all physical currency collected by JSRs on the road is categorized. | `Identity 2: Cash handed in = cash sales + old dues collected` (PASSED) |
+| **3** | $\text{Expected Till} = \text{Opening Float} + \text{Cash Handed In} - \text{Cash Expenses}$ | Defines the exact cashier till liability before physical cash count. | `Identity 3: Expected till = opening float + cash handed in − cash expenses` (PASSED) |
+| **4** | $\text{Variance} = \text{Counted Till} - \text{Expected Till}$ | Flags shortages as negative numbers ($\sum \text{Route Variances} = \text{Total Variance}$). | `Identity 4: Variance = counted − expected` (PASSED) |
+| **5** | $\text{Credit Share} = \frac{\text{Credit Sales}}{\text{Delivered Sales}}$ | Enforces owner policy ceiling ($\le 45.0\%$). Current seed: $39.58\%$. | `Identity 5: Credit share = credit sales ÷ delivered sales` (PASSED) |
+| **6** | $\text{Vault Cash} \neq \text{Bank Balance}$ | Cash sitting in the depot safe is **not** available for bank auto-debits until a physical deposit posts. | `Identity 6: Vault cash is NOT in bank until a deposit posts` (PASSED) |
+| **7** | $\text{Closing AR} = \text{Opening AR} + \text{Credit Sales} - \text{Old Dues Collected}$ | Validates the roll-forward consistency of retailer accounts receivable. | `Identity 7: Receivables roll-forward consistency` (PASSED) |
+| **8** | $\text{NOWC} = \text{AR} + \text{Inventory} + \text{Scheme Claims} + \text{Damage Claims} - \text{AP}$ | Governs Net Operating Working Capital tied up in operational assets. Current seed: ৳1,37,00,000 (৳1.37Cr). | `Identity 8: Net operating working capital formula` (PASSED) |
+| **9** | $\text{Net Profit} = \text{Gross Margin} - \text{Opex} - \text{Financing} - \text{Tax}$ | Validates monthly enterprise profit margin ($1.49\%$ on ৳2.50Cr turnover). | `Identity 9: Monthly P&L lines sum to net profit` (PASSED) |
+| **10** | $\text{Payroll} \le \text{Operating Costs}$ | Verifies enterprise payroll (৳4,05,000 for 57 staff) remains within total operating overhead (৳6,00,000). | `Identity 10: Payroll <= operating costs; headcount = 57` (PASSED) |
+
+---
+
+## 5. Target Production Database Architecture (PostgreSQL Schema)
+
+*Note: The schemas below represent the target relational architecture for Phase 2 backend deployment. In the current live demo, these entities are modeled in TypeScript (`src/types/executive.ts` and `src/data/seedData.ts`).*
+
+### 5.1 Multi-Tenant Governance & Organizations
 
 ```sql
 -- Tenants & Hubs
@@ -87,7 +192,7 @@ CREATE TABLE users (
 );
 ```
 
-### 4.2 Field Operations, Beats & Retailers
+### 5.2 Field Operations, Beats & Retailers
 
 ```sql
 CREATE TABLE beats (
@@ -122,7 +227,7 @@ CREATE TABLE retailers (
 );
 ```
 
-### 4.3 Invoices & Delivery Drops
+### 5.3 Invoices & Delivery Drops
 
 ```sql
 CREATE TYPE invoice_status AS ENUM ('ORDERED', 'PRINTED', 'DISPATCHED', 'DELIVERED', 'PARTIAL', 'RETURNED', 'CANCELLED');
@@ -152,20 +257,9 @@ CREATE TABLE invoices (
     
     CONSTRAINT chk_settlement_sum CHECK (net_payable_amount = (cash_collected + credit_issued))
 );
-
-CREATE TABLE invoice_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-    sku_code VARCHAR(64) NOT NULL,
-    sku_name VARCHAR(255) NOT NULL,
-    ordered_units INT NOT NULL,
-    delivered_units INT NOT NULL,
-    unit_trade_price NUMERIC(12, 2) NOT NULL,
-    line_total NUMERIC(14, 2) NOT NULL
-);
 ```
 
-### 4.4 Daily Cash Reconciliation & Route Settlement
+### 5.4 Daily Cash Reconciliation & Route Settlement
 
 ```sql
 CREATE TYPE settlement_status AS ENUM ('DRAFT', 'SUBMITTED', 'AUDITED', 'SETTLED', 'EXCEPTION');
@@ -222,74 +316,23 @@ CREATE TABLE till_sessions (
     CONSTRAINT chk_till_variance CHECK (till_variance = (counted_vault_cash - expected_till)),
     UNIQUE(tenant_id, hub_id, session_date)
 );
-
--- Denomination Breakdown for Vault Audits
-CREATE TABLE till_denominations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    till_session_id UUID NOT NULL REFERENCES till_sessions(id) ON DELETE CASCADE,
-    note_1000 INT DEFAULT 0,
-    note_500 INT DEFAULT 0,
-    note_200 INT DEFAULT 0,
-    note_100 INT DEFAULT 0,
-    note_50 INT DEFAULT 0,
-    note_20 INT DEFAULT 0,
-    note_10 INT DEFAULT 0,
-    coins NUMERIC(10, 2) DEFAULT 0.00
-);
-```
-
-### 4.5 Working Capital Ledger & Bank Sweeps
-
-```sql
-CREATE TABLE bank_accounts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id),
-    bank_name VARCHAR(128) NOT NULL, -- e.g., 'Islami Bank Bangladesh Ltd'
-    branch_name VARCHAR(128),
-    account_number VARCHAR(64) NOT NULL,
-    current_balance NUMERIC(16, 2) NOT NULL DEFAULT 0.00,
-    is_principal_auto_debit_account BOOLEAN DEFAULT FALSE,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE bank_deposits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id),
-    till_session_id UUID REFERENCES till_sessions(id),
-    bank_account_id UUID NOT NULL REFERENCES bank_accounts(id),
-    deposit_amount NUMERIC(14, 2) NOT NULL,
-    deposit_slip_number VARCHAR(64),
-    slip_image_url TEXT,
-    status VARCHAR(32) DEFAULT 'PENDING', -- 'PENDING', 'CONFIRMED', 'REJECTED'
-    confirmed_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE principal_obligations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id),
-    principal_name VARCHAR(128) NOT NULL, -- 'Unilever Bangladesh Limited'
-    debit_order_number VARCHAR(64) NOT NULL,
-    due_datetime TIMESTAMPTZ NOT NULL,
-    amount NUMERIC(16, 2) NOT NULL,
-    status VARCHAR(32) DEFAULT 'SCHEDULED', -- 'SCHEDULED', 'EXECUTED', 'FAILED'
-    executed_at TIMESTAMPTZ
-);
 ```
 
 ---
 
-## 5. Core REST & WebSocket API Contracts
+## 6. Target Production API Specifications
 
-### 5.1 War Room Live Telemetry Endpoint
+*Note: In the current prototype, navigation and data retrieval occur via Next.js App Router client routing and React Context. The endpoints below specify the RESTful contracts for the future dedicated API server.*
+
+### 6.1 War Room Live Telemetry Endpoint
 
 - **Endpoint**: `GET /api/v1/businesses/{businessSlug}/war-room`
-- **Auth**: Bearer JWT (`OWNER`, `OPERATIONS_MANAGER`, `VAULT_CASHIER`, `AUDITOR`)
-- **Response**:
-
+- **Method**: `GET`
+- **Authentication**: `Bearer <JWT_TOKEN>` (`OWNER`, `OPERATIONS_MANAGER`, `VAULT_CASHIER`, `AUDITOR`)
+- **Sample Response**:
 ```json
 {
-  "asOf": "2026-10-06T16:15:00+06:00",
+  "asOf": "2026-10-08T12:00:00+06:00",
   "operatingSchedule": {
     "phase": "Delivery & Settlement",
     "window": "12:00 - 19:00",
@@ -325,7 +368,7 @@ CREATE TABLE principal_obligations (
     "tillVariance": {
       "amount": -400.00,
       "flaggedRouteId": "R-103",
-      "assignedJsr": "Babul",
+      "assignedJsr": "Babul Hossain",
       "status": "ACTION_REQUIRED"
     },
     "dispatchDelay": {
@@ -335,56 +378,18 @@ CREATE TABLE principal_obligations (
       "bottleneckReason": "Epson LQ-310 Dot-Matrix Jam",
       "status": "CRITICAL"
     }
-  },
-  "routes": [
-    {
-      "routeId": "R-101",
-      "vanNumber": "Van #1 (11-4021)",
-      "beat": "Sherpur Town East",
-      "sr": "Rafiqul",
-      "jsr": "Selim",
-      "deliveredSales": 82400.00,
-      "cashSales": 50200.00,
-      "creditSales": 32200.00,
-      "oldDuesCollected": 24000.00,
-      "cashExpenses": 1200.00,
-      "cashHandedIn": 74200.00,
-      "expectedTill": 73000.00,
-      "countedTill": 73000.00,
-      "variance": 0.00,
-      "status": "OK"
-    }
-  ],
-  "workingCapital": {
-    "receivables": 19700000.00,
-    "inventory": 15400000.00,
-    "schemeClaims": 205000.00,
-    "tradePayables": 21500000.00,
-    "nowc": 13700000.00,
-    "cashConversionCycleDays": 16.0
-  },
-  "receivablesAgeing": {
-    "totalOverdue30d": 3550685.00,
-    "percentOverdue30d": 18.02,
-    "brackets": [
-      { "label": "0-15 Days", "percent": 55, "amount": 10835000.00 },
-      { "label": "16-30 Days", "percent": 27, "amount": 5319000.00 },
-      { "label": "31-45 Days", "percent": 11, "amount": 2167000.00 },
-      { "label": "46-60 Days", "percent": 5, "amount": 985000.00 },
-      { "label": "60+ Days", "percent": 2, "amount": 394000.00 }
-    ]
   }
 }
 ```
 
-### 5.2 Route Cash Settlement Submission
+### 6.2 Route Cash Settlement Submission
 
 - **Endpoint**: `POST /api/v1/businesses/{businessSlug}/routes/{routeCode}/settle`
-- **Payload**:
-
+- **Method**: `POST`
+- **Request Payload**:
 ```json
 {
-  "settlementDate": "2026-10-06",
+  "settlementDate": "2026-10-08",
   "jsrId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
   "deliveredSales": 82400.00,
   "cashSales": 50200.00,
@@ -395,110 +400,77 @@ CREATE TABLE principal_obligations (
   "countedPhysicalCash": 74200.00,
   "expenseVouchers": [
     { "type": "FUEL", "amount": 800.00, "memo": "Padma Oil CNG Fill" },
-    { "type": "TOLL", "amount": 400.00, "memo": "Bridge Toll & Parking" }
+    { "type": "TOLL", "amount": 400.00, "memo": "Sherpur Bridge Toll" }
   ]
 }
 ```
 
-- **Backend Validation**:
-  1. Checks `deliveredSales == cashSales + creditSales` (Identity 1).
-  2. Checks `totalCashHandedIn == cashSales + oldDuesCollected` (Identity 2).
-  3. Calculates variance: `countedPhysicalCash - totalCashHandedIn`.
-  4. Atomically records ledger entries inside a single SQL transaction.
+---
 
-### 5.3 Daily Till Close & Variance Resolution
+## 7. Edge Hardware Subsystem (`distromesh-printd`)
 
-- **Endpoint**: `POST /api/v1/businesses/{businessSlug}/vault/close-session`
-- **Payload**:
+### 7.1 Operational Problem
+In FMCG distribution in Bangladesh, delivery vans cannot legally depart the warehouse yard without 3-part carbon-copy invoices and delivery challans signed by the cashier. When billing rooms rely on aging 24-pin dot-matrix printers (such as the legacy Epson LQ-310) driven by standard Windows spoolers, frequent ribbon jams and head overheats cause severe morning dispatch stalls.
+- **Observed Bottleneck**: 165-minute dispatch delay (09:00 target vs 11:45 actual departure).
+- **Fleet Impact**: 12 vans stalled in yard; 1,980 van-minutes lost.
+- **Labor Waste**: ৳4,950 in idle driver/loader crew wages.
+- **Warehouse Packing Errors**: ৳2,488 daily mispick loss (৳41.46 per unit).
 
-```json
-{
-  "sessionDate": "2026-10-06",
-  "openingFloat": 50000.00,
-  "countedVaultCash": 895200.00,
-  "varianceAction": "SCHEDULE_DEDUCTION", -- Options: 'WAIVE', 'SCHEDULE_DEDUCTION', 'FLAG_AUDIT'
-  "deductionTargetJsrId": "e1f1c7d2-7b24-4f9e-8c33-8cb49db9652a",
-  "deductionAmount": 400.00,
-  "notes": "Route 103 shortfall attributed to change miscount by JSR Babul."
-}
+### 7.2 Solution Architecture
+A standalone edge daemon written in Go (`distromesh-printd`) deployed on the warehouse billing terminal:
+1. **Direct ESC/P 2 Rasterization**: Bypasses the OS print spooler; emits raw ASCII and ESC/P control codes directly to `\\.\LPT1` or `/dev/usb/lp0`.
+2. **Status Pin Telemetry**: Polls hardware status pins every 500ms (Paper Out, Pin Jam, Head Temperature).
+3. **Economic Payback**: Replacing faulty print hardware (cost ৳3,000 for high-speed thermal head or ৳15,000 for line printer) achieves complete financial payback in **2.8 operational days**.
+
+---
+
+## 8. Development Setup, Build & Deployment
+
+### 8.1 Prerequisites
+- **Node.js**: Version 20.9.0 or later (Node 22 LTS recommended)
+- **Package Manager**: npm 10+
+- **Operating Systems**: Windows 11/10, macOS Sonoma/Sequoia, Ubuntu 22.04+
+
+### 8.2 Windows PowerShell Execution Notice
+On Windows systems with default execution policies, PowerShell blocks `.ps1` wrapper scripts. Always use `npm.cmd` or run via `cmd.exe /c`:
+```powershell
+# In PowerShell on Windows:
+npm.cmd install
+npm.cmd run dev
+npm.cmd test
+npm.cmd run build
 ```
 
----
+### 8.3 Core Commands
 
-## 6. Edge Hardware Service (Epson LQ-310 Printing Daemon)
-
-### 6.1 The Problem
-In Unilever distribution, van dispatch cannot commence until multi-part carbon-copy delivery challans and invoices are printed for all 700 retail drops. Inefficient printer drivers and spooler crashes cause a **165-minute dispatch delay**, stalling 6 vans, generating 1,980 lost van-minutes, and costing ৳4,950 in idle wages.
-
-### 6.2 Solution Architecture: `distromesh-printd`
-A dedicated, headless edge daemon written in Go deployed directly on the warehouse billing terminal.
-
-```
-┌────────────────────────────────────────────────────────┐
-│              distroMesh Cloud API Server               │
-└───────────────────────────┬────────────────────────────┘
-                            │ WebSocket / gRPC Queue
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│            distromesh-printd (Edge Daemon)             │
-│  - Raw ESC/P 2 Matrix Rasterizer                       │
-│  - Bidirectional USB/IEEE 1284 Status Poller           │
-│  - In-Memory Spool Buffer                              │
-└───────────────────────────┬────────────────────────────┘
-                            │ Direct Raw Parallel / USB
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│           Epson LQ-310 24-Pin Dot Matrix               │
-│  - 416 cps High-Speed Draft Mode                       │
-│  - 1+3 Carbon Copy Continuous Stationery               │
-└────────────────────────────────────────────────────────┘
-```
-
-### 6.3 Daemon Key Specifications
-1. **Raw ESC/P Byte Generation**: Bypasses the Windows/Linux CUPS graphical print spooler. Sends raw ASCII and ESC/P control codes (`ESC @`, `ESC C`, `ESC E`) directly to device `/dev/usb/lp0` or `\\.\LPT1`.
-2. **Printer Status Telemetry**: Polls printer status pins (Paper Out, Pin Jam, Head Temperature, Ribbon Status) every 500ms.
-3. **Automatic Failover**: If the legacy printer halts, automatically redirects the print queue to a backup high-speed line printer and alerts the War Room via WebSocket.
-4. **Economic ROI**: The replacement hardware cost (৳3,000 for service or ৳15,000 for backup unit) pays for itself in **2.8 operating days** based on recovered mispick losses (৳2,488/day) and idle crew time (৳4,950/day).
-
----
-
-## 7. External Integrations
-
-### 7.1 Principal ERP (Unilever DMS / 1View)
-- **Morning Import Sync (06:00 AM)**: Pulls order bookings generated by SRs via Unilever handheld terminals (DMS API / SFTP Flat File / EDI).
-- **Evening Reconciliation Export (08:00 PM)**: Exports completed drop statuses, return quantities, cash collection logs, and customer damage claims back to Unilever SAP.
-- **Automated Scheme Claims Submission**: Generates claim vouchers for promotional discounts (৳2,05,000 current pending balance) and tracks Unilever credit note issuance.
-
-### 7.2 Banking & MFS Interfaces
-- **Corporate Bank Sweep (Islami Bank Bangladesh Ltd / City Bank)**:
-  - Integration with corporate Internet banking host-to-host API.
-  - Queries real-time clearing account balance.
-  - Generates auto-sweep instructions to move vault cash into the auto-debit account prior to the 48-hour deadline.
-- **Mobile Financial Services (bKash / Nagad / Rocket)**:
-  - Generates dynamic retail merchant QR codes on printed delivery invoices.
-  - Webhook listener receives instant retail payment notifications, automatically reducing invoice dues and updating route cash collection in real time.
-
----
-
-## 8. Security, Compliance & Audit Trail
-
-1. **Cryptographic Audit Log**:
-   - Every state-altering action in the War Room (locking retailer credit, approving till waivers, posting bank deposits) writes to an append-only `audit_events` table with SHA-256 state chaining:
-   $$\text{Hash}_n = \text{SHA256}(\text{Hash}_{n-1} \parallel \text{Timestamp} \parallel \text{UserId} \parallel \text{Payload})$$
-2. **Field Token Revocation**:
-   - JSR mobile devices require daily biometric or OTP check-in at the hub before beginning delivery routes.
-   - Remote wipe capability if a handheld device is lost or stolen on the beat.
-3. **Bangladesh Financial Regulations Compliance**:
-   - Complies with Bangladesh Bank ICT Security Guidelines for enterprise financial data retention (minimum 7 years of immutable ledger history).
-
----
-
-## 9. Implementation Roadmap & Milestones
-
-| Phase | Duration | Scope & Deliverables |
+| Action | Command | Purpose |
 | :--- | :--- | :--- |
-| **Phase 1: Database & Financial Core** | Weeks 1–3 | PostgreSQL schemas, RLS isolation, Double-entry journal, 10 Mathematical Identities validation suite. |
-| **Phase 2: War Room Live APIs** | Weeks 4–5 | REST & WebSocket telemetry endpoints, 12-route settlement workflow, Till session vault management. |
-| **Phase 3: Hardware Print Daemon** | Weeks 6–7 | `distromesh-printd` Go service, ESC/P direct generation, Epson LQ-310 status monitoring, and auto-failover. |
-| **Phase 4: Field Sync & Offline Engine**| Weeks 8–10 | JSR mobile collection app, offline SQLite sync, retailer QR payments, conflict resolution. |
-| **Phase 5: Principal ERP & Bank Connect**| Weeks 11–12| Unilever DMS EDI/SFTP connector, Islami Bank host-to-host balance polling, bKash/Nagad merchant webhooks. |
+| **Install Dependencies** | `npm.cmd install` | Installs Next.js, React 19, Recharts, Lucide, Tailwind v4. |
+| **Start Development Server** | `npm.cmd run dev` | Launches Turbopack dev server on `http://localhost:3000`. |
+| **Run Mathematical Integrity Tests** | `npm.cmd test` | Executes 20 automated unit tests verifying the 10 identities. |
+| **Run Linter** | `npm.cmd run lint` | Runs ESLint 9 checks across all TypeScript files. |
+| **Compile Production Bundle** | `npm.cmd run build` | Compiles optimized Next.js static and dynamic bundles. |
+| **Start Production Server** | `npm.cmd start` | Serves compiled production build locally. |
+| **Deploy to Vercel** | `npx.cmd vercel deploy --prod --yes` | Deploys directly to live Vercel production edge network. |
+
+### 8.4 Production Deployment Details
+
+- **Deployment Platform**: Vercel Serverless Edge Network
+- **Production URL**: [https://distromesh.vercel.app](https://distromesh.vercel.app)
+- **Edge Regions**: Global Anycast CDN distribution
+- **Build Pipeline**: Next.js Turbopack automated production build
+
+---
+
+## 9. Known Limitations & Prototype Boundaries
+
+1. **Client-Side State Durability**:  
+   The current live deployment holds transaction records, new business additions, and audit entries in client-side React memory. Refreshing the browser resets the session back to the seed baseline.
+2. **Absence of Server-Side SQL Database**:  
+   PostgreSQL 16 with Row-Level Security is specified in full DDL detail in Section 5, but is not currently attached to the live Vercel frontend.
+3. **Simulated Authentication**:  
+   The role selector in the top bar (`Owner`, `Operations Manager`, `Vault Cashier`, `Field Viewer`) allows testing user perspectives without requiring SMS OTP or database password verification.
+4. **Offline Sync Handheld Handshake**:  
+   The mobile handheld CRDT synchronization protocol for rural beats is currently specified in architecture but not yet distributed as a native Android APK.
+5. **No Direct Banking Host-to-Host Link**:  
+   Bank balances and auto-debit sweeps simulate the real financial schedule of M/S Popy Traders and Unilever Bangladesh, but are not connected to live bank API webhooks.

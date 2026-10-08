@@ -17,20 +17,15 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem('distromesh_theme') as Theme | null;
-    if (stored === 'light' || stored === 'dark') {
-      setThemeState(stored);
-      applyTheme(stored);
-    } else {
-      // Default to institutional dark mode
-      applyTheme('dark');
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('distromesh_theme');
+        if (stored === 'light' || stored === 'dark') return stored;
+      } catch {}
     }
-  }, []);
+    return 'dark';
+  });
 
   const applyTheme = (t: Theme) => {
     const root = document.documentElement;
@@ -46,6 +41,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.style.colorScheme = 'light';
     }
   };
+
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'distromesh_theme' && (e.newValue === 'dark' || e.newValue === 'light')) {
+        setThemeState(e.newValue);
+        applyTheme(e.newValue);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const setTheme = (t: Theme) => {
     setThemeState(t);

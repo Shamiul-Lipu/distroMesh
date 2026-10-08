@@ -78,8 +78,8 @@ export const WeeklyCashFlowInOut: React.FC<WeeklyCashFlowInOutProps> = ({
                 fontFamily: 'monospace',
                 color: '#F9FAFB',
               }}
-              formatter={(val: any, name: any) => [
-                `৳${val}K`,
+              formatter={(val: unknown, name: unknown) => [
+                `৳${String(val ?? '')}K`,
                 name === 'cashInflow' ? 'Cash Inflow' : 'Cash Outflow',
               ]}
               labelFormatter={(label) => `${label} · Flow`}

@@ -21,10 +21,12 @@ export const DispatchReadinessCard: React.FC<DispatchReadinessCardProps> = ({
   const { state, openDrawer } = useExecutive();
   const initialSecs = status?.countdownSeconds || 8100;
   const [seconds, setSeconds] = useState(initialSecs);
+  const [prevInitial, setPrevInitial] = useState(initialSecs);
 
-  useEffect(() => {
+  if (prevInitial !== initialSecs) {
+    setPrevInitial(initialSecs);
     setSeconds(initialSecs);
-  }, [initialSecs]);
+  }
 
   // Countdown timer simulation
   useEffect(() => {
